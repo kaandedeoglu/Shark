@@ -11,11 +11,16 @@ enum Resource {
 func imageResourcesAtPath(path: String) throws -> [Resource] {
     var results = [Resource]()
     let URL = NSURL.fileURLWithPath(path)
-    let enumerator = NSFileManager.defaultManager().enumeratorAtURL(URL, includingPropertiesForKeys: [NSURLNameKey, NSURLIsDirectoryKey], options: NSDirectoryEnumerationOptions.SkipsHiddenFiles, errorHandler: nil)
+
+    var contents: [NSURL]?
     
-    guard let enumeratorObjects = enumerator?.allObjects as? [NSURL] else { return [] }
+    do {
+        contents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(URL, includingPropertiesForKeys: [NSURLNameKey, NSURLIsDirectoryKey], options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
+    }
     
-    for fileURL in enumeratorObjects {
+    guard let directoryContents = contents else { return [] }
+    
+    for fileURL in directoryContents {
         var directoryKey: AnyObject?
         do {
             try fileURL.getResourceValue(&directoryKey, forKey: NSURLIsDirectoryKey)
@@ -40,15 +45,29 @@ func imageResourcesAtPath(path: String) throws -> [Resource] {
 }
 
 func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) -> String {
+    let sortedResources = resources.sort { first, second in
+        switch first {
+        case .Directory:
+            return true
+        case _:
+            return false
+        }
+    }
     var resultString = ""
-    for singleResource in resources {
+    for singleResource in sortedResources {
         switch singleResource {
         case .File(let name):
-            resultString += String(count: 4 * (indentLevel + 1), repeatedValue: Character(" ")) + "case \(name)\n"
+            let indentationString = String(count: 4 * (indentLevel + 1), repeatedValue: Character(" "))
+            if name.characters.contains(Character(" ")) {
+                let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
+                resultString += indentationString + "case \(correctedName) = \"\(name)\"\n"
+            } else {
+                resultString += indentationString + "case \(name)\n"
+            }
         case .Directory(let (name, subResources)):
             let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
             let indentationString = String(count: 4 * (indentLevel), repeatedValue: Character(" "))
-            resultString += "\n" + indentationString + "public enum \(correctedName): String {"	+ "\n"
+            resultString += "\n" + indentationString + "public enum \(correctedName): String {" + "\n"
             resultString += createEnumDeclarationForResources(subResources, indentLevel: indentLevel + 1)
             resultString += indentationString + "}\n\n"
         }
@@ -61,24 +80,16 @@ func acknowledgementsString() -> String {
 }
 
 func imageExtensionString() -> String {
-    return "extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}"
+    return "public extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}"
 }
 
 do {
     let result = try imageResourcesAtPath(path)
-    let sortedResults = result.sort { first, second in
-        switch first {
-        case .Directory:
-            return true
-        case _:
-            return false
-        }
-    }
-	  var resultString = ""
-
-
-    let top = Resource.Directory(("Shark", sortedResults))
-        
+    var resultString = ""
+    
+    
+    let top = Resource.Directory(("Shark", result))
+    
     let enumString = createEnumDeclarationForResources([top], indentLevel: 0)
     
     resultString += acknowledgementsString()
@@ -86,7 +97,7 @@ do {
     resultString += imageExtensionString()
     resultString += "\n"
     resultString += enumString
-
+    
     print(resultString)
 }
 

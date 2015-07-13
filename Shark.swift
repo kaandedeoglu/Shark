@@ -3,18 +3,9 @@ import Cocoa
 let path = "/Users/kaandedeoglu/Code/Noluyo/Noluyo/Images.xcassets/"
 precondition(path.hasSuffix(".xcassets") || path.hasSuffix(".xcassets/"), "The path should point to a .xcassets folder")
 
-enum Resource: CustomStringConvertible {
+enum Resource {
     case File(String)
     case Directory((String, [Resource]))
-    
-    var description: String {
-        switch self {
-        case File(let name):
-            return "\n" + "File - " + name
-        case Directory(let (name,_)):
-            return "\n" + "Directory - " + name
-        }
-    }
 }
 
 func imageResourcesAtPath(path: String) throws -> [Resource] {

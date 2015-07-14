@@ -1,0 +1,22 @@
+PODS:
+  - PrettyColors (2.0.0)
+  - XcodeEditor (1.6.2)
+
+DEPENDENCIES:
+  - PrettyColors (from `https://github.com/jdhealy/PrettyColors`)
+  - XcodeEditor
+
+EXTERNAL SOURCES:
+  PrettyColors:
+    :git: https://github.com/jdhealy/PrettyColors
+
+CHECKOUT OPTIONS:
+  PrettyColors:
+    :commit: 7a1682b7663cfa075d8e9a5ad0c1e096e54968b5
+    :git: https://github.com/jdhealy/PrettyColors
+
+SPEC CHECKSUMS:
+  PrettyColors: 339615276e92027bb7cd2504685951f14b5feaf6
+  XcodeEditor: 0d21967dd71a16262c7121c7723179f6ae2b11c3
+
+COCOAPODS: 0.38.0.beta.2

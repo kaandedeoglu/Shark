@@ -1,0 +1,826 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		123DB9EE8D7C94FD2E32B6A128C33F2E /* XcodeGroupMember.h in Headers */ = {isa = PBXBuildFile; fileRef = 2E05D1C279DDA149376CA73BB4390DEC /* XcodeGroupMember.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		1842CB3558DB0E7C05D9930F936DCAFD /* XCProject+SubProject.h in Headers */ = {isa = PBXBuildFile; fileRef = 8CC17DBE17D8BCBCFF017AF865AA6671 /* XCProject+SubProject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		198DE9E23F89277838EDD3E2A913C579 /* XcodeMemberType.m in Sources */ = {isa = PBXBuildFile; fileRef = 7D33B635CECA53513D284D18E992A34A /* XcodeMemberType.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		1A56A296069D74445D294FB7545BFE63 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C5146CA4C416EFBD1E192F6E1B200EF /* Cocoa.framework */; };
+		1C045765C239B874C4DD71927D4038E6 /* XCSourceFile.h in Headers */ = {isa = PBXBuildFile; fileRef = 0A5F66356F9E824664425D5BD4BD1C2B /* XCSourceFile.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2320A766CF7CD06C8A8112A6689E35E1 /* Wrap.swift in Sources */ = {isa = PBXBuildFile; fileRef = 573924C5019689998BF647D649F0D851 /* Wrap.swift */; };
+		2D8BB65755F9B4D7DD1834A5A642AF75 /* PrettyColors.h in Headers */ = {isa = PBXBuildFile; fileRef = DBFB96D3907613CE23C337FF9553F4B3 /* PrettyColors.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2DD30662910A1515E2FB5A7E6ADBBED3 /* XCSourceFileDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 1F69A11A9F3ECC28EE8A4C39F00E4F6D /* XCSourceFileDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		2FCF0B5923EACE5F249BA791601E09E0 /* XCSubProjectDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E317F6F505AD71AF127E36E087690A3 /* XCSubProjectDefinition.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		32E42AFFE3244594A7C196A6610312DC /* XCAbstractDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 0BBE858918C1D655189BFC50B87FDBD8 /* XCAbstractDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		410BBD58B96E54263F7935B35FF35CC7 /* XCProjectBuildConfig.m in Sources */ = {isa = PBXBuildFile; fileRef = EA9C5F158001C47148D3FFA80417C33E /* XCProjectBuildConfig.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		4B463D215B5AF7BA3873DF30276DBE57 /* XCSubProjectDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 3EA17B539738DB016843B2C1881BCDD4 /* XCSubProjectDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		525FB09E6B141626DCAE901A4E8DC678 /* XCProjectBuildConfig.h in Headers */ = {isa = PBXBuildFile; fileRef = 2048376922ED2870B26BE5CD4741A742 /* XCProjectBuildConfig.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		5558259AD2916371B9F5F6A0E534D813 /* XCKeyBuilder.m in Sources */ = {isa = PBXBuildFile; fileRef = 1CB16DD5622DE09E1D285ACAD94967A2 /* XCKeyBuilder.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		5B147369323F68188915C362BF94B1D1 /* XcodeSourceFileType.m in Sources */ = {isa = PBXBuildFile; fileRef = 869413197861E477CA3B1DCCCF98A78C /* XcodeSourceFileType.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		5E78308747535683FA7124ED0E7D6583 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C5146CA4C416EFBD1E192F6E1B200EF /* Cocoa.framework */; };
+		5F118668D8E4F0EB02855A2AF256FD47 /* XCGroup.h in Headers */ = {isa = PBXBuildFile; fileRef = 7A45F42D6656E70EE43EB150A5D6CDE0 /* XCGroup.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		609B1096EBCF7A0E31528A91E6371B0E /* XCFileOperationQueue.h in Headers */ = {isa = PBXBuildFile; fileRef = 53008987CA46D0BC478F72AB03DA9365 /* XCFileOperationQueue.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		624BCD60C22BE2EEADA9856E5332D895 /* XcodeSourceFileType.h in Headers */ = {isa = PBXBuildFile; fileRef = FE61E87BA70F33C3D1D5DC769ABF8792 /* XcodeSourceFileType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		631E9F32E3518CC48D3EFB81C6C49904 /* StyleParameter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 67060FE553800B917E24306A3748DE7A /* StyleParameter.swift */; };
+		658CC5368EBD02B6B8D67A2FC01E8BBC /* Pods-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = C12A82CA2ED3C35CEA91FC5809A29605 /* Pods-dummy.m */; };
+		70D9954209C0BD8C202CFB87B92388A4 /* XCProject.h in Headers */ = {isa = PBXBuildFile; fileRef = 47E2728DBF15ED30283C78908B1DFD90 /* XCProject.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		78B0D7794F594B0AB97E7A8B19C0C35D /* XCFrameworkDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = BB254C9D27E764DE7D252453D8A2E6A6 /* XCFrameworkDefinition.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		7B417D92F769042BAAFDDAAF67A6EA94 /* XCKeyBuilder.h in Headers */ = {isa = PBXBuildFile; fileRef = E9AEBEBDF3036F95035AE7DE2B539EAF /* XCKeyBuilder.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7CB6DD8875F9611C51D2B3DF75C0D93A /* XCXibDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = 84F5B84F8CA6862A2A5FED2DD7FF5663 /* XCXibDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		7FFA59D6F249929D68DBD7934CF5B45E /* Color.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A1C566762CD81D44D086D1720499B33 /* Color.swift */; };
+		83C7CAEB3A890BED78511690CBD30952 /* PrettyColors-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 88729D8D2512B89D9A8E85965D33A3CE /* PrettyColors-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		83CA85417EA38A8045025B90C0F85D06 /* PrettyColors-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = AC04769F27F3FF6A3F11651F2C0A9F78 /* PrettyColors-dummy.m */; };
+		8482C205E9C0C04839C7EA1250712A62 /* XCSourceFileDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = E60C2D9EA3C04A1A56FF85553E7237B6 /* XCSourceFileDefinition.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		851CA9C8BFFBED50EABD1DA1759FADAF /* EightBitColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 952E19E749D963AD5585E7A57AFA209E /* EightBitColor.swift */; };
+		892D50C1309C85E3AB0659125B8B2F7C /* XCTarget.h in Headers */ = {isa = PBXBuildFile; fileRef = B6B8D222F322D56CF8B7D140F57FA337 /* XCTarget.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		8F3821EC6E9358C35082E3BC3968BF82 /* XCFrameworkDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = AD70B224628982B96FF423F602BFC47E /* XCFrameworkDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		942A88314D761FBA50247DFE42E69F55 /* XCFileOperationQueue.m in Sources */ = {isa = PBXBuildFile; fileRef = 3FD8A431142A88AAB8265E1DA60903AA /* XCFileOperationQueue.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		95FA295D24A3FA610C13CA2A4AE2F364 /* XCAbstractDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = E20A2EEB49983993CA42A5C760E03700 /* XCAbstractDefinition.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		9B4302E1D0D47E76EF19A25A3BD87FB8 /* XcodeMemberType.h in Headers */ = {isa = PBXBuildFile; fileRef = B2F28F3462C5895DCFF7A485725197FC /* XcodeMemberType.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9DB55C251EDAE3EE031803FBFE5A80AE /* XcodeEditor.h in Headers */ = {isa = PBXBuildFile; fileRef = F11089EDC46E6D854313E330B1FD495F /* XcodeEditor.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		9ECF989203303B9C219DF5137F6B9D8E /* XCTarget.m in Sources */ = {isa = PBXBuildFile; fileRef = 077BFD540A9FD56D0928AE55E790048D /* XCTarget.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		9EEE4221DD5C9A7FDB7E5496627D9FF5 /* XCProject+SubProject.m in Sources */ = {isa = PBXBuildFile; fileRef = A49F49C242D404CD1F0E0E0480DB0373 /* XCProject+SubProject.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		A68862531A3CD8BB1F5CE6A2C6A2DC63 /* XCClassDefinition.h in Headers */ = {isa = PBXBuildFile; fileRef = C58C94D1C77B26DE3A6318CC187C85E4 /* XCClassDefinition.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		A78C419B40B72727FC9D95B6D4C7E31D /* XcodeEditor-dummy.m in Sources */ = {isa = PBXBuildFile; fileRef = 5CACE8A1E32009449BEA88A502C87170 /* XcodeEditor-dummy.m */; };
+		A995BB3AD7B5C086EFFBBEC439B0ED50 /* XcodeEditor-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = F88148AFB32DA0CCB685D6E09CA2FEE6 /* XcodeEditor-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		B457D9AE064090FF46C97D670A8A9DB9 /* XCXibDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = B6F09B7E36F45D01F3E8F96AC28512AE /* XCXibDefinition.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		BDAF628A7DBBAC51C20605ABC533F5EE /* XCSourceFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 7EF8CF53D5F164F73F28D8D4740DC072 /* XCSourceFile.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		C36FB419E4237D0F5BC0870E7D8F4238 /* Named.swift in Sources */ = {isa = PBXBuildFile; fileRef = 166E86F32C38915A0C9FF933C40A93A2 /* Named.swift */; };
+		C37392EDFDDC11C3CA973F2AFB78661D /* Pods-umbrella.h in Headers */ = {isa = PBXBuildFile; fileRef = 39656CA046956923F6D30013E2B3B315 /* Pods-umbrella.h */; settings = {ATTRIBUTES = (Public, ); }; };
+		C470C21E855C6820F9CA55E3EF344383 /* ECMA 48.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8A2AB8CCBE8CFEED9DC30E0DBBF4F816 /* ECMA 48.swift */; };
+		C78F303F7D31661E23D0E9C9D8C8204E /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8C5146CA4C416EFBD1E192F6E1B200EF /* Cocoa.framework */; };
+		CDF86FC9235B768C3282055F1013A014 /* XCGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = A7213DB00BC2B67864751CC8CBB07DE7 /* XCGroup.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		EEAFFCC1B8ACC87B26FAE56D924A452F /* XCProject.m in Sources */ = {isa = PBXBuildFile; fileRef = 740E0AECD7175031F601FF16BC742E52 /* XCProject.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+		FB94CBFFDB1BB21D3421C38F284F552C /* XCClassDefinition.m in Sources */ = {isa = PBXBuildFile; fileRef = 4781D2EB15AFA8195C1B180D9CFFC79B /* XCClassDefinition.m */; settings = {COMPILER_FLAGS = "-DOS_OBJECT_USE_OBJC=0"; }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		4ADBDAA955B8D4B2292CB859EAD2C112 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = B9820C0030AAE00709E8B22C21DACD81;
+			remoteInfo = XcodeEditor;
+		};
+		ADC04A6B614656B4C0452135456173ED /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 72C81C62454C5E6C8DF7BD376BD04544;
+			remoteInfo = PrettyColors;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		077BFD540A9FD56D0928AE55E790048D /* XCTarget.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCTarget.m; path = Source/XCTarget.m; sourceTree = "<group>"; };
+		0A5F66356F9E824664425D5BD4BD1C2B /* XCSourceFile.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCSourceFile.h; path = Source/XCSourceFile.h; sourceTree = "<group>"; };
+		0BBE858918C1D655189BFC50B87FDBD8 /* XCAbstractDefinition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCAbstractDefinition.h; path = Source/XCAbstractDefinition.h; sourceTree = "<group>"; };
+		0D2AD249068221EAC1078D44F02C3EF7 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		15E21B6542920AA9BE7A0DB7D5595BEC /* Pods-frameworks.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-frameworks.sh"; sourceTree = "<group>"; };
+		166E86F32C38915A0C9FF933C40A93A2 /* Named.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Named.swift; path = Source/Color/Named.swift; sourceTree = "<group>"; };
+		17465E07B6E57FD1F394DA2AF4520D8A /* Pods.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = Pods.modulemap; sourceTree = "<group>"; };
+		1CB16DD5622DE09E1D285ACAD94967A2 /* XCKeyBuilder.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCKeyBuilder.m; path = Source/Utils/XCKeyBuilder.m; sourceTree = "<group>"; };
+		1F69A11A9F3ECC28EE8A4C39F00E4F6D /* XCSourceFileDefinition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCSourceFileDefinition.h; path = Source/XCSourceFileDefinition.h; sourceTree = "<group>"; };
+		1FF2EC0BF17D70EB79ACF282C6FFC6BF /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Pods.release.xcconfig; sourceTree = "<group>"; };
+		2048376922ED2870B26BE5CD4741A742 /* XCProjectBuildConfig.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCProjectBuildConfig.h; path = Source/XCProjectBuildConfig.h; sourceTree = "<group>"; };
+		2557F7659BC3FB15F013E0421E982B40 /* XcodeEditor.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = XcodeEditor.modulemap; sourceTree = "<group>"; };
+		2B791E771F11E3718CCE2317E9365642 /* XcodeEditor-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "XcodeEditor-Private.xcconfig"; sourceTree = "<group>"; };
+		2E05D1C279DDA149376CA73BB4390DEC /* XcodeGroupMember.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XcodeGroupMember.h; path = Source/XcodeGroupMember.h; sourceTree = "<group>"; };
+		39656CA046956923F6D30013E2B3B315 /* Pods-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "Pods-umbrella.h"; sourceTree = "<group>"; };
+		3EA17B539738DB016843B2C1881BCDD4 /* XCSubProjectDefinition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCSubProjectDefinition.h; path = Source/XCSubProjectDefinition.h; sourceTree = "<group>"; };
+		3FD8A431142A88AAB8265E1DA60903AA /* XCFileOperationQueue.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCFileOperationQueue.m; path = Source/XCFileOperationQueue.m; sourceTree = "<group>"; };
+		45E11D6F17C07DBD6855274828F0FA28 /* PrettyColors-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PrettyColors-prefix.pch"; sourceTree = "<group>"; };
+		4781D2EB15AFA8195C1B180D9CFFC79B /* XCClassDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCClassDefinition.m; path = Source/XCClassDefinition.m; sourceTree = "<group>"; };
+		47E2728DBF15ED30283C78908B1DFD90 /* XCProject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCProject.h; path = Source/XCProject.h; sourceTree = "<group>"; };
+		53008987CA46D0BC478F72AB03DA9365 /* XCFileOperationQueue.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCFileOperationQueue.h; path = Source/XCFileOperationQueue.h; sourceTree = "<group>"; };
+		573924C5019689998BF647D649F0D851 /* Wrap.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Wrap.swift; path = Source/Color/Wrap.swift; sourceTree = "<group>"; };
+		5CACE8A1E32009449BEA88A502C87170 /* XcodeEditor-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "XcodeEditor-dummy.m"; sourceTree = "<group>"; };
+		67060FE553800B917E24306A3748DE7A /* StyleParameter.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StyleParameter.swift; path = Source/StyleParameter.swift; sourceTree = "<group>"; };
+		6923D203A92290C0BBCD519C08481078 /* XcodeEditor.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = XcodeEditor.xcconfig; sourceTree = "<group>"; };
+		740E0AECD7175031F601FF16BC742E52 /* XCProject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCProject.m; path = Source/XCProject.m; sourceTree = "<group>"; };
+		7A45F42D6656E70EE43EB150A5D6CDE0 /* XCGroup.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCGroup.h; path = Source/XCGroup.h; sourceTree = "<group>"; };
+		7D33B635CECA53513D284D18E992A34A /* XcodeMemberType.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XcodeMemberType.m; path = Source/XcodeMemberType.m; sourceTree = "<group>"; };
+		7EF8CF53D5F164F73F28D8D4740DC072 /* XCSourceFile.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCSourceFile.m; path = Source/XCSourceFile.m; sourceTree = "<group>"; };
+		84F5B84F8CA6862A2A5FED2DD7FF5663 /* XCXibDefinition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCXibDefinition.h; path = Source/XCXibDefinition.h; sourceTree = "<group>"; };
+		869413197861E477CA3B1DCCCF98A78C /* XcodeSourceFileType.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XcodeSourceFileType.m; path = Source/XcodeSourceFileType.m; sourceTree = "<group>"; };
+		88729D8D2512B89D9A8E85965D33A3CE /* PrettyColors-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "PrettyColors-umbrella.h"; sourceTree = "<group>"; };
+		8A1C566762CD81D44D086D1720499B33 /* Color.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Color.swift; path = Source/Color/Color.swift; sourceTree = "<group>"; };
+		8A2AB8CCBE8CFEED9DC30E0DBBF4F816 /* ECMA 48.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = "ECMA 48.swift"; path = "Source/ECMA 48.swift"; sourceTree = "<group>"; };
+		8B569B68DD5107854363423D959B83EA /* PrettyColors.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = PrettyColors.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8C5146CA4C416EFBD1E192F6E1B200EF /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX10.10.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
+		8CC17DBE17D8BCBCFF017AF865AA6671 /* XCProject+SubProject.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = "XCProject+SubProject.h"; path = "Source/XCProject+SubProject.h"; sourceTree = "<group>"; };
+		8E2D84F8671B879BBD0AAFA415146356 /* Pods-resources.sh */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.script.sh; path = "Pods-resources.sh"; sourceTree = "<group>"; };
+		8E317F6F505AD71AF127E36E087690A3 /* XCSubProjectDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCSubProjectDefinition.m; path = Source/XCSubProjectDefinition.m; sourceTree = "<group>"; };
+		8F47A3F976A5A8DFFE5D8C680127852A /* PrettyColors.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = PrettyColors.xcconfig; sourceTree = "<group>"; };
+		93C653C5BF08777608F8702F3E6096DE /* PrettyColors-Private.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "PrettyColors-Private.xcconfig"; sourceTree = "<group>"; };
+		9463D212B2BC7AA3A673202B94C01C62 /* Pods.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		952E19E749D963AD5585E7A57AFA209E /* EightBitColor.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = EightBitColor.swift; path = Source/Color/EightBitColor.swift; sourceTree = "<group>"; };
+		96C33D0EA8AC2FE0A6D947AAA3A8A3CC /* XcodeEditor-prefix.pch */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "XcodeEditor-prefix.pch"; sourceTree = "<group>"; };
+		9AE07C5919829AED82301BD4552AD4C3 /* XcodeEditor.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XcodeEditor.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		A49F49C242D404CD1F0E0E0480DB0373 /* XCProject+SubProject.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = "XCProject+SubProject.m"; path = "Source/XCProject+SubProject.m"; sourceTree = "<group>"; };
+		A7213DB00BC2B67864751CC8CBB07DE7 /* XCGroup.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCGroup.m; path = Source/XCGroup.m; sourceTree = "<group>"; };
+		AC04769F27F3FF6A3F11651F2C0A9F78 /* PrettyColors-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "PrettyColors-dummy.m"; sourceTree = "<group>"; };
+		AD61C49D17010919BD6592F3531C6EBA /* Pods-acknowledgements.markdown */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; path = "Pods-acknowledgements.markdown"; sourceTree = "<group>"; };
+		AD70B224628982B96FF423F602BFC47E /* XCFrameworkDefinition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCFrameworkDefinition.h; path = Source/XCFrameworkDefinition.h; sourceTree = "<group>"; };
+		B2F28F3462C5895DCFF7A485725197FC /* XcodeMemberType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XcodeMemberType.h; path = Source/XcodeMemberType.h; sourceTree = "<group>"; };
+		B6B8D222F322D56CF8B7D140F57FA337 /* XCTarget.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCTarget.h; path = Source/XCTarget.h; sourceTree = "<group>"; };
+		B6F09B7E36F45D01F3E8F96AC28512AE /* XCXibDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCXibDefinition.m; path = Source/XCXibDefinition.m; sourceTree = "<group>"; };
+		BB254C9D27E764DE7D252453D8A2E6A6 /* XCFrameworkDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCFrameworkDefinition.m; path = Source/XCFrameworkDefinition.m; sourceTree = "<group>"; };
+		C12A82CA2ED3C35CEA91FC5809A29605 /* Pods-dummy.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = "Pods-dummy.m"; sourceTree = "<group>"; };
+		C58C94D1C77B26DE3A6318CC187C85E4 /* XCClassDefinition.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCClassDefinition.h; path = Source/XCClassDefinition.h; sourceTree = "<group>"; };
+		C5BFFE307295DBB0A968ADB138FD1122 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C88113A79685B4EFEE7BAD12896829F7 /* Podfile */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text; name = Podfile; path = ../Podfile; sourceTree = SOURCE_ROOT; xcLanguageSpecificationIdentifier = xcode.lang.ruby; };
+		D7A8F62AE0A5AB5688E3F07720126D2A /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DBFB96D3907613CE23C337FF9553F4B3 /* PrettyColors.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = PrettyColors.h; path = Source/PrettyColors.h; sourceTree = "<group>"; };
+		DE2B4E48A861EA25354A1A32D8C5E7AB /* Pods-acknowledgements.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Pods-acknowledgements.plist"; sourceTree = "<group>"; };
+		E20A2EEB49983993CA42A5C760E03700 /* XCAbstractDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCAbstractDefinition.m; path = Source/XCAbstractDefinition.m; sourceTree = "<group>"; };
+		E5C3C7B8D4F352CD49C76F315D417C3F /* PrettyColors.modulemap */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = "sourcecode.module-map"; path = PrettyColors.modulemap; sourceTree = "<group>"; };
+		E60C2D9EA3C04A1A56FF85553E7237B6 /* XCSourceFileDefinition.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCSourceFileDefinition.m; path = Source/XCSourceFileDefinition.m; sourceTree = "<group>"; };
+		E9AEBEBDF3036F95035AE7DE2B539EAF /* XCKeyBuilder.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XCKeyBuilder.h; path = Source/Utils/XCKeyBuilder.h; sourceTree = "<group>"; };
+		EA9C5F158001C47148D3FFA80417C33E /* XCProjectBuildConfig.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; name = XCProjectBuildConfig.m; path = Source/XCProjectBuildConfig.m; sourceTree = "<group>"; };
+		EE1EE5F4247E057828C636EABDDBFCBB /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Pods.debug.xcconfig; sourceTree = "<group>"; };
+		F11089EDC46E6D854313E330B1FD495F /* XcodeEditor.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XcodeEditor.h; path = Source/XcodeEditor.h; sourceTree = "<group>"; };
+		F88148AFB32DA0CCB685D6E09CA2FEE6 /* XcodeEditor-umbrella.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; path = "XcodeEditor-umbrella.h"; sourceTree = "<group>"; };
+		FE61E87BA70F33C3D1D5DC769ABF8792 /* XcodeSourceFileType.h */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.h; name = XcodeSourceFileType.h; path = Source/XcodeSourceFileType.h; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		9334E36F281D2A8FE0C3DD142CE3AF81 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C78F303F7D31661E23D0E9C9D8C8204E /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9CACC41E079F61A1BAF9EDC29EE7C7CB /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5E78308747535683FA7124ED0E7D6583 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D99CA40DB620AB91C0ED5598CD1C99FD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1A56A296069D74445D294FB7545BFE63 /* Cocoa.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2F414954F87ED957BE121A1660094A49 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				E635ABF0202A433CE5625C37534DE0C2 /* PrettyColors */,
+				A88D4BD0D4F5C6AF85300B76C7A3A289 /* XcodeEditor */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
+		35D93C355E665D16F55FF4EA5632E9F7 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				D7A8F62AE0A5AB5688E3F07720126D2A /* Info.plist */,
+				2557F7659BC3FB15F013E0421E982B40 /* XcodeEditor.modulemap */,
+				6923D203A92290C0BBCD519C08481078 /* XcodeEditor.xcconfig */,
+				2B791E771F11E3718CCE2317E9365642 /* XcodeEditor-Private.xcconfig */,
+				5CACE8A1E32009449BEA88A502C87170 /* XcodeEditor-dummy.m */,
+				96C33D0EA8AC2FE0A6D947AAA3A8A3CC /* XcodeEditor-prefix.pch */,
+				F88148AFB32DA0CCB685D6E09CA2FEE6 /* XcodeEditor-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/XcodeEditor";
+			sourceTree = "<group>";
+		};
+		5B5A4FDD3C70E5BDC2BBCBBBBD01F157 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				0D2AD249068221EAC1078D44F02C3EF7 /* Info.plist */,
+				17465E07B6E57FD1F394DA2AF4520D8A /* Pods.modulemap */,
+				AD61C49D17010919BD6592F3531C6EBA /* Pods-acknowledgements.markdown */,
+				DE2B4E48A861EA25354A1A32D8C5E7AB /* Pods-acknowledgements.plist */,
+				C12A82CA2ED3C35CEA91FC5809A29605 /* Pods-dummy.m */,
+				15E21B6542920AA9BE7A0DB7D5595BEC /* Pods-frameworks.sh */,
+				8E2D84F8671B879BBD0AAFA415146356 /* Pods-resources.sh */,
+				39656CA046956923F6D30013E2B3B315 /* Pods-umbrella.h */,
+				EE1EE5F4247E057828C636EABDDBFCBB /* Pods.debug.xcconfig */,
+				1FF2EC0BF17D70EB79ACF282C6FFC6BF /* Pods.release.xcconfig */,
+			);
+			name = Pods;
+			path = "Target Support Files/Pods";
+			sourceTree = "<group>";
+		};
+		5E1F3384B1B39575144FEBFCF3210CCC /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				67A96FA033F30F75C9E3499ACB0D5F52 /* OS X */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		67A96FA033F30F75C9E3499ACB0D5F52 /* OS X */ = {
+			isa = PBXGroup;
+			children = (
+				8C5146CA4C416EFBD1E192F6E1B200EF /* Cocoa.framework */,
+			);
+			name = "OS X";
+			sourceTree = "<group>";
+		};
+		7D8011EDED2DCD166EF332D838A10B95 /* Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				C5BFFE307295DBB0A968ADB138FD1122 /* Info.plist */,
+				E5C3C7B8D4F352CD49C76F315D417C3F /* PrettyColors.modulemap */,
+				8F47A3F976A5A8DFFE5D8C680127852A /* PrettyColors.xcconfig */,
+				93C653C5BF08777608F8702F3E6096DE /* PrettyColors-Private.xcconfig */,
+				AC04769F27F3FF6A3F11651F2C0A9F78 /* PrettyColors-dummy.m */,
+				45E11D6F17C07DBD6855274828F0FA28 /* PrettyColors-prefix.pch */,
+				88729D8D2512B89D9A8E85965D33A3CE /* PrettyColors-umbrella.h */,
+			);
+			name = "Support Files";
+			path = "../Target Support Files/PrettyColors";
+			sourceTree = "<group>";
+		};
+		7DB346D0F39D3F0E887471402A8071AB = {
+			isa = PBXGroup;
+			children = (
+				C88113A79685B4EFEE7BAD12896829F7 /* Podfile */,
+				5E1F3384B1B39575144FEBFCF3210CCC /* Frameworks */,
+				2F414954F87ED957BE121A1660094A49 /* Pods */,
+				CCA510CFBEA2D207524CDA0D73C3B561 /* Products */,
+				848A6CE8DA3504A266A17F635DC3683A /* Targets Support Files */,
+			);
+			sourceTree = "<group>";
+		};
+		848A6CE8DA3504A266A17F635DC3683A /* Targets Support Files */ = {
+			isa = PBXGroup;
+			children = (
+				5B5A4FDD3C70E5BDC2BBCBBBBD01F157 /* Pods */,
+			);
+			name = "Targets Support Files";
+			sourceTree = "<group>";
+		};
+		A88D4BD0D4F5C6AF85300B76C7A3A289 /* XcodeEditor */ = {
+			isa = PBXGroup;
+			children = (
+				0BBE858918C1D655189BFC50B87FDBD8 /* XCAbstractDefinition.h */,
+				E20A2EEB49983993CA42A5C760E03700 /* XCAbstractDefinition.m */,
+				C58C94D1C77B26DE3A6318CC187C85E4 /* XCClassDefinition.h */,
+				4781D2EB15AFA8195C1B180D9CFFC79B /* XCClassDefinition.m */,
+				53008987CA46D0BC478F72AB03DA9365 /* XCFileOperationQueue.h */,
+				3FD8A431142A88AAB8265E1DA60903AA /* XCFileOperationQueue.m */,
+				AD70B224628982B96FF423F602BFC47E /* XCFrameworkDefinition.h */,
+				BB254C9D27E764DE7D252453D8A2E6A6 /* XCFrameworkDefinition.m */,
+				7A45F42D6656E70EE43EB150A5D6CDE0 /* XCGroup.h */,
+				A7213DB00BC2B67864751CC8CBB07DE7 /* XCGroup.m */,
+				E9AEBEBDF3036F95035AE7DE2B539EAF /* XCKeyBuilder.h */,
+				1CB16DD5622DE09E1D285ACAD94967A2 /* XCKeyBuilder.m */,
+				47E2728DBF15ED30283C78908B1DFD90 /* XCProject.h */,
+				740E0AECD7175031F601FF16BC742E52 /* XCProject.m */,
+				8CC17DBE17D8BCBCFF017AF865AA6671 /* XCProject+SubProject.h */,
+				A49F49C242D404CD1F0E0E0480DB0373 /* XCProject+SubProject.m */,
+				2048376922ED2870B26BE5CD4741A742 /* XCProjectBuildConfig.h */,
+				EA9C5F158001C47148D3FFA80417C33E /* XCProjectBuildConfig.m */,
+				0A5F66356F9E824664425D5BD4BD1C2B /* XCSourceFile.h */,
+				7EF8CF53D5F164F73F28D8D4740DC072 /* XCSourceFile.m */,
+				1F69A11A9F3ECC28EE8A4C39F00E4F6D /* XCSourceFileDefinition.h */,
+				E60C2D9EA3C04A1A56FF85553E7237B6 /* XCSourceFileDefinition.m */,
+				3EA17B539738DB016843B2C1881BCDD4 /* XCSubProjectDefinition.h */,
+				8E317F6F505AD71AF127E36E087690A3 /* XCSubProjectDefinition.m */,
+				B6B8D222F322D56CF8B7D140F57FA337 /* XCTarget.h */,
+				077BFD540A9FD56D0928AE55E790048D /* XCTarget.m */,
+				84F5B84F8CA6862A2A5FED2DD7FF5663 /* XCXibDefinition.h */,
+				B6F09B7E36F45D01F3E8F96AC28512AE /* XCXibDefinition.m */,
+				F11089EDC46E6D854313E330B1FD495F /* XcodeEditor.h */,
+				2E05D1C279DDA149376CA73BB4390DEC /* XcodeGroupMember.h */,
+				B2F28F3462C5895DCFF7A485725197FC /* XcodeMemberType.h */,
+				7D33B635CECA53513D284D18E992A34A /* XcodeMemberType.m */,
+				FE61E87BA70F33C3D1D5DC769ABF8792 /* XcodeSourceFileType.h */,
+				869413197861E477CA3B1DCCCF98A78C /* XcodeSourceFileType.m */,
+				35D93C355E665D16F55FF4EA5632E9F7 /* Support Files */,
+			);
+			path = XcodeEditor;
+			sourceTree = "<group>";
+		};
+		CCA510CFBEA2D207524CDA0D73C3B561 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9463D212B2BC7AA3A673202B94C01C62 /* Pods.framework */,
+				8B569B68DD5107854363423D959B83EA /* PrettyColors.framework */,
+				9AE07C5919829AED82301BD4552AD4C3 /* XcodeEditor.framework */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		E635ABF0202A433CE5625C37534DE0C2 /* PrettyColors */ = {
+			isa = PBXGroup;
+			children = (
+				8A1C566762CD81D44D086D1720499B33 /* Color.swift */,
+				8A2AB8CCBE8CFEED9DC30E0DBBF4F816 /* ECMA 48.swift */,
+				952E19E749D963AD5585E7A57AFA209E /* EightBitColor.swift */,
+				166E86F32C38915A0C9FF933C40A93A2 /* Named.swift */,
+				DBFB96D3907613CE23C337FF9553F4B3 /* PrettyColors.h */,
+				67060FE553800B917E24306A3748DE7A /* StyleParameter.swift */,
+				573924C5019689998BF647D649F0D851 /* Wrap.swift */,
+				7D8011EDED2DCD166EF332D838A10B95 /* Support Files */,
+			);
+			path = PrettyColors;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXHeadersBuildPhase section */
+		70B7A27F0C2B294FF8E5E51D093043A3 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				83C7CAEB3A890BED78511690CBD30952 /* PrettyColors-umbrella.h in Headers */,
+				2D8BB65755F9B4D7DD1834A5A642AF75 /* PrettyColors.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		9A830F5B806BDCEAC84E89CCD85FF9D1 /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C37392EDFDDC11C3CA973F2AFB78661D /* Pods-umbrella.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		B60A256C98B2B9EA7861FF646F4CA03A /* Headers */ = {
+			isa = PBXHeadersBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				32E42AFFE3244594A7C196A6610312DC /* XCAbstractDefinition.h in Headers */,
+				A68862531A3CD8BB1F5CE6A2C6A2DC63 /* XCClassDefinition.h in Headers */,
+				609B1096EBCF7A0E31528A91E6371B0E /* XCFileOperationQueue.h in Headers */,
+				8F3821EC6E9358C35082E3BC3968BF82 /* XCFrameworkDefinition.h in Headers */,
+				5F118668D8E4F0EB02855A2AF256FD47 /* XCGroup.h in Headers */,
+				7B417D92F769042BAAFDDAAF67A6EA94 /* XCKeyBuilder.h in Headers */,
+				1842CB3558DB0E7C05D9930F936DCAFD /* XCProject+SubProject.h in Headers */,
+				70D9954209C0BD8C202CFB87B92388A4 /* XCProject.h in Headers */,
+				525FB09E6B141626DCAE901A4E8DC678 /* XCProjectBuildConfig.h in Headers */,
+				1C045765C239B874C4DD71927D4038E6 /* XCSourceFile.h in Headers */,
+				2DD30662910A1515E2FB5A7E6ADBBED3 /* XCSourceFileDefinition.h in Headers */,
+				4B463D215B5AF7BA3873DF30276DBE57 /* XCSubProjectDefinition.h in Headers */,
+				892D50C1309C85E3AB0659125B8B2F7C /* XCTarget.h in Headers */,
+				7CB6DD8875F9611C51D2B3DF75C0D93A /* XCXibDefinition.h in Headers */,
+				A995BB3AD7B5C086EFFBBEC439B0ED50 /* XcodeEditor-umbrella.h in Headers */,
+				9DB55C251EDAE3EE031803FBFE5A80AE /* XcodeEditor.h in Headers */,
+				123DB9EE8D7C94FD2E32B6A128C33F2E /* XcodeGroupMember.h in Headers */,
+				9B4302E1D0D47E76EF19A25A3BD87FB8 /* XcodeMemberType.h in Headers */,
+				624BCD60C22BE2EEADA9856E5332D895 /* XcodeSourceFileType.h in Headers */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXHeadersBuildPhase section */
+
+/* Begin PBXNativeTarget section */
+		72C81C62454C5E6C8DF7BD376BD04544 /* PrettyColors */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 487853C9B45E8D3686C763729B72DFE9 /* Build configuration list for PBXNativeTarget "PrettyColors" */;
+			buildPhases = (
+				ADE3AABC76E33E7F34A36FCDD0890814 /* Sources */,
+				D99CA40DB620AB91C0ED5598CD1C99FD /* Frameworks */,
+				70B7A27F0C2B294FF8E5E51D093043A3 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = PrettyColors;
+			productName = PrettyColors;
+			productReference = 8B569B68DD5107854363423D959B83EA /* PrettyColors.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		97305000082F67075102EA461520AA95 /* Pods */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 65C87A763D012BFC2A09AE917F95A5CF /* Build configuration list for PBXNativeTarget "Pods" */;
+			buildPhases = (
+				917D29EF8140EFF93676671836F58B6A /* Sources */,
+				9334E36F281D2A8FE0C3DD142CE3AF81 /* Frameworks */,
+				9A830F5B806BDCEAC84E89CCD85FF9D1 /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				55E7E1232912AF105DD1D8889BB47C7D /* PBXTargetDependency */,
+				3EF63162B798CDA2D3EF55CDE3674331 /* PBXTargetDependency */,
+			);
+			name = Pods;
+			productName = Pods;
+			productReference = 9463D212B2BC7AA3A673202B94C01C62 /* Pods.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+		B9820C0030AAE00709E8B22C21DACD81 /* XcodeEditor */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = ED824BEE79FC1510C0296B037358C6E3 /* Build configuration list for PBXNativeTarget "XcodeEditor" */;
+			buildPhases = (
+				1CFD1CE33BC0764E15E3344744629B9E /* Sources */,
+				9CACC41E079F61A1BAF9EDC29EE7C7CB /* Frameworks */,
+				B60A256C98B2B9EA7861FF646F4CA03A /* Headers */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = XcodeEditor;
+			productName = XcodeEditor;
+			productReference = 9AE07C5919829AED82301BD4552AD4C3 /* XcodeEditor.framework */;
+			productType = "com.apple.product-type.framework";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D41D8CD98F00B204E9800998ECF8427E /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 0700;
+				LastUpgradeCheck = 0700;
+			};
+			buildConfigurationList = 2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = English;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+			);
+			mainGroup = 7DB346D0F39D3F0E887471402A8071AB;
+			productRefGroup = CCA510CFBEA2D207524CDA0D73C3B561 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				97305000082F67075102EA461520AA95 /* Pods */,
+				72C81C62454C5E6C8DF7BD376BD04544 /* PrettyColors */,
+				B9820C0030AAE00709E8B22C21DACD81 /* XcodeEditor */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		1CFD1CE33BC0764E15E3344744629B9E /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				95FA295D24A3FA610C13CA2A4AE2F364 /* XCAbstractDefinition.m in Sources */,
+				FB94CBFFDB1BB21D3421C38F284F552C /* XCClassDefinition.m in Sources */,
+				942A88314D761FBA50247DFE42E69F55 /* XCFileOperationQueue.m in Sources */,
+				78B0D7794F594B0AB97E7A8B19C0C35D /* XCFrameworkDefinition.m in Sources */,
+				CDF86FC9235B768C3282055F1013A014 /* XCGroup.m in Sources */,
+				5558259AD2916371B9F5F6A0E534D813 /* XCKeyBuilder.m in Sources */,
+				9EEE4221DD5C9A7FDB7E5496627D9FF5 /* XCProject+SubProject.m in Sources */,
+				EEAFFCC1B8ACC87B26FAE56D924A452F /* XCProject.m in Sources */,
+				410BBD58B96E54263F7935B35FF35CC7 /* XCProjectBuildConfig.m in Sources */,
+				BDAF628A7DBBAC51C20605ABC533F5EE /* XCSourceFile.m in Sources */,
+				8482C205E9C0C04839C7EA1250712A62 /* XCSourceFileDefinition.m in Sources */,
+				2FCF0B5923EACE5F249BA791601E09E0 /* XCSubProjectDefinition.m in Sources */,
+				9ECF989203303B9C219DF5137F6B9D8E /* XCTarget.m in Sources */,
+				B457D9AE064090FF46C97D670A8A9DB9 /* XCXibDefinition.m in Sources */,
+				A78C419B40B72727FC9D95B6D4C7E31D /* XcodeEditor-dummy.m in Sources */,
+				198DE9E23F89277838EDD3E2A913C579 /* XcodeMemberType.m in Sources */,
+				5B147369323F68188915C362BF94B1D1 /* XcodeSourceFileType.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		917D29EF8140EFF93676671836F58B6A /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				658CC5368EBD02B6B8D67A2FC01E8BBC /* Pods-dummy.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		ADE3AABC76E33E7F34A36FCDD0890814 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7FFA59D6F249929D68DBD7934CF5B45E /* Color.swift in Sources */,
+				C470C21E855C6820F9CA55E3EF344383 /* ECMA 48.swift in Sources */,
+				851CA9C8BFFBED50EABD1DA1759FADAF /* EightBitColor.swift in Sources */,
+				C36FB419E4237D0F5BC0870E7D8F4238 /* Named.swift in Sources */,
+				83CA85417EA38A8045025B90C0F85D06 /* PrettyColors-dummy.m in Sources */,
+				631E9F32E3518CC48D3EFB81C6C49904 /* StyleParameter.swift in Sources */,
+				2320A766CF7CD06C8A8112A6689E35E1 /* Wrap.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3EF63162B798CDA2D3EF55CDE3674331 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = XcodeEditor;
+			target = B9820C0030AAE00709E8B22C21DACD81 /* XcodeEditor */;
+			targetProxy = 4ADBDAA955B8D4B2292CB859EAD2C112 /* PBXContainerItemProxy */;
+		};
+		55E7E1232912AF105DD1D8889BB47C7D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = PrettyColors;
+			target = 72C81C62454C5E6C8DF7BD376BD04544 /* PrettyColors */;
+			targetProxy = ADC04A6B614656B4C0452135456173ED /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		11E6BE92D3B03A884F1688BA4E9EEB95 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B791E771F11E3718CCE2317E9365642 /* XcodeEditor-Private.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/XcodeEditor/XcodeEditor-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/XcodeEditor/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/XcodeEditor/XcodeEditor.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = XcodeEditor;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		35DFFD775786A18ECE7FB5AD93F4A224 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = EE1EE5F4247E057828C636EABDDBFCBB /* Pods.debug.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "Target Support Files/Pods/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/Pods/Pods.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		74F70D54448CD26F29B2F3F320B5940C /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 2B791E771F11E3718CCE2317E9365642 /* XcodeEditor-Private.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/XcodeEditor/XcodeEditor-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/XcodeEditor/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/XcodeEditor/XcodeEditor.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = XcodeEditor;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		76AEF0776B41A01B66C81AE75B4F49E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93C653C5BF08777608F8702F3E6096DE /* PrettyColors-Private.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/PrettyColors/PrettyColors-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PrettyColors/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/PrettyColors/PrettyColors.modulemap";
+				MTL_ENABLE_DEBUG_INFO = YES;
+				PRODUCT_NAME = PrettyColors;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Debug;
+		};
+		78174F4A601CFAD94F4C20967BFAAB2A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				ONLY_ACTIVE_ARCH = YES;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+			};
+			name = Debug;
+		};
+		80EFAEB1421522CF8488FF675D9DCE7F /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 1FF2EC0BF17D70EB79ACF282C6FFC6BF /* Pods.release.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				INFOPLIST_FILE = "Target Support Files/Pods/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/Pods/Pods.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				OTHER_LDFLAGS = "";
+				OTHER_LIBTOOLFLAGS = "";
+				PODS_ROOT = "$(SRCROOT)";
+				PRODUCT_NAME = Pods;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		A20915CD1534A81DDD3C7C018E17D7F0 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 93C653C5BF08777608F8702F3E6096DE /* PrettyColors-Private.xcconfig */;
+			buildSettings = {
+				ARCHS = "$(ARCHS_STANDARD_64_BIT)";
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEFINES_MODULE = YES;
+				DYLIB_COMPATIBILITY_VERSION = 1;
+				DYLIB_CURRENT_VERSION = 1;
+				DYLIB_INSTALL_NAME_BASE = "@rpath";
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				FRAMEWORK_VERSION = A;
+				GCC_PREFIX_HEADER = "Target Support Files/PrettyColors/PrettyColors-prefix.pch";
+				INFOPLIST_FILE = "Target Support Files/PrettyColors/Info.plist";
+				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/Frameworks";
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				MODULEMAP_FILE = "Target Support Files/PrettyColors/PrettyColors.modulemap";
+				MTL_ENABLE_DEBUG_INFO = NO;
+				PRODUCT_NAME = PrettyColors;
+				SDKROOT = macosx;
+				SKIP_INSTALL = YES;
+				VERSIONING_SYSTEM = "apple-generic";
+				VERSION_INFO_PREFIX = "";
+			};
+			name = Release;
+		};
+		F8BA96F0A61F0DE03CF3629D04BF6110 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = YES;
+				ENABLE_NS_ASSERTIONS = NO;
+				GCC_C_LANGUAGE_STANDARD = gnu99;
+				GCC_PREPROCESSOR_DEFINITIONS = "RELEASE=1";
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 10.10;
+				STRIP_INSTALLED_PRODUCT = NO;
+				SYMROOT = "${SRCROOT}/../build";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		2D8E8EC45A3A1A1D94AE762CB5028504 /* Build configuration list for PBXProject "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				78174F4A601CFAD94F4C20967BFAAB2A /* Debug */,
+				F8BA96F0A61F0DE03CF3629D04BF6110 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		487853C9B45E8D3686C763729B72DFE9 /* Build configuration list for PBXNativeTarget "PrettyColors" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				76AEF0776B41A01B66C81AE75B4F49E4 /* Debug */,
+				A20915CD1534A81DDD3C7C018E17D7F0 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		65C87A763D012BFC2A09AE917F95A5CF /* Build configuration list for PBXNativeTarget "Pods" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				35DFFD775786A18ECE7FB5AD93F4A224 /* Debug */,
+				80EFAEB1421522CF8488FF675D9DCE7F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		ED824BEE79FC1510C0296B037358C6E3 /* Build configuration list for PBXNativeTarget "XcodeEditor" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				11E6BE92D3B03A884F1688BA4E9EEB95 /* Debug */,
+				74F70D54448CD26F29B2F3F320B5940C /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = D41D8CD98F00B204E9800998ECF8427E /* Project object */;
+}

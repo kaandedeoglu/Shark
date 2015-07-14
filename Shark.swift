@@ -1,7 +1,7 @@
-import Cocoa
+// #!/usr/bin/env xcrun swift -F ./Rome
 
-let path = "/Users/kaandedeoglu/Code/Noluyo/Noluyo/Images.xcassets/"
-precondition(path.hasSuffix(".xcassets") || path.hasSuffix(".xcassets/"), "The path should point to a .xcassets folder")
+import Cocoa
+import PrettyColors
 
 enum Resource {
     case File(String)
@@ -11,16 +11,10 @@ enum Resource {
 func imageResourcesAtPath(path: String) throws -> [Resource] {
     var results = [Resource]()
     let URL = NSURL.fileURLWithPath(path)
-
-    var contents: [NSURL]?
     
-    do {
-        contents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(URL, includingPropertiesForKeys: [NSURLNameKey, NSURLIsDirectoryKey], options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
-    }
+    let contents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(URL, includingPropertiesForKeys: [NSURLNameKey, NSURLIsDirectoryKey], options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
     
-    guard let directoryContents = contents else { return [] }
-    
-    for fileURL in directoryContents {
+    for fileURL in contents {
         var directoryKey: AnyObject?
         do {
             try fileURL.getResourceValue(&directoryKey, forKey: NSURLIsDirectoryKey)
@@ -57,6 +51,7 @@ func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) 
     for singleResource in sortedResources {
         switch singleResource {
         case .File(let name):
+            printGreen("Creating Case: \(name)")
             let indentationString = String(count: 4 * (indentLevel + 1), repeatedValue: Character(" "))
             if name.characters.contains(Character(" ")) {
                 let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
@@ -66,6 +61,7 @@ func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) 
             }
         case .Directory(let (name, subResources)):
             let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
+            printMagenta("Creating Enum: \(correctedName)")
             let indentationString = String(count: 4 * (indentLevel), repeatedValue: Character(" "))
             resultString += "\n" + indentationString + "public enum \(correctedName): String {" + "\n"
             resultString += createEnumDeclarationForResources(subResources, indentLevel: indentLevel + 1)
@@ -83,21 +79,65 @@ func imageExtensionString() -> String {
     return "public extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}"
 }
 
-do {
-    let result = try imageResourcesAtPath(path)
-    var resultString = ""
-    
-    
-    let top = Resource.Directory(("Shark", result))
-    
-    let enumString = createEnumDeclarationForResources([top], indentLevel: 0)
-    
-    resultString += acknowledgementsString()
-    resultString += "\n\n"
-    resultString += imageExtensionString()
-    resultString += "\n"
-    resultString += enumString
-    
-    print(resultString)
+func printRed(string: String) {
+    let text = Color.Wrap(foreground: .Red).wrap(string)
+    print(text)
 }
 
+func printGreen(string: String) {
+    let text = Color.Wrap(foreground: .Green).wrap(string)
+    print(text)
+}
+
+func printMagenta(string: String) {
+    let text = Color.Wrap(foreground: .Magenta).wrap(string)
+    print(text)
+}
+
+let arguments = Process.arguments
+
+if arguments.count != 3 {
+    printRed("You must supply the path to the .xcassets folder, and the output path for the Shark file")
+    printGreen("\n\nExample Usage:\nswift Shark.swift /Users/john/Code/GameProject/GameProject/Images.xcassets/ /Users/john/Code/GameProject/GameProject/SharkImageNames.swift")
+    exit(1)
+}
+
+let path = arguments[1]
+
+
+if !(path.hasSuffix(".xcassets") || path.hasSuffix(".xcassets/")) {
+    print("The path should point to a .xcassets folder")
+    exit(1)
+}
+
+let outputPath = arguments[2].stringByExpandingTildeInPath
+
+var isDirectory: ObjCBool = false
+if NSFileManager.defaultManager().fileExistsAtPath(outputPath, isDirectory: &isDirectory) == false {
+    printRed("The output path does not exist")
+    exit(1)
+}
+
+if !isDirectory{
+    printRed("The output path is not a valid directory")
+    exit(1)
+}
+
+
+let outputURL = NSURL.fileURLWithPath(outputPath).URLByAppendingPathComponent("SharkImages.swift")
+
+let result = try imageResourcesAtPath(path)
+var resultString = ""
+
+
+let top = Resource.Directory(("Shark", result))
+
+let enumString = createEnumDeclarationForResources([top], indentLevel: 0)
+
+resultString += acknowledgementsString()
+resultString += "\n\n"
+resultString += imageExtensionString()
+resultString += "\n"
+resultString += enumString
+
+try resultString.writeToURL(outputURL, atomically: true, encoding: NSUTF8StringEncoding)

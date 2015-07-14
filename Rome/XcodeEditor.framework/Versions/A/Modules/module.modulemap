@@ -1,0 +1,6 @@
+framework module XcodeEditor {
+  umbrella header "XcodeEditor-umbrella.h"
+
+  export *
+  module * { export * }
+}

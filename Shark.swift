@@ -16,9 +16,7 @@ func imageResourcesAtPath(path: String) throws -> [Resource] {
     
     for fileURL in contents {
         var directoryKey: AnyObject?
-        do {
-            try fileURL.getResourceValue(&directoryKey, forKey: NSURLIsDirectoryKey)
-        }
+        try fileURL.getResourceValue(&directoryKey, forKey: NSURLIsDirectoryKey)
         
         guard let isDirectory = directoryKey as? NSNumber else { continue }
         
@@ -27,11 +25,9 @@ func imageResourcesAtPath(path: String) throws -> [Resource] {
                 let name = fileURL.lastPathComponent!.componentsSeparatedByString(".imageset")[0]
                 results.append(.File(name))
             } else if !fileURL.absoluteString.hasSuffix(".appiconset/") {
-                do {
-                    let folderName = fileURL.lastPathComponent!
-                    let subResources = try imageResourcesAtPath(fileURL.relativePath!)
-                    results.append(.Directory((folderName, subResources)))
-                }
+                let folderName = fileURL.lastPathComponent!
+                let subResources = try imageResourcesAtPath(fileURL.relativePath!)
+                results.append(.Directory((folderName, subResources)))
             }
         }
     }

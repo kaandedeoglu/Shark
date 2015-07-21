@@ -1,7 +1,6 @@
-// #!/usr/bin/env xcrun -sdk macosx swift -F ./Rome/
+#!/usr/bin/env xcrun -sdk macosx swift
 
 import Foundation
-import PrettyColors
 
 enum Resource {
     case File(String)
@@ -47,7 +46,7 @@ func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) 
     for singleResource in sortedResources {
         switch singleResource {
         case .File(let name):
-            printGreen("Creating Case: \(name)")
+            print("Creating Case: \(name)")
             let indentationString = String(count: 4 * (indentLevel + 1), repeatedValue: Character(" "))
             if name.characters.contains(Character(" ")) {
                 let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
@@ -57,7 +56,7 @@ func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) 
             }
         case .Directory(let (name, subResources)):
             let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
-            printMagenta("Creating Enum: \(correctedName)")
+            print("Creating Enum: \(correctedName)")
             let indentationString = String(count: 4 * (indentLevel), repeatedValue: Character(" "))
             resultString += "\n" + indentationString + "public enum \(correctedName): String {" + "\n"
             resultString += createEnumDeclarationForResources(subResources, indentLevel: indentLevel + 1)
@@ -75,26 +74,11 @@ func imageExtensionString() -> String {
     return "public extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}"
 }
 
-func printRed(string: String) {
-    let text = Color.Wrap(foreground: .Red).wrap(string)
-    print(text)
-}
-
-func printGreen(string: String) {
-    let text = Color.Wrap(foreground: .Green).wrap(string)
-    print(text)
-}
-
-func printMagenta(string: String) {
-    let text = Color.Wrap(foreground: .Magenta).wrap(string)
-    print(text)
-}
-
 let arguments = Process.arguments
 
 if arguments.count != 3 {
-    printRed("You must supply the path to the .xcassets folder, and the output path for the Shark file")
-    printGreen("\n\nExample Usage:\nswift Shark.swift /Users/john/Code/GameProject/GameProject/Images.xcassets/ /Users/john/Code/GameProject/GameProject/SharkImageNames.swift")
+    print("You must supply the path to the .xcassets folder, and the output path for the Shark file")
+    print("\n\nExample Usage:\nswift Shark.swift /Users/john/Code/GameProject/GameProject/Images.xcassets/ /Users/john/Code/GameProject/GameProject/SharkImageNames.swift")
     exit(1)
 }
 
@@ -110,12 +94,12 @@ let outputPath = arguments[2].stringByExpandingTildeInPath
 
 var isDirectory: ObjCBool = false
 if NSFileManager.defaultManager().fileExistsAtPath(outputPath, isDirectory: &isDirectory) == false {
-    printRed("The output path does not exist")
+    print("The output path does not exist")
     exit(1)
 }
 
 if !isDirectory{
-    printRed("The output path is not a valid directory")
+    print("The output path is not a valid directory")
     exit(1)
 }
 

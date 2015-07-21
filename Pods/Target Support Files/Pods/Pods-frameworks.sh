@@ -53,9 +53,7 @@ code_sign_if_enabled() {
 
 if [[ "$CONFIGURATION" == "Release" ]]; then
   install_framework 'Pods/PrettyColors.framework'
-  install_framework 'Pods/XcodeEditor.framework'
 fi
 if [[ "$CONFIGURATION" == "Debug" ]]; then
   install_framework 'Pods/PrettyColors.framework'
-  install_framework 'Pods/XcodeEditor.framework'
 fi

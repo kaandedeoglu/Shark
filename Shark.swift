@@ -1,6 +1,6 @@
-// #!/usr/bin/env xcrun swift -F ./Rome
+// #!/usr/bin/env xcrun -sdk macosx swift -F ./Rome/
 
-import Cocoa
+import Foundation
 import PrettyColors
 
 enum Resource {

@@ -3,12 +3,12 @@ Swift CLI to transform the .xcassets folder into a type safe enum
 
 ###How to run:
 
-- Switch to Xcode Beta toolchain - sudo xcode-select -switch /Applications/Xcode-beta.app/Contents/Developer/
+- Switch to Xcode Beta toolchain - `sudo xcode-select -switch /Applications/Xcode-beta.app/Contents/Developer/`
 - cd to the directory where Shark is located
 
 There are 2 ways to run:
 
-1. swift Shark.swift [PATH-TO-IMAGEASSETS-FOLDER] [OUTPUT-DIRECTORY]
+1. `swift Shark.swift [PATH-TO-IMAGEASSETS-FOLDER] [OUTPUT-DIRECTORY]`
 
 Example:
 ```bash 
@@ -17,12 +17,11 @@ swift Shark.swift ~/Code/Noluyo/Noluyo/Images.xcassets/ ~/Desktop
  
 **OR**
 
-2. move shark executable to /usr/local/bin and call shark [PATH-TO-IMAGEASSETS-FOLDER] [OUTPUT-DIRECTORY]
+2. move shark executable to /usr/local/bin and call `shark [PATH-TO-IMAGEASSETS-FOLDER] [OUTPUT-DIRECTORY]`
 
 
 ###How to Build an executable:
-
-- xcrun -sdk macosx swiftc Shark.swift -o shark
+ `xcrun -sdk macosx swiftc Shark.swift -o shark`
 
 ---
 

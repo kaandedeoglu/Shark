@@ -71,7 +71,7 @@ func acknowledgementsString() -> String {
 }
 
 func imageExtensionString() -> String {
-    return "public protocol SharkImageConvertible {}\n\npublic extension SharkImageConvertible where Self: RawRepresentable, Self.RawValue == String {\n    public var image: UIImage? {\n        return UIImage(named: self.rawValue)\n    }\n}\n\npublic extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}\n\nenum Shark: String, SharkImageConvertible {\n    case Icon\n    \n    enum Buttons: String, SharkImageConvertible {\n        case Login\n    }\n}"
+    return "public protocol SharkImageConvertible {}\n\npublic extension SharkImageConvertible where Self: RawRepresentable, Self.RawValue == String {\n    public var image: UIImage? {\n        return UIImage(named: self.rawValue)\n    }\n}\n\npublic extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}\n"
 }
 
 let arguments = Process.arguments

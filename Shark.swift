@@ -78,7 +78,7 @@ let arguments = Process.arguments
 
 if arguments.count != 3 {
     print("You must supply the path to the .xcassets folder, and the output path for the Shark file")
-    print("\n\nExample Usage:\nswift Shark.swift /Users/john/Code/GameProject/GameProject/Images.xcassets/ /Users/john/Code/GameProject/GameProject/SharkImageNames.swift")
+    print("\n\nExample Usage:\nswift Shark.swift /Users/john/Code/GameProject/GameProject/Images.xcassets/ /Users/john/Code/GameProject/GameProject/")
     exit(1)
 }
 

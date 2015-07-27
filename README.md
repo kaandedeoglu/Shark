@@ -1,6 +1,9 @@
 # Shark
 Swift CLI to transform the .xcassets folder into a type safe enum
 
+### Warning:
+Shark is still in development and not ready for production use. I'm still looking for ways to make the setup easier.
+
 ###How to run:
 
 - Switch to Xcode Beta toolchain - `sudo xcode-select -switch /Applications/Xcode-beta.app/Contents/Developer/`

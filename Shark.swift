@@ -2,78 +2,97 @@
 
 import Foundation
 
-enum Resource {
-    case File(String)
-    case Directory((String, [Resource]))
-}
-
-func imageResourcesAtPath(path: String) throws -> [Resource] {
-    var results = [Resource]()
-    let URL = NSURL.fileURLWithPath(path)
+struct EnumBuilder {
+    private enum Resource {
+        case File(String)
+        case Directory((String, [Resource]))
+    }
     
-    let contents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(URL, includingPropertiesForKeys: [NSURLNameKey, NSURLIsDirectoryKey], options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
+    static func enumStringForPath(path: String, topLevelName: String = "Shark") throws -> String {
+        let resources = try imageResourcesAtPath(path)
+        let topLevelResource = Resource.Directory(topLevelName, resources)
+        return createEnumDeclarationForResources([topLevelResource], indentLevel: 0)
+    }
     
-    for fileURL in contents {
-        var directoryKey: AnyObject?
-        try fileURL.getResourceValue(&directoryKey, forKey: NSURLIsDirectoryKey)
+    private static func imageResourcesAtPath(path: String) throws -> [Resource] {
+        var results = [Resource]()
+        let URL = NSURL.fileURLWithPath(path)
         
-        guard let isDirectory = directoryKey as? NSNumber else { continue }
+        let contents = try NSFileManager.defaultManager().contentsOfDirectoryAtURL(URL, includingPropertiesForKeys: [NSURLNameKey, NSURLIsDirectoryKey], options: NSDirectoryEnumerationOptions.SkipsHiddenFiles)
         
-        if isDirectory.integerValue == 1 {
-            if fileURL.absoluteString.hasSuffix(".imageset/") {
-                let name = fileURL.lastPathComponent!.componentsSeparatedByString(".imageset")[0]
-                results.append(.File(name))
-            } else if !fileURL.absoluteString.hasSuffix(".appiconset/") {
-                let folderName = fileURL.lastPathComponent!
-                let subResources = try imageResourcesAtPath(fileURL.relativePath!)
-                results.append(.Directory((folderName, subResources)))
+        for fileURL in contents {
+            var directoryKey: AnyObject?
+            try fileURL.getResourceValue(&directoryKey, forKey: NSURLIsDirectoryKey)
+            
+            guard let isDirectory = directoryKey as? NSNumber else { continue }
+            
+            if isDirectory.integerValue == 1 {
+                if fileURL.absoluteString.hasSuffix(".imageset/") {
+                    let name = fileURL.lastPathComponent!.componentsSeparatedByString(".imageset")[0]
+                    results.append(.File(name))
+                } else if !fileURL.absoluteString.hasSuffix(".appiconset/") {
+                    let folderName = fileURL.lastPathComponent!
+                    let subResources = try imageResourcesAtPath(fileURL.relativePath!)
+                    results.append(.Directory((folderName, subResources)))
+                }
             }
         }
+        return results
     }
-    return results
-}
-
-func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) -> String {
-    let sortedResources = resources.sort { first, second in
-        switch first {
-        case .Directory:
-            return true
-        case _:
+    
+    private static func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) -> String {
+        let sortedResources = resources.sort { first, _ in
+            if case .Directory = first {
+                return true
+            }
             return false
         }
-    }
-    var resultString = ""
-    for singleResource in sortedResources {
-        switch singleResource {
-        case .File(let name):
-            print("Creating Case: \(name)")
-            let indentationString = String(count: 4 * (indentLevel + 1), repeatedValue: Character(" "))
-            if name.characters.contains(Character(" ")) {
+        
+        var resultString = ""
+        for singleResource in sortedResources {
+            switch singleResource {
+            case .File(let name):
+                print("Creating Case: \(name)")
+                let indentationString = String(count: 4 * (indentLevel + 1), repeatedValue: Character(" "))
+                if name.characters.contains(Character(" ")) {
+                    let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
+                    resultString += indentationString + "case \(correctedName) = \"\(name)\"\n"
+                } else {
+                    resultString += indentationString + "case \(name)\n"
+                }
+            case .Directory(let (name, subResources)):
                 let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
-                resultString += indentationString + "case \(correctedName) = \"\(name)\"\n"
-            } else {
-                resultString += indentationString + "case \(name)\n"
+                print("Creating Enum: \(correctedName)")
+                let indentationString = String(count: 4 * (indentLevel), repeatedValue: Character(" "))
+                resultString += "\n" + indentationString + "public enum \(correctedName): String, SharkImageConvertible {" + "\n"
+                resultString += createEnumDeclarationForResources(subResources, indentLevel: indentLevel + 1)
+                resultString += indentationString + "}\n\n"
             }
-        case .Directory(let (name, subResources)):
-            let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
-            print("Creating Enum: \(correctedName)")
-            let indentationString = String(count: 4 * (indentLevel), repeatedValue: Character(" "))
-            resultString += "\n" + indentationString + "public enum \(correctedName): String, SharkImageConvertible {" + "\n"
-            resultString += createEnumDeclarationForResources(subResources, indentLevel: indentLevel + 1)
-            resultString += indentationString + "}\n\n"
         }
+        return resultString
     }
-    return resultString
 }
 
-func acknowledgementsString() -> String {
-    return "//SharkImageNames.swift\n//Generated by Shark"
+
+struct FileBuilder {
+    static func fileStringWithEnumString(enumString: String) -> String {
+        return acknowledgementsString() + "\n\n" + imageExtensionString() + "\n" + enumString
+    }
+    
+    private static func acknowledgementsString() -> String {
+        return "//SharkImageNames.swift\n//Generated by Shark"
+    }
+    
+    private static func imageExtensionString() -> String {
+        return "public protocol SharkImageConvertible {}\n\npublic extension SharkImageConvertible where Self: RawRepresentable, Self.RawValue == String {\n    public var image: UIImage? {\n        return UIImage(named: self.rawValue)\n    }\n}\n\npublic extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}\n"
+    }
 }
 
-func imageExtensionString() -> String {
-    return "public protocol SharkImageConvertible {}\n\npublic extension SharkImageConvertible where Self: RawRepresentable, Self.RawValue == String {\n    public var image: UIImage? {\n        return UIImage(named: self.rawValue)\n    }\n}\n\npublic extension UIImage {\n    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {\n        self.init(named: shark.rawValue)\n    }\n}\n"
-}
+//-----------------------------------------------------------//
+//-----------------------------------------------------------//
 
+
+//Process arguments and run the script
 let arguments = Process.arguments
 
 if arguments.count != 3 {
@@ -83,7 +102,6 @@ if arguments.count != 3 {
 }
 
 let path = arguments[1]
-
 
 if !(path.hasSuffix(".xcassets") || path.hasSuffix(".xcassets/")) {
     print("The path should point to a .xcassets folder")
@@ -104,20 +122,10 @@ if !isDirectory{
 }
 
 
+//Create the file string
+let enumString = try EnumBuilder.enumStringForPath(path)
+let fileString = FileBuilder.fileStringWithEnumString(enumString)
+
+//Save the file string
 let outputURL = NSURL.fileURLWithPath(outputPath).URLByAppendingPathComponent("SharkImages.swift")
-
-let result = try imageResourcesAtPath(path)
-var resultString = ""
-
-
-let top = Resource.Directory(("Shark", result))
-
-let enumString = createEnumDeclarationForResources([top], indentLevel: 0)
-
-resultString += acknowledgementsString()
-resultString += "\n\n"
-resultString += imageExtensionString()
-resultString += "\n"
-resultString += enumString
-
-try resultString.writeToURL(outputURL, atomically: true, encoding: NSUTF8StringEncoding)
+try fileString.writeToURL(outputURL, atomically: true, encoding: NSUTF8StringEncoding)

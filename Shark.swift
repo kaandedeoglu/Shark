@@ -8,6 +8,12 @@ struct EnumBuilder {
         case Directory((String, [Resource]))
     }
     
+    private static let forbiddenCharacterSet: NSCharacterSet = {
+        let validSet = NSMutableCharacterSet(charactersInString: "_")
+        validSet.formUnionWithCharacterSet(NSCharacterSet.letterCharacterSet())
+        return validSet.invertedSet
+        }()
+    
     static func enumStringForPath(path: String, topLevelName: String = "Shark") throws -> String {
         let resources = try imageResourcesAtPath(path)
         let topLevelResource = Resource.Directory(topLevelName, resources)
@@ -40,6 +46,22 @@ struct EnumBuilder {
         return results
     }
     
+    private static func correctedNameForString(string: String) -> String? {
+        //First try replacing -'s with _'s only, then remove illegal characters
+        if let _ = string.rangeOfString("-") {
+            let replacedString = string.stringByReplacingOccurrencesOfString("-", withString: "_")
+            if replacedString.rangeOfCharacterFromSet(forbiddenCharacterSet) == nil {
+                return replacedString
+            }
+        }
+        
+        if let _ = string.rangeOfCharacterFromSet(forbiddenCharacterSet) {
+            return "".join(string.componentsSeparatedByCharactersInSet(forbiddenCharacterSet))
+        }
+        
+        return nil
+    }
+    
     private static func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) -> String {
         let sortedResources = resources.sort { first, _ in
             if case .Directory = first {
@@ -54,8 +76,7 @@ struct EnumBuilder {
             case .File(let name):
                 print("Creating Case: \(name)")
                 let indentationString = String(count: 4 * (indentLevel + 1), repeatedValue: Character(" "))
-                if name.characters.contains(Character(" ")) {
-                    let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
+                if let correctedName = correctedNameForString(name) {
                     resultString += indentationString + "case \(correctedName) = \"\(name)\"\n"
                 } else {
                     resultString += indentationString + "case \(name)\n"
@@ -76,7 +97,11 @@ struct EnumBuilder {
 
 struct FileBuilder {
     static func fileStringWithEnumString(enumString: String) -> String {
-        return acknowledgementsString() + "\n\n" + imageExtensionString() + "\n" + enumString
+        return acknowledgementsString() + "\n\n" + importString() + "\n\n" + imageExtensionString() + "\n" + enumString
+    }
+    
+    static func importString() -> String {
+        return "import UIKit"
     }
     
     private static func acknowledgementsString() -> String {

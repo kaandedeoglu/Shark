@@ -16,6 +16,9 @@ struct EnumBuilder {
     
     static func enumStringForPath(path: String, topLevelName: String = "Shark") throws -> String {
         let resources = try imageResourcesAtPath(path)
+        if resources.isEmpty {
+            return ""
+        }
         let topLevelResource = Resource.Directory(topLevelName, resources)
         return createEnumDeclarationForResources([topLevelResource], indentLevel: 0)
     }
@@ -100,7 +103,7 @@ struct FileBuilder {
         return acknowledgementsString() + "\n\n" + importString() + "\n\n" + imageExtensionString() + "\n" + enumString
     }
     
-    static func importString() -> String {
+    private static func importString() -> String {
         return "import UIKit"
     }
     

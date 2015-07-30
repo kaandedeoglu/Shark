@@ -127,7 +127,7 @@ struct FileBuilder {
         return acknowledgementsString() + "\n\n" + importString() + "\n\n" + imageExtensionString() + "\n" + enumString
     }
     
-    static func importString() -> String {
+    private static func importString() -> String {
         return "import UIKit"
     }
     

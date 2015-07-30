@@ -65,6 +65,30 @@ struct EnumBuilder {
         return nil
     }
     
+    //An enum should extend String and conform to SharkImageConvertible if and only if it has at least on image asset in it.
+    //We return empty string when we get a Directory of directories.
+    private static func conformanceStringForResource(resource: Resource) -> String {
+        switch resource {
+        case .Directory(_, let subResources):
+            
+            let index = subResources.indexOf({
+                if case .File = $0 {
+                    return true
+                } else {
+                    return false
+                }
+            })
+            
+            if let _ = index {
+                return ": String, SharkImageConvertible"
+            } else {
+                return ""
+            }
+        case _:
+            return ""
+        }
+    }
+    
     private static func createEnumDeclarationForResources(resources: [Resource], indentLevel: Int) -> String {
         let sortedResources = resources.sort { first, _ in
             if case .Directory = first {
@@ -88,7 +112,7 @@ struct EnumBuilder {
                 let correctedName = name.stringByReplacingOccurrencesOfString(" ", withString: "")
                 print("Creating Enum: \(correctedName)")
                 let indentationString = String(count: 4 * (indentLevel), repeatedValue: Character(" "))
-                resultString += "\n" + indentationString + "public enum \(correctedName): String, SharkImageConvertible {" + "\n"
+                resultString += "\n" + indentationString + "public enum \(correctedName)" + conformanceStringForResource(singleResource)  + " {" + "\n"
                 resultString += createEnumDeclarationForResources(subResources, indentLevel: indentLevel + 1)
                 resultString += indentationString + "}\n\n"
             }
@@ -103,7 +127,7 @@ struct FileBuilder {
         return acknowledgementsString() + "\n\n" + importString() + "\n\n" + imageExtensionString() + "\n" + enumString
     }
     
-    private static func importString() -> String {
+    static func importString() -> String {
         return "import UIKit"
     }
     

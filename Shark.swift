@@ -160,7 +160,7 @@ if !(path.hasSuffix(".xcassets") || path.hasSuffix(".xcassets/")) {
     exit(1)
 }
 
-let outputPath = arguments[2].stringByExpandingTildeInPath
+let outputPath = arguments[2]
 
 var isDirectory: ObjCBool = false
 if NSFileManager.defaultManager().fileExistsAtPath(outputPath, isDirectory: &isDirectory) == false {

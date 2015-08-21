@@ -34,7 +34,7 @@ myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
 - Using nested folders makes working with Shark easier. This way you can do `Shark.Buttons.Active.Login.fb_button.image` rather than Shark.fb_button.image (which is harder to find when there are 100s of images in your assets)
 - Name your images with valid enum case names ( `login_button` is valid whereas `login-button` or `login button` are not), Swift 2 automatically sets case names to raw values in String backed Enums. If you name your images with valid names - Shark will generate `case login_button`, otherwise you'll see something like `case "loginbutton = "login button"` 
 
-###Sample `SwiftImages.swift` file:
+###Sample `SharkImages.swift` file:
 
 ```swift
 //SharkImageNames.swift

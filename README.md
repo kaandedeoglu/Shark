@@ -1,6 +1,8 @@
 # Shark
 Swift Script that transforms the .xcassets folder into a type safe Enum.
 
+> Swift 2.0 Only
+
 ###Blog Post & Tutorial
 [http://kaandedeoglu.com/2015/07/28/Shark/](http://kaandedeoglu.com/2015/07/28/Shark/)
 

@@ -9,7 +9,7 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 ###Quick Setup:
 - Make sure you have the latest Xcode 7 Beta.
 - Clone the repo
-- Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`
+- Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`. After this, Shark is available from the command line as `shark`
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
 
@@ -34,7 +34,7 @@ myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
 
 ###Notes
 - Using nested folders makes working with Shark easier. This way you can do `Shark.Buttons.Active.Login.fb_button.image` rather than Shark.fb_button.image (which is harder to find when there are 100s of images in your assets)
-- Name your images with valid enum case names ( `login_button` is valid whereas `login-button` or `login button` are not), Swift 2 automatically sets case names to raw values in String backed Enums. If you name your images with valid names - Shark will generate `case login_button`, otherwise you'll see something like `case "loginbutton = "login button"` 
+- Name your images with valid enum case names ( `login_button` is valid whereas `login-button` or `login button` are not), Swift 2 automatically sets case names to raw values in String backed Enums. If you name your images with valid names - Shark will generate something like `case login_button`, otherwise you'll see something like `case "loginbutton = "login button"` 
 
 ###Sample `SharkImages.swift` file:
 

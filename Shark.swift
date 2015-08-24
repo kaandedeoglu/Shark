@@ -59,7 +59,7 @@ struct EnumBuilder {
         }
         
         if let _ = string.rangeOfCharacterFromSet(forbiddenCharacterSet) {
-            return "".join(string.componentsSeparatedByCharactersInSet(forbiddenCharacterSet))
+            return string.componentsSeparatedByCharactersInSet(forbiddenCharacterSet).joinWithSeparator("")
         }
         
         return nil

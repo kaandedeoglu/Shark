@@ -2,7 +2,7 @@
 
 set -e
 
-DEVELOPER_DIR="/Applications/Xcode-beta.app/Contents/Developer"
+DEVELOPER_DIR=`xcode-select -p`
 export DEVELOPER_DIR
 xcrun -sdk macosx swiftc Shark.swift -o shark
 mv shark /usr/local/bin

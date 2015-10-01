@@ -12,7 +12,7 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
 
-`shark "${PROJECT_DIR}/ManyImages/Assets.xcassets" "${PROJECT_DIR}/ManyImages/"`
+`shark "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_NAME}/ManyImages/"`
 
 - Build once - a file named `SharkImages.swift` should magically appear at your output folder
 - Add the file to your project

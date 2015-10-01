@@ -7,7 +7,6 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 [http://kaandedeoglu.com/2015/07/28/Shark/](http://kaandedeoglu.com/2015/07/28/Shark/)
 
 ###Quick Setup:
-- Make sure you have the latest Xcode 7 Beta.
 - Clone the repo
 - Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`. After this, Shark is available from the command line as `shark`
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase

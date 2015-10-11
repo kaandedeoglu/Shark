@@ -161,7 +161,7 @@ public enum Shark {
 ##To-Do
 - [ ] Add example project
 - [ ] Homebrew Support
-- [ ] Cocoapods Support to automatically add Shark - Pre-build script to the Xcode Project
+- [x] Cocoapods Support
 - [ ] Handle Multiple .imageAssets folders in a single project
 - [ ] Clean up
 

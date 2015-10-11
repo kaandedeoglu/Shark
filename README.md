@@ -36,11 +36,11 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 
 After the setup, we can use Shark to load images in two ways:
 
-*1:*```swift
+```swift
 myImageView.image = UIImage(shark: Shark.EmptyIcons.programs_empty_icon)
 ```
 
-*2:*```swift
+```swift
 myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
 ```
 

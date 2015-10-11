@@ -7,27 +7,40 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 [http://kaandedeoglu.com/2015/07/28/Shark/](http://kaandedeoglu.com/2015/07/28/Shark/)
 
 ###Quick Setup:
-- Clone the repo
-- Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`. After this, Shark is available from the command line as `shark`
+
+####Cocoapods:
+- Add `pod 'Shark'` to your `Podfile`
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
 
-`shark "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_NAME}/ManyImages/"`
+`"$PODS_ROOT/Shark/shark" "${PROJECT_DIR}/${PROJECT_NAME}/Images.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
 - Build once - a file named `SharkImages.swift` should magically appear at your output folder
 - Add the file to your project
 - You're done! the file `SharkImage.swift` will be updated every time you build the project.
 
 
+####Building the executable yourself:
+- Clone the repo
+- Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`. After this, Shark is available from the command line as `shark`
+- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
+- Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
+
+`shark "${PROJECT_DIR}/${PROJECT_NAME}/Images.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
+
+- Build once - a file named `SharkImages.swift` should magically appear at your output folder
+- Add the file to your project
+- You're done! the file `SharkImage.swift` will be updated every time you build the project.
+
+----
+
 After the setup, we can use Shark to load images in two ways:
 
-*1:*
-```swift
+*1:*```swift
 myImageView.image = UIImage(shark: Shark.EmptyIcons.programs_empty_icon)
 ```
 
-*2:*
-```swift
+*2:*```swift
 myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
 ```
 

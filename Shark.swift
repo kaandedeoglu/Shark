@@ -39,10 +39,11 @@ struct EnumBuilder {
                 if fileURL.absoluteString.hasSuffix(".imageset/") {
                     let name = fileURL.lastPathComponent!.componentsSeparatedByString(".imageset")[0]
                     results.append(.File(name))
-                } else if !fileURL.absoluteString.hasSuffix(".appiconset/") {
+                } else if !fileURL.absoluteString.hasSuffix(".appiconset/") && !fileURL.absoluteString.hasSuffix(".launchimage/") {
                     let folderName = fileURL.lastPathComponent!
+                    let correctedName = correctedNameForString(folderName) ?? folderName
                     let subResources = try imageResourcesAtPath(fileURL.relativePath!)
-                    results.append(.Directory((folderName, subResources)))
+                    results.append(.Directory((correctedName, subResources)))
                 }
             }
         }

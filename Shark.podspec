@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Shark'
-  s.version = '0.1.0'
+  s.version = '0.1.1'
   
   s.license      = { :type => 'The MIT License (MIT)', :text => <<-LICENSE
     Copyright (c) 2015 Kaan Dedeoglu
@@ -17,7 +17,7 @@ Pod::Spec.new do |s|
   s.summary = 'Swift Script that transforms the .xcassets folder into a type safe enum'
   s.homepage = 'https://github.com/kaandedeoglu/Shark'
   s.authors = { 'Kaan Dedeoglu' => 'kaandedeoglu@me.com' }
-  s.source = { :http => 'https://github.com/kaandedeoglu/Shark/releases/download/0.1.0/shark.zip' }
+  s.source = { :http => "https://github.com/kaandedeoglu/Shark/releases/download/#{s.version}/shark.zip" }
   s.preserve_paths = 'shark'
 
   s.ios.deployment_target = '8.0'

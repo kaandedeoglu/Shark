@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name = 'Shark'
-  s.version = '0.1.1'
+  s.version = '0.1.2'
   
   s.license      = { :type => 'The MIT License (MIT)', :text => <<-LICENSE
     Copyright (c) 2015 Kaan Dedeoglu

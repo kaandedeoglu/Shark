@@ -1,7 +1,7 @@
 # Shark
 Swift Script that transforms the .xcassets folder into a type safe Enum.
 
-> Swift 2.0 Only
+> The master branch of Shark is Swift 3.0 compatible. For Swift 2 support, please check out the Swift2 branch.
 
 ###Blog Post & Tutorial
 [http://kaandedeoglu.com/2015/07/28/Shark/](http://kaandedeoglu.com/2015/07/28/Shark/)
@@ -10,14 +10,18 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 
 ####Cocoapods:
 - Add `pod 'Shark'` to your `Podfile`
-- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
+- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase.
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
 
-`"$PODS_ROOT/Shark/shark" "${PROJECT_DIR}/${PROJECT_NAME}/Images.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
+`"$PODS_ROOT/Shark/shark" "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
-- Build once - a file named `SharkImages.swift` should magically appear at your output folder
-- Add the file to your project
-- You're done! the file `SharkImage.swift` will be updated every time you build the project.
+
+####Manually
+- Place `Shark.swift` anywhere in your project directory - you don't have to add it to your project or your targets.
+- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase.
+- Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
+
+`"${PROJECT_DIR}/path_to_Shark.swift} "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
 
 ####Building the executable yourself:
@@ -26,10 +30,13 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
 
-`shark "${PROJECT_DIR}/${PROJECT_NAME}/Images.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
+`shark "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
-- Build once - a file named `SharkImages.swift` should magically appear at your output folder
-- Add the file to your project
+####Finally
+Whichever method you chose, the final steps are the same, and they are outlined below:
+
+- Build once - a file named `SharkImages.swift` should magically appear at your output destination.
+- Add the file to your project.
 - You're done! the file `SharkImage.swift` will be updated every time you build the project.
 
 ----
@@ -45,7 +52,7 @@ myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
 ```
 
 ###Notes
-- Using nested folders makes working with Shark easier. This way you can do `Shark.Buttons.Active.Login.fb_button.image` rather than Shark.fb_button.image (which is harder to find when there are 100s of images in your assets)
+- Using nested folders makes working with Shark easier. This way you can do `Shark.Buttons.Active.Login.fb_button.image` rather than `Shark.fb_button.image` (which is harder to find when there are 100s of images in your assets)
 - Name your images with valid enum case names ( `login_button` is valid whereas `login-button` or `login button` are not), Swift 2 automatically sets case names to raw values in String backed Enums. If you name your images with valid names - Shark will generate something like `case login_button`, otherwise you'll see something like `case "loginbutton = "login button"` 
 
 ###Sample `SharkImages.swift` file:
@@ -65,7 +72,7 @@ public extension SharkImageConvertible where Self: RawRepresentable, Self.RawVal
 }
 
 public extension UIImage {
-    convenience init?<T: RawRepresentable where T.RawValue == String>(shark: T) {
+    convenience init?<T: RawRepresentable>(shark: T) where T.RawValue == String {
         self.init(named: shark.rawValue)
     }
 }
@@ -160,16 +167,13 @@ public enum Shark {
 
 ##To-Do
 - [ ] Add example project
-- [ ] Homebrew Support
 - [x] Cocoapods Support
-- [ ] Handle Multiple .imageAssets folders in a single project
-- [ ] Clean up
 
 
 ##License
 The MIT License (MIT)
 
-Copyright (c) 2015 Kaan Dedeoglu
+Copyright (c) 2016 Kaan Dedeoglu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

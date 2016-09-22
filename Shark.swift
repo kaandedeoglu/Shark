@@ -33,11 +33,11 @@ struct EnumBuilder {
         let validSet = NSMutableCharacterSet(charactersIn: "_")
         validSet.formUnion(with: CharacterSet.letters)
         return validSet.inverted
-        }()
+    }()
     
     private static let forbiddenPathExtensions = [".appiconset/", ".launchimage/"]
     private static let imageSetExtension = "imageset"
-
+    
     static func enumStringForPath(_ path: String, topLevelName: String = "Shark") throws -> String {
         let resources = try imageResourcesAtPath(path)
         if resources.isEmpty {
@@ -62,7 +62,7 @@ struct EnumBuilder {
             if isDirectory.intValue == 1 {
                 if fileURL.pathExtension == imageSetExtension {
                     if let name = fileURL.lastPathComponent.components(separatedBy: "." + imageSetExtension).first {
-                        results.append(.file(name))                        
+                        results.append(.file(name))
                     }
                 } else if forbiddenPathExtensions.index(where: { fileURL.absoluteString.hasSuffix($0) }) == nil {
                     let folderName = fileURL.lastPathComponent
@@ -96,19 +96,13 @@ struct EnumBuilder {
         switch resource {
         case .directory(_, let subResources):
             
-            let index = subResources.index(where: {
-                if case .file = $0 {
-                    return true
-                } else {
-                    return false
+            for resource in subResources {
+                if case .file = resource {
+                    return ": String, SharkImageConvertible"
                 }
-            })
-            
-            if let _ = index {
-                return ": String, SharkImageConvertible"
-            } else {
-                return ""
             }
+            
+            return ""
         case _:
             return ""
         }

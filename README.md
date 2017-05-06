@@ -3,12 +3,12 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 
 > The master branch of Shark is Swift 3.0 compatible. For Swift 2 support, please check out the Swift2 branch.
 
-###Blog Post & Tutorial
+### Blog Post & Tutorial
 [http://kaandedeoglu.com/2015/07/28/Shark/](http://kaandedeoglu.com/2015/07/28/Shark/)
 
-###Quick Setup:
+### Quick Setup:
 
-####Cocoapods:
+#### Cocoapods:
 - Add `pod 'Shark'` to your `Podfile`
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase.
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
@@ -16,7 +16,7 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 `"$PODS_ROOT/Shark/shark" "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
 
-####Manually
+#### Manually
 - Place `Shark.swift` anywhere in your project directory - you don't have to add it to your project or your targets.
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase.
 - Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
@@ -24,7 +24,7 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 `"${PROJECT_DIR}/path_to_Shark.swift} "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
 
-####Building the executable yourself:
+#### Building the executable yourself:
 - Clone the repo
 - Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`. After this, Shark is available from the command line as `shark`
 - Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
@@ -32,7 +32,7 @@ Swift Script that transforms the .xcassets folder into a type safe Enum.
 
 `shark "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
 
-####Finally
+#### Finally
 Whichever method you chose, the final steps are the same, and they are outlined below:
 
 - Build once - a file named `SharkImages.swift` should magically appear at your output destination.
@@ -51,11 +51,11 @@ myImageView.image = UIImage(shark: Shark.EmptyIcons.programs_empty_icon)
 myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
 ```
 
-###Notes
+### Notes
 - Using nested folders makes working with Shark easier. This way you can do `Shark.Buttons.Active.Login.fb_button.image` rather than `Shark.fb_button.image` (which is harder to find when there are 100s of images in your assets)
 - Name your images with valid enum case names ( `login_button` is valid whereas `login-button` or `login button` are not), Swift 2 automatically sets case names to raw values in String backed Enums. If you name your images with valid names - Shark will generate something like `case login_button`, otherwise you'll see something like `case "loginbutton = "login button"` 
 
-###Sample `SharkImages.swift` file:
+### Sample `SharkImages.swift` file:
 
 ```swift
 //SharkImageNames.swift
@@ -165,12 +165,12 @@ public enum Shark {
 }
 ```
 
-##To-Do
+## To-Do
 - [ ] Add example project
 - [x] Cocoapods Support
 
 
-##License
+## License
 The MIT License (MIT)
 
 Copyright (c) 2016 Kaan Dedeoglu

@@ -4,7 +4,10 @@ import Foundation
 
 //A simple counted set implementation that uses a dictionary for storage.
 struct CountedSet<Element: Hashable>: Sequence {
-    private var backingDictionary = [Element : Int]()
+    
+    typealias Iterator = DictionaryIterator<Element, Int>
+    
+    private var backingDictionary: [Element: Int] = [:]
     
     @discardableResult
     mutating func addObject(_ object: Element) -> Int {
@@ -67,7 +70,7 @@ struct EnumBuilder {
                 } else if forbiddenPathExtensions.index(where: { fileURL.absoluteString.hasSuffix($0) }) == nil {
                     let folderName = fileURL.lastPathComponent
                     let subResources = try imageResourcesAtPath(fileURL.relativePath)
-                    results.append(.directory((folderName, subResources)))
+                    results.append(.directory(folderName, subResources))
                 }
             }
         }

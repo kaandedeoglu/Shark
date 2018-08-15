@@ -4,7 +4,6 @@ import Foundation
 
 //A simple counted set implementation that uses a dictionary for storage.
 struct CountedSet<Element: Hashable>: Sequence {
-    
     typealias Iterator = DictionaryIterator<Element, Int>
     
     private var backingDictionary: [Element: Int] = [:]

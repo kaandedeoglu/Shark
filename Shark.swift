@@ -37,7 +37,7 @@ struct EnumBuilder {
         return validSet.inverted
     }()
     
-    private static let forbiddenPathExtensions = [".appiconset/", ".launchimage/"]
+    private static let forbiddenPathExtensions = [".appiconset/", ".launchimage/", ".colorset/"]
     private static let imageSetExtension = "imageset"
     
     static func enumStringForPath(_ path: String, topLevelName: String = "Shark") throws -> String {

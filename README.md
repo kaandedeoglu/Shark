@@ -1,179 +1,272 @@
 # Shark
-Swift Script that transforms the .xcassets folder into a type safe Enum.
 
-> The master branch of Shark is Swift 3.0 compatible. For Swift 2 support, please check out the Swift2 branch.
+> Shark has been rewritten from scratch and now requires Xcode 10.2 / Swift 5
 
-### Blog Post & Tutorial
-[http://kaandedeoglu.com/2015/07/28/Shark/](http://kaandedeoglu.com/2015/07/28/Shark/)
+Shark is a Swift command line tool that generates type safe enums for your image assets, color assets and localizations. 
 
-### Quick Setup:
+Because Shark reads your .xcodeproj to find these assets, the setup is extremely simple.
 
-#### Cocoapods:
-- Add `pod 'Shark'` to your `Podfile`
-- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase.
-- Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
-
-`"$PODS_ROOT/Shark/shark" "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
-
-
-#### Manually
-- Place `Shark.swift` anywhere in your project directory - you don't have to add it to your project or your targets.
-- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase.
-- Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
-
-`"${PROJECT_DIR}/path_to_Shark.swift} "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
-
-
-#### Building the executable yourself:
-- Clone the repo
-- Run the setup script from the terminal - `sh setup.sh`. This will compile the source, create an executable and move it to `/usr/local/bin`. After this, Shark is available from the command line as `shark`
-- Go to your targets build phases and add a `Run Script Phase` and place it before the `Compile Sources` phase
-- Shark takes two parameters - path to your image assets (folder with the .xcassets extension), and the path to the desired output folder. Fill the run script area by typing these out. Here's an example: 
-
-`shark "${PROJECT_DIR}/${PROJECT_NAME}/Assets.xcassets" "${PROJECT_DIR}/${PROJECT_NAME}"`
-
-#### Finally
-Whichever method you chose, the final steps are the same, and they are outlined below:
-
-- Build once - a file named `SharkImages.swift` should magically appear at your output destination.
-- Add the file to your project.
-- You're done! the file `SharkImage.swift` will be updated every time you build the project.
-
-----
-
-After the setup, we can use Shark to load images in two ways:
-
-```swift
-myImageView.image = UIImage(shark: Shark.EmptyIcons.programs_empty_icon)
+## Installation
+#### Brew:
+```bash
+brew install kaandedeoglu/formulae/shark
 ```
 
-```swift
-myImageView.image = Shark.EmptyIcons.programs_empty_icon.image
+#### Manually:
+Clone the project, then do:
+```bash
+> swift build -c release --disable-sandbox
+> cp ./build/release/Shark /usr/local/bin
 ```
 
-### Notes
-- Using nested folders makes working with Shark easier. This way you can do `Shark.Buttons.Active.Login.fb_button.image` rather than `Shark.fb_button.image` (which is harder to find when there are 100s of images in your assets)
-- Name your images with valid enum case names ( `login_button` is valid whereas `login-button` or `login button` are not), Swift 2 automatically sets case names to raw values in String backed Enums. If you name your images with valid names - Shark will generate something like `case login_button`, otherwise you'll see something like `case "loginbutton = "login button"` 
+You can then verify the installation by doing
 
-### Sample `SharkImages.swift` file:
+```bash
+shark --help
+```
+
+## Setup
+
+The easiest way to set up Shark is by adding a new Run Script phase to your build phases. This build phase should ideally run before the `Compile Sources` phase.
+
+- Add a new Run Script phase to your target. The script body should look like:
+  ```bash
+  if [ -x "$(command -v shark)" ]; then
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME
+  fi
+  ```
+
+  the `if/else` block makes sure that Shark is run only if it's installed on the current machine.
+
+- Build your project. You should now see a file named `Shark.swift` in your project folder.
+- Add this file to your project. Voila! The file will be updated every time the project is built!
+- Alternatively you can do the following:
+  ```bash
+  # Write to a specific file called MyAssets.swift
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/MyAssets.swift
+  ```
+
+  ```bash
+  # Write to a specific file in a different folder
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/Utility/MyAssets.swift
+  ```
+
+## Flags
+Shark also accepts some flags to configure behavior
+
+#### --name
+By default, the top level enum everything else lives under is called - you guessed it - `Shark`. You can change this by using the `--name` flag.
+
+ ```bash
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --name Assets
+  ```
+
+#### --locale
+By default, Shark will try to find English localizations to generate the localizations enum. If there are no English .strings file in your project, or you'd like Shark to take another localization as base, you can specify the language code with the `--locale` flag.
+ ```bash
+# Use Spanish localizations for generation
+shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --locale es
+```
+
+#### --target
+In case your Xcode project has multiple application targets, you should specify which one Shark should look at by using the `--target` flag.
+
+   ```bash
+shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --target MyAppTarget
+```
+
+#### --help
+Prints the overview, example usage and available flags to the console.
+
+## Sample output
+
+Below is a sample output generated by Shark. As you can see, the top level `enum Shark` contains three enums inside. `I` (Images), `L` (Localizations) and `C` (Colors). Example usage looks like
 
 ```swift
-//SharkImageNames.swift
-//Generated by Shark
+imageView.image = Shark.I.TaskIcons.task_icon_clean
+label.text = Shark.L.button.login
+view.backgroundColor = Shark.C.blue1
+```
+
+There are a few things to notice:
+- Image assets are namespaced by folder. For example all the images in your `.xcassets` folder that are contained in a folder called `TaskIcons` will be listed under an enum called `TaskIcons`.
+- Localizations are namespaced with separators. Currently Shark uses the dot symbol `.` as the separator. 
+  For example given two strings `"button.login"` and `"button.logout"`, Shark will generate the following:
+
+```swift
+public enum C {
+    public enum button {
+        /// Login
+        public static var login: String { return NSLocalizedString("button.login", comment: "") }
+
+        /// Logout
+        public static var logout: String { return NSLocalizedString("button.logout", comment: "") }
+    }
+}
+```
+
+You can see the sample below:
+
+```swift
+// Shark.swift
+// Generated by Shark https://github.com/kaandedeoglu/Shark
 
 import UIKit
 
-public protocol SharkImageConvertible {}
-
-public extension SharkImageConvertible where Self: RawRepresentable, Self.RawValue == String {
-    public var image: UIImage? {
-        return UIImage(named: self.rawValue)
-    }
-}
-
-public extension UIImage {
-    convenience init?<T: RawRepresentable>(shark: T) where T.RawValue == String {
-        self.init(named: shark.rawValue)
-    }
-}
-
-
 public enum Shark {
+    public enum I {
+        public enum TaskIcons {
+            public static var task_icon_clean: UIImage { return UIImage(named:"task_icon_clean")! }
+            public static var task_icon_fallback: UIImage { return UIImage(named:"task_icon_fallback")! }
+            public static var task_icon_replacebatteries: UIImage { return UIImage(named:"task_icon_replacebatteries")! }
+            public static var task_icon_replacezipper: UIImage { return UIImage(named:"task_icon_replacezipper")! }
+        }
+    
+        public static var back_image: UIImage { return UIImage(named:"back_image")! }
+        public static var icon_banner_retry: UIImage { return UIImage(named:"icon-banner-retry")! }
+        public static var icon_no_internet: UIImage { return UIImage(named:"icon-no-internet")! }
+        public static var icon_paused_shift: UIImage { return UIImage(named:"icon-paused-shift")! }
+        public static var input_icon_camera: UIImage { return UIImage(named:"input-icon-camera")! }
+        public static var input_icon_invalid: UIImage { return UIImage(named:"input-icon-invalid")! }
+        public static var input_icon_show_password: UIImage { return UIImage(named:"input-icon-show-password")! }
+        public static var map_location_on: UIImage { return UIImage(named:"map-location-on")! }
+        public static var menu_icon: UIImage { return UIImage(named:"menu-icon")! }
+        public static var modal_checkbox_active: UIImage { return UIImage(named:"modal-checkbox-active")! }
+        public static var modal_checkbox_inactive: UIImage { return UIImage(named:"modal-checkbox-inactive")! }
+        public static var modal_icon_cancel: UIImage { return UIImage(named:"modal-icon-cancel")! }
+        public static var modal_icon_navigate: UIImage { return UIImage(named:"modal-icon-navigate")! }
+    }    
 
-    public enum SocialIcons: String, SharkImageConvertible {
-            case facebook_share_checked = "facebook-share-checked"
-            case facebook_share_unchecked = "facebook-share-unchecked"
-            case facebook_icon
-            case tumblr_share_checked = "tumblr-share-checked"
-            case tumblr_share_unchecked = "tumblr-share-unchecked"
-            case TumblrIcon
-            case twitter_icon = "twitter-icon"
-            case twitter_share_checked = "twitter-share-checked"
-            case twitter_share_unchecked = "twitter-share-unchecked"
+    public enum C {
+        public static var backgroundColor: UIColor { return UIColor(named: "backgroundColor")! }
+        public static var blue1: UIColor { return UIColor(named: "blue1")! }
+        public static var blue2: UIColor { return UIColor(named: "blue2")! }
+        public static var blue3: UIColor { return UIColor(named: "blue3")! }
+        public static var gray1: UIColor { return UIColor(named: "gray1")! }
+        public static var gray2: UIColor { return UIColor(named: "gray2")! }
+        public static var gray3: UIColor { return UIColor(named: "gray3")! }
+        public static var green1: UIColor { return UIColor(named: "green1")! }
+        public static var green2: UIColor { return UIColor(named: "green2")! }
+        public static var green3: UIColor { return UIColor(named: "green3")! }
+        public static var red1: UIColor { return UIColor(named: "red1")! }
+        public static var red2: UIColor { return UIColor(named: "red2")! }
+        public static var red3: UIColor { return UIColor(named: "red3")! }
+        public static var violet1: UIColor { return UIColor(named: "violet1")! }
+        public static var violet2: UIColor { return UIColor(named: "violet2")! }
+        public static var violet3: UIColor { return UIColor(named: "violet3")! }
     }
 
-
-    public enum SideMenuIcons: String, SharkImageConvertible {
-            case side_menu_discover_icon = "side-menu-discover-icon"
-            case side_menu_light = "side-menu-light"
-            case side_menu_line = "side-menu-line"
-            case side_menu_news_icon = "side-menu-news-icon"
-            case side_menu_notifications_icon = "side-menu-notifications-icon"
-            case side_menu_settings_icon = "side-menu-settings-icon"
-            case side_menu_tvguide_icon = "side-menu-tvguide-icon"
-            case side_menu_watchlist_icon = "side-menu-watchlist-icon"
+    public enum L {
+        public enum banner {
+            public enum bluetooth_controller_failed {
+                /// Cannot create the ble connection to the scooter, this is most likely a backend issue, please contact your fleet operator.
+                public static var title: String { return NSLocalizedString("banner.bluetooth_controller_failed.title", comment: "") }
+            }
+    
+            public enum check_out_next_step_fetch_failed {
+                /// Check out succeeded, but fetching the next step failed, please try again.
+                public static var message: String { return NSLocalizedString("banner.check_out_next_step_fetch_failed.message", comment: "") }
+            }
+    
+            public enum generic {
+                /// Error
+                public static var title: String { return NSLocalizedString("banner.generic.title", comment: "") }
+            }
+    
+            public enum invalid_credentials {
+                /// Wrong email & password combination
+                public static var title: String { return NSLocalizedString("banner.invalid_credentials.title", comment: "") }
+            }
+    
+            public enum login {
+                /// Login request failed, please try again
+                public static var message: String { return NSLocalizedString("banner.login.message", comment: "") }
+            }
+    
+            public enum no_network_connection {
+                /// No internet connection
+                public static var title: String { return NSLocalizedString("banner.no_network_connection.title", comment: "") }
+            }
+    
+            public enum request_failed {
+                /// Request failed, please try again
+                public static var title: String { return NSLocalizedString("banner.request_failed.title", comment: "") }
+            }
+    
+            public enum retry {
+                /// Please try again
+                public static var message: String { return NSLocalizedString("banner.retry.message", comment: "") }
+            }
+        }
+    
+        public enum button {
+            /// Connecting...
+            public static var connecting: String { return NSLocalizedString("button.connecting", comment: "") }
+    
+            /// Login
+            public static var login: String { return NSLocalizedString("button.login", comment: "") }
+    
+            /// Logout
+            public static var logout: String { return NSLocalizedString("button.logout", comment: "") }
+    
+            /// Navigate
+            public static var navigate: String { return NSLocalizedString("button.navigate", comment: "") }
+    
+            /// Okay
+            public static var okay: String { return NSLocalizedString("button.okay", comment: "") }
+    
+            /// Remember my choice
+            public static var remember_my_choice: String { return NSLocalizedString("button.remember_my_choice", comment: "") }
+    
+            /// Retry
+            public static var retry: String { return NSLocalizedString("button.retry", comment: "") }
+            
+            /// Start Task
+            public static var start_task: String { return NSLocalizedString("button.start_task", comment: "") }
+    
+            /// Unlock
+            public static var unlock: String { return NSLocalizedString("button.unlock", comment: "") }
+    
+            /// Unlocking...
+            public static var unlocking: String { return NSLocalizedString("button.unlocking", comment: "") }
+        }
+    
+        public enum error {
+            public enum generic {
+                /// Error
+                public static var title: String { return NSLocalizedString("error.generic.title", comment: "") }
+            }
+    
+            public enum location_required {
+                /// Turn on location services to allow Runner to determine your location
+                public static var message: String { return NSLocalizedString("error.location_required.message", comment: "") }
+    
+                /// Location required
+                public static var title: String { return NSLocalizedString("error.location_required.title", comment: "") }
+            }
+    
+            /// Not a valid email address
+            public static var invalid_email: String { return NSLocalizedString("error.invalid_email", comment: "") }
+    
+            /// Password must be at least 8 characters
+            /// include upper and lowercase letters,
+            /// numbers and special characters
+            public static var invalid_password: String { return NSLocalizedString("error.invalid_password", comment: "") }
+    
+            /// Starting Runner failed with error: %@
+            public static func loading_failed(_ value1: String) -> String {
+                return String(format: NSLocalizedString("error.loading_failed", comment: ""), value1)
+            }
+        }
     }
-
-
-    public enum Other: String, SharkImageConvertible {
-            case badge_locked
-            case news_filter_confirm = "news-filter-confirm"
-            case noluyo_logo
-            case NoluyoTitleText
-            case profile_placeholder
-            case program_watching_eye
-            case rating_star_checked = "rating-star-checked"
-            case rating_star_unchecked = "rating-star-unchecked"
-            case register_add_image
-            case tv_guide_now_button = "tv-guide-now-button"
-            case tv_guide_back_arrow
-            case tv_guide_filter_delete_button
-            case tv_guide_filter_down_arrow
-            case tv_guide_forward_arrow
-            case watchlist_down_arrow = "watchlist-down-arrow"
-    }
-
-
-    public enum EmptyIcons: String, SharkImageConvertible {
-            case feed_empty_icon
-            case news_empty_icon
-            case programs_empty_icon
-            case reminders_empty_icon
-            case watch_list_empty_icon
-    }
-
-
-    public enum ApplicationIcons: String, SharkImageConvertible {
-            case checkbox_icon = "checkbox-icon"
-            case comment_count_icon = "comment-count-icon"
-            case delete_account_icon
-            case end_of_feed_icon = "end-of-feed-icon"
-            case feed_view_like_icon_checked = "feed-view-like-icon-checked"
-            case feed_view_like_icon_unchecked = "feed-view-like-icon-unchecked"
-            case feed_view_post_follow_icon = "feed-view-post-follow-icon"
-            case feed_view_post_link_icon = "feed-view-post-link-icon"
-            case feed_view_post_watch_icon = "feed-view-post-watch-icon"
-            case feed_view_share_icon = "feed-view-share-icon"
-            case follow_icon_unchecked = "follow-icon-unchecked"
-            case hamburger_menu_icon = "hamburger-menu-icon"
-            case logout_icon
-            case media_icon_checked = "media-icon-checked"
-            case media_icon_unchecked = "media-icon-unchecked"
-            case nav_back_icon = "nav-back-icon"
-            case nav_forward_icon = "nav-forward-icon"
-            case new_post_icon = "new-post-icon"
-            case post_media_delete_icon = "post-media-delete-icon"
-            case post_delete_icon
-            case profile_icon_programs = "profile-icon-programs"
-            case profile_reminders_delete_icon = "profile-reminders-delete-icon"
-            case program_badge_icon
-            case program_feed_icon
-            case program_game_icon
-            case program_schedule_icon
-    }
-
 }
 ```
 
-## To-Do
-- [ ] Add example project
-- [x] Cocoapods Support
-
-
 ## License
+
 The MIT License (MIT)
 
-Copyright (c) 2016 Kaan Dedeoglu
+Copyright (c) 2019 Kaan Dedeoglu
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

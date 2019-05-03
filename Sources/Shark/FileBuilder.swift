@@ -6,6 +6,7 @@ enum FileBuilder {
         
         import UIKit
         
+        // swiftlint:disable all
         \(enumString)
         """
     }

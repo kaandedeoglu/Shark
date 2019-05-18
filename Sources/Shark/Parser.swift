@@ -7,7 +7,6 @@ enum Parser {
         let projectPath: String
         let outputURL: Foundation.URL
         let topLevelEnumName: String
-        let fileName: String
         let targetName: String?
         let locale: String?
     }
@@ -50,13 +49,10 @@ enum Parser {
         
         var isDirectory: ObjCBool = false
         
-        let fileName: String
         let outputURL: Foundation.URL
         if FileManager.default.fileExists(atPath: outputPath, isDirectory: &isDirectory), isDirectory.boolValue {
-            fileName = "Shark"
-            outputURL = URL(fileURLWithPath: outputPath).appendingPathComponent("\(fileName).swift")
+            outputURL = URL(fileURLWithPath: outputPath).appendingPathComponent("Shark.swift")
         } else if outputPath.pathExtension == "swift" {
-            fileName = outputPath.lastPathComponent.deletingPathExtension
             outputURL = URL(fileURLWithPath: outputPath)
         } else {
             print("The output path should either point to an existing folder or end with a .swift extension")
@@ -66,7 +62,6 @@ enum Parser {
         return Result(projectPath: projectPath,
                       outputURL: outputURL,
                       topLevelEnumName: parseResults.get(nameArgument) ?? "Shark",
-                      fileName: fileName,
                       targetName: parseResults.get(targetArgument),
                       locale: parseResults.get(localeArgument))
     }

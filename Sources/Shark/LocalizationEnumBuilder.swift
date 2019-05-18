@@ -53,7 +53,7 @@ private enum LocalizationValue: Comparable {
         }
     }
     
-    func declaration(with body: String = "", indentLevel: Int) throws -> String {
+    func declaration(withBody body: String = "", indentLevel: Int) throws -> String {
         var result = ""
         switch self {
         case .namespace(let name):
@@ -135,7 +135,7 @@ enum LocalizationEnumBuilder {
         switch node.value {
         case .namespace:
             let childrenString = try node.children.map { try localizationEnumString(for: $0, indentLevel: indentLevel + 1) }
-            return try node.value.declaration(with: childrenString.joined(separator: "\n\n"), indentLevel: indentLevel)
+            return try node.value.declaration(withBody: childrenString.joined(separator: "\n\n"), indentLevel: indentLevel)
         case .localization:
             return try node.value.declaration(indentLevel: indentLevel)
         }
@@ -195,7 +195,7 @@ private extension Node where Element == LocalizationValue {
         case .localization(let name, let key, let value):
             self.value = .localization(name: name.underscored, key: key, value: value)
         case .namespace(let name):
-            value = .namespace(name: name.underscored)
+            self.value = .namespace(name: name.underscored)
         }
     }
 }

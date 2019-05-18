@@ -53,12 +53,12 @@ struct XcodeProjectHelper {
         var assetPaths: [String] = []
         
         let allPaths = try targetResourcesFiles.compactMap { $0.file }.flatMap { try paths(for: $0) }
-        for x in allPaths {
-            switch x.pathExtension {
+        for path in allPaths {
+            switch path.pathExtension {
             case "xcassets":
-                assetPaths.append(x)
-            case "strings" where x.pathComponents.contains("\(locale).lproj"):
-                localizationPaths.append(x)
+                assetPaths.append(path)
+            case "strings" where path.pathComponents.contains("\(locale).lproj"):
+                localizationPaths.append(path)
             default:
                 break
             }

@@ -12,7 +12,7 @@ let package = Package(
     targets: [
         .target(
             name: "Shark",
-            dependencies: ["Utility", "xcodeproj"]),
+            dependencies: ["SPMUtility", "xcodeproj"]),
         .testTarget(
             name: "SharkTests",
             dependencies: ["Shark"]),

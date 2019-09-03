@@ -94,7 +94,7 @@ There are a few things to notice:
   For example given two strings `"button.login"` and `"button.logout"`, Shark will generate the following:
 
 ```swift
-public enum C {
+public enum L {
     public enum button {
         /// Login
         public static var login: String { return NSLocalizedString("button.login", comment: "") }

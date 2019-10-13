@@ -1,6 +1,5 @@
 import Foundation
-import SPMUtility
-import Basic
+import TSCUtility
 
 enum Parser {
     struct Result {
@@ -8,7 +7,7 @@ enum Parser {
         let outputURL: Foundation.URL
         let topLevelEnumName: String
         let targetName: String?
-        let locale: String?
+        let locale: String
     }
     
     static func parse() throws -> Result {
@@ -63,6 +62,6 @@ enum Parser {
                       outputURL: outputURL,
                       topLevelEnumName: parseResults.get(nameArgument) ?? "Shark",
                       targetName: parseResults.get(targetArgument),
-                      locale: parseResults.get(localeArgument))
+                      locale: parseResults.get(localeArgument) ?? "en")
     }
 }

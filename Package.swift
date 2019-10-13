@@ -6,15 +6,16 @@ import PackageDescription
 let package = Package(
     name: "Shark",
     dependencies: [
-        .package(url: "https://github.com/apple/swift-package-manager.git", from: "0.1.0"),
         .package(url: "https://github.com/tuist/xcodeproj.git", .upToNextMajor(from: "7.1.0")),
+        .package(url:  "https://github.com/apple/swift-tools-support-core.git", .branch("master"))
     ],
     targets: [
         .target(
             name: "Shark",
-            dependencies: ["SPMUtility", "XcodeProj"]),
+            dependencies: ["SwiftToolsSupport", "XcodeProj"]),
         .testTarget(
             name: "SharkTests",
             dependencies: ["Shark"]),
     ]
 )
+

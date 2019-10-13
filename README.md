@@ -1,4 +1,5 @@
 # Shark
+[![Build Status](https://travis-ci.org/kaandedeoglu/Shark.svg?branch=master)](https://travis-ci.org/kaandedeoglu/Shark)
 
 > Shark has been rewritten from scratch and now requires Xcode 10.2 / Swift 5
 

@@ -21,7 +21,7 @@ struct XcodeProjectHelper {
         projectPath = Path(parseResult.projectPath)
         xcodeproj = try XcodeProj(path: projectPath)
         targetName = parseResult.targetName
-        locale = parseResult.locale ?? "en"
+        locale = parseResult.locale
     }
     
     func resourcePaths() throws -> ResourcePaths {

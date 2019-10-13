@@ -8,7 +8,7 @@ extension String {
                                             "#column", "#else", "#elseif", "#endif", "#error", "#file", "#fileLiteral", "#function", "#if", "#imageLiteral",  "#line", "#selector",
                                             "#sourceLocation", "#warning", "associativity", "convenience", "dynamic", "didSet", "final", "get", "infix", "indirect", "lazy", "left",
                                             "mutating", "none", "nonmutating", "optional", "override", "postfix", "precedence", "prefix", "Protocol", "required", "right",
-                                            "set", "Type", "unowned", "weak", "willSet", "__COLUMN__", "__FILE__", "__FUNCTION__", "__LINE__"]
+                                            "set", "Type", "unowned", "weak", "willSet", "some", "__COLUMN__", "__FILE__", "__FUNCTION__", "__LINE__"]
     
     init(indentLevel: Int) {
         self.init(repeating: " ", count: indentLevel * 4)
@@ -47,26 +47,17 @@ extension String {
     
     var casenameSanitized: String {
         guard isEmpty == false else { return self }
-        
-        var result = self
+
+        var result = replacingOccurrences(of: "-", with: "_")
         let startIndex = result.startIndex
-        
-        //First try replacing -'s with _'s only, then remove illegal characters
-        if result.contains("-") {
-            result = replacingOccurrences(of: "-", with: "_")
-        }
-        
-        while result[startIndex...startIndex].rangeOfCharacter(from: .firstLetterForbidden) != nil || String.forbiddenKeywords.contains(result) {
+
+        if CharacterSet.firstLetterForbidden.contains(result.unicodeScalars[startIndex]) || String.forbiddenKeywords.contains(result) {
             result = result.underscored
         }
 
-        if result[result.index(after: startIndex)...].rangeOfCharacter(from: .forbidden) != nil {
-            result = result.components(separatedBy: .forbidden).joined(separator: "")
-        }
-        
-        return result
+        return result.filter { !CharacterSet.forbidden.contains($0.unicodeScalars.first!) }
     }
-    
+
     var underscored: String {
         return "_" + self
     }

@@ -25,23 +25,23 @@ struct XcodeProjectHelper {
     }
     
     func resourcePaths() throws -> ResourcePaths {
-        let applicationTargets = xcodeproj.pbxproj.nativeTargets.filter({ $0.productType == .application })
+        let eligibleTargets = xcodeproj.pbxproj.nativeTargets.filter({ $0.productType == .application || $0.productType == .framework })
         let selectedTarget: PBXNativeTarget
         
         if let targetName = targetName {
-            guard let target = applicationTargets.first(where: { $0.name == targetName }) else {
-                print("No target found with name \(targetName). The available targets are:\n\(applicationTargets.map({ "- \($0.name)" }).joined(separator: "\n"))")
+            guard let target = eligibleTargets.first(where: { $0.name == targetName }) else {
+                print("No target found with name \(targetName). The available targets are:\n\(eligibleTargets.map({ "- \($0.name)" }).joined(separator: "\n"))")
                 exit(EXIT_FAILURE)
             }
             
             selectedTarget = target
         } else {
-            guard applicationTargets.count == 1 else {
+            guard eligibleTargets.count == 1 else {
                 print("Multiple application targets found, please specify the target by using the --target flag")
                 exit(EXIT_FAILURE)
             }
             
-            selectedTarget = applicationTargets[0]
+            selectedTarget = eligibleTargets[0]
         }
         
         guard let targetResourcesFiles = try selectedTarget.resourcesBuildPhase()?.files else {

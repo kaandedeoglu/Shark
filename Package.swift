@@ -12,7 +12,7 @@ let package = Package(
     targets: [
         .target(
             name: "Shark",
-            dependencies: ["SwiftToolsSupport", "XcodeProj"]),
+            dependencies: ["SwiftToolsSupport-auto", "XcodeProj"]),
         .testTarget(
             name: "SharkTests",
             dependencies: ["Shark"]),

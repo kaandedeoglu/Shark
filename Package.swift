@@ -6,7 +6,7 @@ import PackageDescription
 let package = Package(
     name: "Shark",
     dependencies: [
-        .package(url: "https://github.com/tuist/xcodeproj.git", .upToNextMajor(from: "7.1.0")),
+        .package(url: "https://github.com/tuist/xcodeproj.git", .upToNextMajor(from: "7.5.0")),
         .package(url:  "https://github.com/apple/swift-tools-support-core.git", .branch("master"))
     ],
     targets: [

@@ -7,7 +7,7 @@ private enum ImageValue: Equatable, Comparable {
     func declaration(withBody body: String = "", indentLevel: Int) throws -> String {
         switch self {
         case .image(let name, let value):
-            return #"\#(String(indentLevel: indentLevel))public static var \#(name): UIImage { return UIImage(named:"\#(value)")! }"#
+            return #"\#(String(indentLevel: indentLevel))public static var \#(name): UIImage { return UIImage(named:"\#(value)", in: Shark.bundle, compatibleWith: nil)! }"#
         case .namespace(let name):
             return #"""
             \#(String(indentLevel: indentLevel))public enum \#(name) {

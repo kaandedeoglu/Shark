@@ -12,6 +12,8 @@ enum SharkEnumBuilder {
         
         return """
         public enum \(parseResult.topLevelEnumName) {
+            private class Custom {}
+            static var bundle: Bundle { return Bundle(for: Custom.self) }
         \(declarations)
         }
         """

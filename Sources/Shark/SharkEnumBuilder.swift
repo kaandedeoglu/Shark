@@ -1,7 +1,9 @@
 import Foundation
 
 enum SharkEnumBuilder {
+    static var topLevelEnumName = "Shark"
     static func sharkEnumString(forParseResult parseResult: Parser.Result) throws -> String {
+        SharkEnumBuilder.topLevelEnumName = parseResult.topLevelEnumName
         let resourcePaths = try XcodeProjectHelper(parseResult: parseResult).resourcePaths()
         
         let imagesString = try ImageEnumBuilder.imageEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I")

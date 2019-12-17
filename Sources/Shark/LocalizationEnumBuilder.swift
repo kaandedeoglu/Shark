@@ -154,7 +154,7 @@ extension Array where Element == LocalizationValue.InterpolationType {
 
         return #"""
         \#(String(indentLevel: indentLevel))public static func \#(name)(\#(argumentsString)) -> String {
-        \#(String(indentLevel:indentLevel + 1))return String(format: NSLocalizedString("\#(key)", comment: ""), \#(formatValuesString))
+        \#(String(indentLevel:indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName), comment: ""), \#(formatValuesString))
         \#(String(indentLevel: indentLevel))}
         """#
     }

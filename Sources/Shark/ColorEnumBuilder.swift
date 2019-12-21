@@ -6,7 +6,7 @@ private enum ColorValue: Equatable, Comparable {
     func declaration(indentLevel: Int) -> String {
         switch self {
         case .color(let name):
-            return #"\#(String(indentLevel: indentLevel))public static var \#(name.casenameSanitized): UIColor { return UIColor(named: "\#(name)")! }"#
+            return #"\#(String(indentLevel: indentLevel))public static var \#(name.casenameSanitized): UIColor { return UIColor(named: "\#(name)", in: \#(SharkEnumBuilder.topLevelEnumName).bundle, compatibleWith: nil)! }"#
         }
     }
     

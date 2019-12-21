@@ -73,7 +73,7 @@ private enum LocalizationValue: Comparable {
             if interpolatedTypes.isEmpty == false {
                 result += interpolatedTypes.functionDeclaration(withName: name, key: key, indentLevel: indentLevel)
             } else {
-                result += #"\#(String(indentLevel: indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", comment: "") }"#
+                result += #"\#(String(indentLevel: indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: "") }"#
             }
         }
         return result
@@ -154,7 +154,7 @@ extension Array where Element == LocalizationValue.InterpolationType {
 
         return #"""
         \#(String(indentLevel: indentLevel))public static func \#(name)(\#(argumentsString)) -> String {
-        \#(String(indentLevel:indentLevel + 1))return String(format: NSLocalizedString("\#(key)", comment: ""), \#(formatValuesString))
+        \#(String(indentLevel:indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: ""), \#(formatValuesString))
         \#(String(indentLevel: indentLevel))}
         """#
     }

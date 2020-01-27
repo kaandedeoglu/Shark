@@ -100,7 +100,8 @@ enum LocalizationBuilderError: Error {
 
 enum LocalizationEnumBuilder {
     static func localizationsEnumString(forFilesAtPaths paths: [String], topLevelName: String) throws -> String? {
-        let termsDictionaries = try paths.compactMap({ path -> [String: String] in
+        let termsDictionaries = try paths.compactMap({ path -> [String: String]? in
+            guard FileManager.default.fileExists(atPath: path) else { return nil }
             guard let termsDictionary = NSDictionary(contentsOfFile: path) as? [String: String] else {
                 throw LocalizationBuilderError.invalidLocalizableStringsFile(path: path)
             }

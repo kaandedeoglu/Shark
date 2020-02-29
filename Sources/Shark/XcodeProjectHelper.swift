@@ -17,11 +17,11 @@ struct XcodeProjectHelper {
     private let targetName: String?
     private let locale: String
     
-    init(parseResult: Parser.Result) throws {
-        projectPath = Path(parseResult.projectPath)
+    init(options: Options) throws {
+        projectPath = Path(options.projectPath)
         xcodeproj = try XcodeProj(path: projectPath)
-        targetName = parseResult.targetName
-        locale = parseResult.locale
+        targetName = options.targetName
+        locale = options.locale
     }
     
     func resourcePaths() throws -> ResourcePaths {

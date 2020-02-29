@@ -10,12 +10,12 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/tuist/xcodeproj.git", .upToNextMajor(from: "7.5.0")),
-        .package(url:  "https://github.com/apple/swift-tools-support-core.git", .branch("master"))
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "0.0.1"),
     ],
     targets: [
         .target(
             name: "Shark",
-            dependencies: ["SwiftToolsSupport-auto", "XcodeProj"]),
+            dependencies: ["XcodeProj", "ArgumentParser"]),
         .testTarget(
             name: "SharkTests",
             dependencies: ["Shark"]),

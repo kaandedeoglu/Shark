@@ -29,12 +29,12 @@
         }
       },
       {
-        "package": "swift-tools-support-core",
-        "repositoryURL": "https://github.com/apple/swift-tools-support-core.git",
+        "package": "swift-argument-parser",
+        "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
-          "branch": "master",
-          "revision": "f9e7ad4d3dd25d698c53a723ca67cd145418e821",
-          "version": null
+          "branch": null,
+          "revision": "f6ac7b8118ff5d1bc0faee7f37bf6f8fd8f95602",
+          "version": "0.0.1"
         }
       },
       {

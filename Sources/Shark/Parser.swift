@@ -26,7 +26,7 @@ struct Options: ParsableArguments {
 struct Shark: ParsableCommand {
     static var configuration: CommandConfiguration = .init(abstract:#"""
 Paste the following line in a Xcode run phase script that runs after the "Compile Sources" run phase:
-$PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME
+shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME
 """#)
 
     @OptionGroup()

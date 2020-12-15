@@ -1,8 +1,8 @@
 import Foundation
 
 private enum ImageValue: Equatable, Comparable {
-    case namespace(name: String)
     case image(caseName: String, value: String)
+    case namespace(name: String)
     
     func declaration(withBody body: String = "", indentLevel: Int) throws -> String {
         switch self {
@@ -27,6 +27,24 @@ private enum ImageValue: Equatable, Comparable {
             return true
         case (.image, .namespace):
             return false
+        }
+    }
+}
+
+extension ImageValue: SanitizableValue {
+    var name: String {
+        switch self {
+        case .namespace(let name), .image(let name, _):
+            return name
+        }
+    }
+
+    func underscoringName() -> ImageValue {
+        switch self {
+        case .image(let caseName, let value):
+            return .image(caseName: caseName.underscored, value: value)
+        case .namespace(let name):
+            return .namespace(name: name.underscored)
         }
     }
 }
@@ -64,46 +82,6 @@ enum ImageEnumBuilder {
             return try node.value.declaration(withBody: childrenString.joined(separator: "\n"), indentLevel: indentLevel)
         case .image:
             return try node.value.declaration(indentLevel: indentLevel)
-        }
-    }
-}
-
-private extension Node where Element == ImageValue {
-    func sanitize() {
-        //If two children have the same name, or if a child has the same name with its parent, underscore
-        var modified = false
-        repeat {
-            modified = false
-            var countedSet = CountedSet<String>()
-            for child in children {
-                for _ in 0..<countedSet.count(for: child.name) {
-                    child.underscoreName()
-                    modified = true
-                }
-                countedSet.add(child.name)
-                if name == child.name {
-                    child.underscoreName()
-                    modified = true
-                }
-            }
-        } while modified
-        
-        children.forEach { $0.sanitize() }
-    }
-    
-    private var name: String {
-        switch value {
-        case .namespace(let name), .image(let name, _):
-            return name
-        }
-    }
-    
-    private func underscoreName() {
-        switch value {
-        case .image(let caseName, let value):
-            self.value = .image(caseName: caseName.underscored, value: value)
-        case .namespace(let name):
-            self.value = .namespace(name: name.underscored)
         }
     }
 }

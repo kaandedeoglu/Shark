@@ -1,0 +1,52 @@
+import Foundation
+
+private struct FontValue: Equatable, Comparable {
+    let methodName: String
+    let fontName: String
+
+    func declaration(indentLevel: Int) -> String {
+        #"\#(String(indentLevel: indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
+    }
+
+    static func <(lhs: FontValue, rhs: FontValue) -> Bool {
+        lhs.methodName < rhs.methodName
+    }
+}
+
+enum FontEnumBuilder {
+    static func fontsEnumString(forFilesAtPaths paths: [String], topLevelName: String) throws -> String? {
+        let fontValues = paths.compactMap { path -> FontValue? in
+            let url = URL(fileURLWithPath: path)
+
+            guard
+                let data = try? Data(contentsOf: url),
+                let provider = CGDataProvider(data: data as CFData),
+                let font = CGFont(provider),
+                let fullName = font.fullName as String?,
+                let postScriptName = font.postScriptName as String? else { return nil }
+
+            var components = fullName.split(separator: " ")
+            let first = components.removeFirst().lowercased()
+            let rest = components.map(\.capitalized)
+            let methodName = ([first] + rest).joined()
+
+            return FontValue(methodName: methodName,
+                             fontName: postScriptName)
+        }
+
+        guard fontValues.isEmpty == false else { return nil }
+
+        var result = """
+        public enum \(topLevelName) {
+
+        """
+
+        for font in fontValues.sorted() {
+            result += font.declaration(indentLevel: 1)
+            result += "\n"
+        }
+
+        result += "}"
+        return result
+    }
+}

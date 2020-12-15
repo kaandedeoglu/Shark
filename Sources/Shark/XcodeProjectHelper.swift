@@ -52,7 +52,7 @@ struct XcodeProjectHelper {
         }
 
         return try targetResourcesFiles
-            .compactMap(\.file)
+            .compactMap { $0.file }
             .flatMap(paths(for:))
             .reduce(into: ResourcePaths(), { result, path in
                 switch path.pathExtension {

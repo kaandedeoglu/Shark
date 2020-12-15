@@ -16,10 +16,8 @@ private struct FontValue: Equatable, Comparable {
 enum FontEnumBuilder {
     static func fontsEnumString(forFilesAtPaths paths: [String], topLevelName: String) throws -> String? {
         let fontValues = paths.compactMap { path -> FontValue? in
-            let url = URL(fileURLWithPath: path)
-
             guard
-                let data = try? Data(contentsOf: url),
+                let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
                 let provider = CGDataProvider(data: data as CFData),
                 let font = CGFont(provider),
                 let fullName = font.fullName as String?,
@@ -27,7 +25,7 @@ enum FontEnumBuilder {
 
             var components = fullName.split(separator: " ")
             let first = components.removeFirst().lowercased()
-            let rest = components.map(\.capitalized)
+            let rest = components.map { $0.capitalized }
             let methodName = ([first] + rest).joined()
 
             return FontValue(methodName: methodName,

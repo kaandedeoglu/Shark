@@ -5,7 +5,7 @@ private struct FontValue: Equatable, Comparable {
     let fontName: String
 
     func declaration(indentLevel: Int) -> String {
-        #"\#(String(indentLevel: indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
+        #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
     }
 
     static func <(lhs: FontValue, rhs: FontValue) -> Bool {

@@ -4,7 +4,7 @@ private struct ColorValue: Equatable, Comparable {
     let name: String
     
     func declaration(indentLevel: Int) -> String {
-        return #"\#(String(indentLevel: indentLevel))public static var \#(name.casenameSanitized): UIColor { return UIColor(named: "\#(name)", in: \#(SharkEnumBuilder.topLevelEnumName).bundle, compatibleWith: nil)! }"#
+        return #"\#(String.indent(indentLevel))public static var \#(name.casenameSanitized): UIColor { return UIColor(named: "\#(name)", in: \#(SharkEnumBuilder.topLevelEnumName).bundle, compatibleWith: nil)! }"#
     }
     
     static func <(lhs: ColorValue, rhs: ColorValue) -> Bool {

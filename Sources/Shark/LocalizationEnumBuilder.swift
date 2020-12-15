@@ -58,9 +58,9 @@ private enum LocalizationValue: Comparable {
         switch self {
         case .namespace(let name):
             result += #"""
-            \#(String(indentLevel: indentLevel))public enum \#(name) {
+            \#(String.indent(indentLevel))public enum \#(name) {
             \#(body)
-            \#(String(indentLevel: indentLevel))}
+            \#(String.indent(indentLevel))}
             """#
         case .localization(let name, let key, let value):
             let translationComment = value.mapLines { "/// \($0)" }
@@ -73,7 +73,7 @@ private enum LocalizationValue: Comparable {
             if interpolatedTypes.isEmpty == false {
                 result += interpolatedTypes.functionDeclaration(withName: name, key: key, indentLevel: indentLevel)
             } else {
-                result += #"\#(String(indentLevel: indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: "") }"#
+                result += #"\#(String.indent(indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: "") }"#
             }
         }
         return result
@@ -172,9 +172,9 @@ extension Array where Element == LocalizationValue.InterpolationType {
         let formatValuesString = (1...count).map { "\(variableName)\($0)"}.joined(separator: ", ")
 
         return #"""
-        \#(String(indentLevel: indentLevel))public static func \#(name)(\#(argumentsString)) -> String {
-        \#(String(indentLevel:indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: ""), \#(formatValuesString))
-        \#(String(indentLevel: indentLevel))}
+        \#(String.indent(indentLevel))public static func \#(name)(\#(argumentsString)) -> String {
+        \#(String.indent(indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: ""), \#(formatValuesString))
+        \#(String.indent(indentLevel))}
         """#
     }
 }

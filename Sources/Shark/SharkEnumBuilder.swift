@@ -1,7 +1,5 @@
 enum SharkEnumBuilder {
-    static var topLevelEnumName = "Shark"
     static func sharkEnumString(forOptions options: Options) throws -> String {
-        SharkEnumBuilder.topLevelEnumName = options.topLevelEnumName
         let resourcePaths = try XcodeProjectHelper(options: options).resourcePaths()
         
         let imagesString = try ImageEnumBuilder.imageEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I")
@@ -9,12 +7,17 @@ enum SharkEnumBuilder {
         let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L")
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F")
 
-        let declarations = [imagesString, colorsString, localizationsString, fontsString].compactMap({ $0?.indented(withLevel: 1) }).joined(separator: "\n\n")
+        let declarations = [imagesString, colorsString, localizationsString, fontsString]
+            .compactMap({ $0?.indented(withLevel: 1) })
+            .joined(separator: "\n\n")
         
         return """
-        public enum \(topLevelEnumName) {
-            private class Custom {}
-            static var bundle: Bundle { return Bundle(for: Custom.self) }
+        public enum \(options.topLevelEnumName) {
+            private static let bundle: Bundle = {
+                class Custom {}
+                return Bundle(for: Custom.self)
+            }()
+
         \(declarations)
         }
         """

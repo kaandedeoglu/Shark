@@ -63,7 +63,7 @@ extension String {
     }
     
     func indented(withLevel level: Int) -> String {
-        return mapLines { String.indent(level) + $0 }
+        mapLines { $0.allSatisfy(\.isWhitespace) ? $0 : String.indent(level) + $0 }
     }
     
     func mapLines(_ transform: (String) -> String) -> String {

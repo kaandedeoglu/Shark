@@ -7,7 +7,7 @@ enum SharkEnumBuilder {
         let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L")
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F")
 
-        let declarations = [imagesString, colorsString, localizationsString, fontsString]
+        let declarations = [imagesString, colorsString, fontsString, localizationsString]
             .compactMap({ $0?.indented(withLevel: 1) })
             .joined(separator: "\n\n")
         

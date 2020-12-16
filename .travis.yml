@@ -1,6 +1,0 @@
-os: osx
-osx_image: xcode11.3
-language: swift
-sudo: required
-script:
-- swift test

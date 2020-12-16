@@ -8,8 +8,9 @@ enum PBXFilePathError: String, Error {
 
 struct XcodeProjectHelper {
     struct ResourcePaths {
-        let localizationPaths: [String]
-        let assetsPaths: [String]
+        fileprivate(set) var localizationPaths: [String] = []
+        fileprivate(set) var assetsPaths: [String] = []
+        fileprivate(set) var fontPaths: [String] = []
     }
     
     private let projectPath: Path
@@ -49,23 +50,22 @@ struct XcodeProjectHelper {
             print("Cannot locate the resources build phase in the target")
             exit(EXIT_FAILURE)
         }
-        
-        var localizationPaths: [String] = []
-        var assetPaths: [String] = []
-        
-        let allPaths = try targetResourcesFiles.compactMap { $0.file }.flatMap { try paths(for: $0) }
-        for path in allPaths {
-            switch path.pathExtension {
-            case "xcassets":
-                assetPaths.append(path)
-            case "strings" where path.pathComponents.contains("\(locale).lproj"):
-                localizationPaths.append(path)
-            default:
-                break
-            }
-        }
 
-        return ResourcePaths(localizationPaths: localizationPaths, assetsPaths: assetPaths)
+        return try targetResourcesFiles
+            .compactMap { $0.file }
+            .flatMap(paths(for:))
+            .reduce(into: ResourcePaths(), { result, path in
+                switch path.pathExtension {
+                case "xcassets":
+                    result.assetsPaths.append(path)
+                case "strings" where path.pathComponents.contains("\(locale).lproj"):
+                    result.localizationPaths.append(path)
+                case "ttf", "otf", "ttc":
+                    result.fontPaths.append(path)
+                default:
+                    break
+                }
+            })
     }
  
     private func paths(for fileElement: PBXFileElement) throws -> [String] {

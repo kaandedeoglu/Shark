@@ -105,10 +105,10 @@ extension LocalizationValue: SanitizableValue {
     }
 }
 
-enum LocalizationBuilderError: Error {
+enum LocalizationBuilderError: LocalizedError {
     case invalidLocalizableStringsFile(path: String)
-    
-    var localizedDescription: String {
+
+    var errorDescription: String? {
         switch self {
         case .invalidLocalizableStringsFile(let path):
             return "Invalid .strings file at \(path)"

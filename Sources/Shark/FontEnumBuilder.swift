@@ -15,11 +15,10 @@ private struct FontValue: Equatable, Comparable {
 
 enum FontEnumBuilder {
     static func fontsEnumString(forFilesAtPaths paths: [String], topLevelName: String) throws -> String? {
-        let fontValues = paths.compactMap { path -> FontValue? in
+        let fontValues: [FontValue] = paths.compactMap { path in
             guard
                 let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
-                let provider = CGDataProvider(data: data as CFData),
-                let font = CGFont(provider),
+                let font = CGDataProvider(data: data as CFData).flatMap(CGFont.init),
                 let fullName = font.fullName as String?,
                 let postScriptName = font.postScriptName as String? else { return nil }
 

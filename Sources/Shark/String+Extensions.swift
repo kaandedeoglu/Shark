@@ -9,9 +9,9 @@ extension String {
                                             "#sourceLocation", "#warning", "associativity", "convenience", "dynamic", "didSet", "final", "get", "infix", "indirect", "lazy", "left",
                                             "mutating", "none", "nonmutating", "optional", "override", "postfix", "precedence", "prefix", "Protocol", "required", "right",
                                             "set", "Type", "unowned", "weak", "willSet", "some", "__COLUMN__", "__FILE__", "__FUNCTION__", "__LINE__"]
-    
-    init(indentLevel: Int) {
-        self.init(repeating: " ", count: indentLevel * 4)
+
+    static func indent(_ level: Int) -> String {
+        String(repeating: " ", count: level * 4)
     }
     
     var expandingTildeInPath: String {
@@ -63,7 +63,7 @@ extension String {
     }
     
     func indented(withLevel level: Int) -> String {
-        return mapLines { String(indentLevel: level) + $0 }
+        mapLines { $0.allSatisfy(\.isWhitespace) ? $0 : String.indent(level) + $0 }
     }
     
     func mapLines(_ transform: (String) -> String) -> String {

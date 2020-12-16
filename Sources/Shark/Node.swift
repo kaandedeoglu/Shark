@@ -1,5 +1,3 @@
-import Foundation
-
 // A simple tree node
 final class Node<Element> {
     var value: Element
@@ -42,5 +40,37 @@ extension Node: Comparable where Element: Comparable {
     
     static func <(lhs: Node, rhs: Node) -> Bool {
         return lhs.value < rhs.value
+    }
+}
+
+extension Node where Element: SanitizableValue {
+    func sanitize() {
+        //If two children have the same name, or if a children has the same name with a parent, underscore
+        var modified = false
+        repeat {
+            modified = false
+            var countedSet = CountedSet<String>()
+            for child in children {
+                for _ in 0..<countedSet.count(for: child.name) {
+                    child.underscoreName()
+                    modified = true
+                }
+                countedSet.add(child.name)
+                if name == child.name {
+                    child.underscoreName()
+                    modified = true
+                }
+            }
+        } while modified
+
+        children.forEach { $0.sanitize() }
+    }
+
+    private var name: String {
+        return value.name
+    }
+
+    private func underscoreName() {
+        value = value.underscoringName()
     }
 }

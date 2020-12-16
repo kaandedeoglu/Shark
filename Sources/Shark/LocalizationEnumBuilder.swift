@@ -58,9 +58,9 @@ private enum LocalizationValue: Comparable {
         switch self {
         case .namespace(let name):
             result += #"""
-            \#(String(indentLevel: indentLevel))public enum \#(name) {
+            \#(String.indent(indentLevel))public enum \#(name) {
             \#(body)
-            \#(String(indentLevel: indentLevel))}
+            \#(String.indent(indentLevel))}
             """#
         case .localization(let name, let key, let value):
             let translationComment = value.mapLines { "/// \($0)" }
@@ -73,7 +73,7 @@ private enum LocalizationValue: Comparable {
             if interpolatedTypes.isEmpty == false {
                 result += interpolatedTypes.functionDeclaration(withName: name, key: key, indentLevel: indentLevel)
             } else {
-                result += #"\#(String(indentLevel: indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: "") }"#
+                result += #"\#(String.indent(indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: bundle, comment: "") }"#
             }
         }
         return result
@@ -87,10 +87,28 @@ private enum LocalizationValue: Comparable {
     }
 }
 
-enum LocalizationBuilderError: Error {
+extension LocalizationValue: SanitizableValue {
+    var name: String {
+        switch self {
+        case .namespace(let name), .localization(let name, _, _):
+            return name
+        }
+    }
+
+    func underscoringName() -> Self {
+        switch self {
+        case .localization(let name, let key, let value):
+            return .localization(name: name.underscored, key: key, value: value)
+        case .namespace(let name):
+            return .namespace(name: name.underscored)
+        }
+    }
+}
+
+enum LocalizationBuilderError: LocalizedError {
     case invalidLocalizableStringsFile(path: String)
-    
-    var localizedDescription: String {
+
+    var errorDescription: String? {
         switch self {
         case .invalidLocalizableStringsFile(let path):
             return "Invalid .strings file at \(path)"
@@ -154,49 +172,9 @@ extension Array where Element == LocalizationValue.InterpolationType {
         let formatValuesString = (1...count).map { "\(variableName)\($0)"}.joined(separator: ", ")
 
         return #"""
-        \#(String(indentLevel: indentLevel))public static func \#(name)(\#(argumentsString)) -> String {
-        \#(String(indentLevel:indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: \#(SharkEnumBuilder.topLevelEnumName).bundle, comment: ""), \#(formatValuesString))
-        \#(String(indentLevel: indentLevel))}
+        \#(String.indent(indentLevel))public static func \#(name)(\#(argumentsString)) -> String {
+        \#(String.indent(indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: bundle, comment: ""), \#(formatValuesString))
+        \#(String.indent(indentLevel))}
         """#
-    }
-}
-
-private extension Node where Element == LocalizationValue {
-    func sanitize() {
-        //If two children have the same name, or if a children has the same name with a parent, underscore
-        var modified = false
-        repeat {
-            modified = false
-            var countedSet = CountedSet<String>()
-            for child in children {
-                for _ in 0..<countedSet.count(for: child.name) {
-                    child.underscoreName()
-                    modified = true
-                }
-                countedSet.add(child.name)
-                if name == child.name {
-                    child.underscoreName()
-                    modified = true
-                }
-            }
-        } while modified
-        
-        children.forEach { $0.sanitize() }
-    }
-    
-    private var name: String {
-        switch value {
-        case .localization(let name, _, _), .namespace(let name):
-            return name
-        }
-    }
-    
-    private func underscoreName() {
-        switch value {
-        case .localization(let name, let key, let value):
-            self.value = .localization(name: name.underscored, key: key, value: value)
-        case .namespace(let name):
-            self.value = .namespace(name: name.underscored)
-        }
     }
 }

@@ -1,14 +1,14 @@
 import Foundation
 
 extension String {
-    private static let forbiddenKeywords = ["associatedtype", "class", "deinit", "enum", "extension", "fileprivate", "func", "import", "init", "inout", "internal", "let",
-                                            "open", "operator", "private", "protocol", "public", "static", "struct", "subscript", "typealias", "var", "break", "case", "continue",
-                                            "default", "defer", "do", "else", "fallthrough", "for", "guard", "if", "in", "repeat", "return", "switch", "where", "while", "Any",
-                                            "catch", "false", "is", "nil", "rethrows", "super", "self", "Self", "throw", "throws", "true", "try", "#available", "#colorLiteral",
-                                            "#column", "#else", "#elseif", "#endif", "#error", "#file", "#fileLiteral", "#function", "#if", "#imageLiteral",  "#line", "#selector",
-                                            "#sourceLocation", "#warning", "associativity", "convenience", "dynamic", "didSet", "final", "get", "infix", "indirect", "lazy", "left",
-                                            "mutating", "none", "nonmutating", "optional", "override", "postfix", "precedence", "prefix", "Protocol", "required", "right",
-                                            "set", "Type", "unowned", "weak", "willSet", "some", "__COLUMN__", "__FILE__", "__FUNCTION__", "__LINE__"]
+    private static let forbiddenKeywords: Set<String> = ["associatedtype", "class", "deinit", "enum", "extension", "fileprivate", "func", "import", "init", "inout", "internal", "let",
+                                                         "open", "operator", "private", "protocol", "public", "static", "struct", "subscript", "typealias", "var", "break", "case", "continue",
+                                                         "default", "defer", "do", "else", "fallthrough", "for", "guard", "if", "in", "repeat", "return", "switch", "where", "while", "Any",
+                                                         "catch", "false", "is", "nil", "rethrows", "super", "self", "Self", "throw", "throws", "true", "try", "#available", "#colorLiteral",
+                                                         "#column", "#else", "#elseif", "#endif", "#error", "#file", "#fileLiteral", "#function", "#if", "#imageLiteral",  "#line", "#selector",
+                                                         "#sourceLocation", "#warning", "associativity", "convenience", "dynamic", "didSet", "final", "get", "infix", "indirect", "lazy", "left",
+                                                         "mutating", "none", "nonmutating", "optional", "override", "postfix", "precedence", "prefix", "Protocol", "required", "right",
+                                                         "set", "Type", "unowned", "weak", "willSet", "some", "__COLUMN__", "__FILE__", "__FUNCTION__", "__LINE__"]
 
     static func indent(_ level: Int) -> String {
         String(repeating: " ", count: level * 4)

@@ -1,6 +1,6 @@
 # Shark
 
-[![Build Status](https://travis-ci.org/kaandedeoglu/Shark.svg?branch=master)](https://travis-ci.org/kaandedeoglu/Shark)
+![Build](https://github.com/kaandedeoglu/Shark/workflows/Swift/badge.svg)
 
 Shark is a Swift command line tool that generates type safe enums for your image assets, color assets, localizations and fonts.
 

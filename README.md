@@ -25,9 +25,9 @@ public enum Shark {
 
     public enum I {
         public enum Button {
-            public static var profile: UIImage { return UIImage(named:"report_user", in: bundle, compatibleWith: nil)! }
-            public static var cancel: UIImage { return UIImage(named:"battery_swap_maintained", in: bundle, compatibleWith: nil)! }
-            public static var user_avatar: UIImage { return UIImage(named:"damage_check", in: bundle, compatibleWith: nil)! }
+            public static var profile: UIImage { return UIImage(named:"profile", in: bundle, compatibleWith: nil)! }
+            public static var cancel: UIImage { return UIImage(named:"cancel", in: bundle, compatibleWith: nil)! }
+            public static var user_avatar: UIImage { return UIImage(named:"user_avatar", in: bundle, compatibleWith: nil)! }
         }
     }
 

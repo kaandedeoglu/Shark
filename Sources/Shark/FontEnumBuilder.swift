@@ -22,12 +22,15 @@ enum FontEnumBuilder {
                 let fullName = font.fullName as String?,
                 let postScriptName = font.postScriptName as String? else { return nil }
 
-            var components = fullName.split(separator: " ")
+            let sanitized = fullName
+                .replacingOccurrences(of: "-", with: " ")
+                .replacingOccurrences(of: "_", with: " ")
+            var components = sanitized.split(separator: " ")
             let first = components.removeFirst().lowercased()
             let rest = components.map { $0.capitalized }
             let methodName = ([first] + rest).joined()
 
-            return FontValue(methodName: methodName,
+            return FontValue(methodName: methodName.casenameSanitized,
                              fontName: postScriptName)
         }
 

@@ -128,7 +128,7 @@ You can then verify the installation by doing
 
   ```bash
   if [ -x "$(command -v shark)" ]; then
-  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/
   fi
   ```
 

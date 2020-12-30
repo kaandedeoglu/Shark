@@ -7,6 +7,7 @@ enum FileBuilder {
         import UIKit
         
         // swiftlint:disable all
+        // swiftformat:disable all
         \(enumString)
         """
     }

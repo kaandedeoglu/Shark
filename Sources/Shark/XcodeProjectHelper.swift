@@ -11,6 +11,7 @@ struct XcodeProjectHelper {
         fileprivate(set) var localizationPaths: [String] = []
         fileprivate(set) var assetsPaths: [String] = []
         fileprivate(set) var fontPaths: [String] = []
+        fileprivate(set) var dataAssetPaths: [String] = []
     }
     
     private let projectPath: Path

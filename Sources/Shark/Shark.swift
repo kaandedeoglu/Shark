@@ -35,6 +35,9 @@ struct Options: ParsableArguments {
     @Option(name: .long,
             help: "Localization code to use when selecting the Localizable.strings. i.e en, de, es.")
     private(set) var locale: String = "en"
+
+    @Flag(help: "Disable the top level enum and declare resource enums on the top level")
+    private(set) var topLevelScope: Bool = false
 }
 
 extension Options {

@@ -1,4 +1,11 @@
 enum SharkEnumBuilder {
+    private static let bundleString = """
+        private static let bundle: Bundle = {
+            class Custom {}
+            return Bundle(for: Custom.self)
+        }()
+        """
+
     static func sharkEnumString(forOptions options: Options) throws -> String {
         let resourcePaths = try XcodeProjectHelper(options: options).resourcePaths()
         
@@ -7,19 +14,27 @@ enum SharkEnumBuilder {
         let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L")
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F")
 
-        let declarations = [imagesString, colorsString, fontsString, localizationsString]
-            .compactMap({ $0?.indented(withLevel: 1) })
+        let declarationIndendationLevel = options.topLevelScope ? 0 : 1
+        let resourcesEnumsString = [imagesString, colorsString, fontsString, localizationsString]
+            .compactMap { $0 }
             .joined(separator: "\n\n")
-        
-        return """
-        public enum \(options.topLevelEnumName) {
-            private static let bundle: Bundle = {
-                class Custom {}
-                return Bundle(for: Custom.self)
-            }()
 
+        // bundleString + the I, C, F, L enums if present
+        let declarations = """
+        \(bundleString)
+
+        \(resourcesEnumsString)
+        """
+            .indented(withLevel: declarationIndendationLevel)
+
+        if options.topLevelScope {
+            return declarations
+        } else {
+            return """
+        public enum \(options.topLevelEnumName) {
         \(declarations)
         }
         """
+        }
     }
 }

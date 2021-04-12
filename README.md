@@ -148,7 +148,7 @@ You can then verify the installation by doing
   shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/Utility/MyAssets.swift
   ```
 
-## Options
+## Options & Flags
 
 Shark also accepts the following command line options to configure behavior
 
@@ -176,6 +176,10 @@ In case your Xcode project has multiple application targets, you should specify 
    ```bash
 shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --target MyAppTarget
 ```
+
+### --top-level-scope
+
+Declares the `I, C, F, L` enums in the top level scope instead of nesting it in a top level `Shark` enum.
 
 ### --help
 

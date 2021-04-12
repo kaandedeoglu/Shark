@@ -39,7 +39,7 @@ extension ImageValue: SanitizableValue {
         }
     }
 
-    func underscoringName() -> ImageValue {
+    func underscoringName() -> Self {
         switch self {
         case .image(let caseName, let value):
             return .image(caseName: caseName.underscored, value: value)

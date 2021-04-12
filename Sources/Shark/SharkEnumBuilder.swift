@@ -13,14 +13,16 @@ enum SharkEnumBuilder {
         let colorsString = try ColorEnumBuilder.colorEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "C")
         let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L")
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F")
+        let dataAssetsString = try DataAssetEnumBuilder.dataAssetEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "D")
 
         let declarationIndendationLevel = options.topLevelScope ? 0 : 1
-        let resourcesEnumsString = [imagesString, colorsString, fontsString, localizationsString]
+        let resourcesEnumsString = [imagesString, colorsString, fontsString, localizationsString, dataAssetsString]
             .compactMap({ $0?.indented(withLevel: declarationIndendationLevel) })
             .joined(separator: "\n\n")
 
         var result = """
         \(bundleString)
+
 
         """
 

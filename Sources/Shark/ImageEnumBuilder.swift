@@ -72,7 +72,10 @@ enum ImageEnumBuilder {
         
         rootNode.sort()
         rootNode.sanitize()
-        return try enumString(for: rootNode)
+
+        var result = try enumString(for: rootNode)
+        result.removeLast()
+        return result
     }
     
     private static func enumString(for node: Node<ImageValue>, indentLevel: Int = 0) throws -> String {

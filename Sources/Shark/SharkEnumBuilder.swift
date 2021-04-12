@@ -1,6 +1,6 @@
 enum SharkEnumBuilder {
     private static let bundleString = """
-        private static let bundle: Bundle = {
+        private let bundle: Bundle = {
             class Custom {}
             return Bundle(for: Custom.self)
         }()
@@ -16,25 +16,21 @@ enum SharkEnumBuilder {
 
         let declarationIndendationLevel = options.topLevelScope ? 0 : 1
         let resourcesEnumsString = [imagesString, colorsString, fontsString, localizationsString]
-            .compactMap { $0 }
+            .compactMap({ $0?.indented(withLevel: declarationIndendationLevel) })
             .joined(separator: "\n\n")
 
-        // bundleString + the I, C, F, L enums if present
-        let declarations = """
+        var result = """
         \(bundleString)
 
-        \(resourcesEnumsString)
         """
-            .indented(withLevel: declarationIndendationLevel)
 
         if options.topLevelScope {
-            return declarations
+            result.append(resourcesEnumsString)
         } else {
-            return """
-        public enum \(options.topLevelEnumName) {
-        \(declarations)
+            result.append("public enum \(options.topLevelEnumName) {\n")
+            result.append(resourcesEnumsString)
+            result.append("\n}")
         }
-        """
-        }
+        return result
     }
 }

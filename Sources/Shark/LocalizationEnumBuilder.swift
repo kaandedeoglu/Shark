@@ -81,8 +81,8 @@ private enum LocalizationValue: Comparable {
     
     private static func interpolationTypes(forValue value: String) throws -> [InterpolationType] {
         let regex = try NSRegularExpression(pattern: "%([0-9]*.[0-9]*(d|i|u|f|ld)|(\\d\\$)?@|d|i|u|f|ld)", options: [])
-        
-        let results = regex.matches(in: value, options: [], range: NSRange(location: 0, length: value.count))
+
+        let results = regex.matches(in: value, options: [], range: NSRange(location: 0, length: value.utf16.count))
         return results.map { (value as NSString).substring(with: $0.range) }.map(InterpolationType.init)
     }
 }

@@ -14,9 +14,9 @@ enum SharkEnumBuilder {
         let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L")
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F")
         let dataAssetsString = try DataAssetEnumBuilder.dataAssetEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "D")
-
+        let storyboardString = try StoryboardBuilder.storyboardEnumString(forFilesAtPaths: resourcePaths.storyboardPaths, topLevelName: "S")
         let declarationIndendationLevel = options.topLevelScope ? 0 : 1
-        let resourcesEnumsString = [imagesString, colorsString, fontsString, localizationsString, dataAssetsString]
+        let resourcesEnumsString = [imagesString, colorsString, fontsString, localizationsString, storyboardString, dataAssetsString]
             .compactMap({ $0?.indented(withLevel: declarationIndendationLevel) })
             .joined(separator: "\n\n")
 

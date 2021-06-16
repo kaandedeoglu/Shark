@@ -11,6 +11,7 @@ struct XcodeProjectHelper {
         fileprivate(set) var localizationPaths: [String] = []
         fileprivate(set) var assetsPaths: [String] = []
         fileprivate(set) var fontPaths: [String] = []
+        fileprivate(set) var storyboardPaths: [String] = []
     }
     
     private let projectPath: Path
@@ -62,6 +63,8 @@ struct XcodeProjectHelper {
                     result.localizationPaths.append(path)
                 case "ttf", "otf", "ttc":
                     result.fontPaths.append(path)
+                case "storyboard":
+                    result.storyboardPaths.append(path)
                 default:
                     break
                 }

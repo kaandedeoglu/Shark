@@ -4,14 +4,14 @@ struct CountedSet<Element: Hashable>: Sequence {
     
     @discardableResult
     mutating func add(_ object: Element) -> Int {
-        let currentCount = backingDictionary[object] ?? 0
+        let currentCount = backingDictionary[object, default: 0]
         let newCount = currentCount + 1
         backingDictionary[object] = newCount
         return newCount
     }
     
     func count(for object: Element) -> Int {
-        return backingDictionary[object] ?? 0
+        return backingDictionary[object, default: 0]
     }
     
     func makeIterator() -> Dictionary<Element, Int>.Values.Iterator {

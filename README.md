@@ -2,7 +2,7 @@
 
 ![Build](https://github.com/kaandedeoglu/Shark/workflows/Swift/badge.svg)
 
-Shark is a Swift command line tool that generates type safe enums for your image assets, color assets, localizations and fonts.
+Shark is a Swift command line tool that generates type safe enums for your images, colors, storyboards, fonts and localizations.
 
 Because Shark reads your `.xcodeproj` to find these assets, the setup is extremely simple.
 

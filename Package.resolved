@@ -33,17 +33,17 @@
         "repositoryURL": "https://github.com/apple/swift-argument-parser",
         "state": {
           "branch": null,
-          "revision": "831ed5e860a70e745bc1337830af4786b2576881",
-          "version": "0.4.1"
+          "revision": "986d191f94cec88f6350056da59c2e59e83d1229",
+          "version": "0.4.3"
         }
       },
       {
-        "package": "XcodeProj",
+        "package": "xcodeproj",
         "repositoryURL": "https://github.com/tuist/xcodeproj.git",
         "state": {
           "branch": null,
-          "revision": "0c889906136b7cba277b9327e9a8217669bb4eb3",
-          "version": "7.21.0"
+          "revision": "45e349e1c4e4da1a85a7b9392b737acde2e2f2a8",
+          "version": "7.23.0"
         }
       }
     ]

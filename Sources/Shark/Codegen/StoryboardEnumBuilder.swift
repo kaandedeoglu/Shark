@@ -4,7 +4,7 @@ private struct StoryboardValue: Equatable, Comparable {
     let name: String
 
     func declaration(indentLevel: Int) -> String {
-        return #"\#(String.indent(indentLevel))public static var \#(name.casenameSanitized): UIStoryboard { return UIStoryboard(name: "\#(name)", bundle: bundle) }"#
+        return #"\#(String.indent(indentLevel))public static var \#(name.propertyNameSanitized): UIStoryboard { return UIStoryboard(name: "\#(name)", bundle: bundle) }"#
     }
 
     static func <(lhs: StoryboardValue, rhs: StoryboardValue) -> Bool {

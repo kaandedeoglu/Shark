@@ -21,7 +21,8 @@ enum NestedValue<Asset: AssetType>: Equatable, Comparable {
 
     static func <(lhs: NestedValue, rhs: NestedValue) -> Bool {
         switch(lhs, rhs) {
-        case (let .namespace(leftName), let .namespace(rightName)), (let .value(leftName, _), let .value(rightName, _)):
+        case (let .namespace(leftName), let .namespace(rightName)),
+             (let .value(leftName, _), let .value(rightName, _)):
             return leftName < rightName
         case (.namespace, .value):
             return true

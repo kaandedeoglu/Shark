@@ -61,7 +61,10 @@ enum NestedEnumBuilder<Kind: AssetType> {
             var pathComponents = path.pathComponents
             let name = pathComponents.removeLast().deletingPathExtension
 
-            var pathNodes: [Node<NestedValue<Kind>>] = pathComponents.map { Node(value: .namespace(name: $0.propertyNameSanitized)) }
+            var pathNodes = pathComponents
+                .map(\.propertyNameSanitized)
+                .map(NestedValue<Kind>.namespace(name:))
+                .map(Node.init)
             pathNodes.append(Node(value: .value(propertyName: name.propertyNameSanitized, name: name)))
 
             rootNode.add(childrenRelatively: pathNodes)

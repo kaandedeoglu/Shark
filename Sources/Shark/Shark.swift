@@ -33,6 +33,10 @@ struct Options: ParsableArguments {
     private(set) var targetName: String?
 
     @Option(name: .long,
+            help: "Separator character used to split localization keys")
+    private(set) var separator: Character = "."
+
+    @Option(name: .long,
             help: "Localization code to use when selecting the Localizable.strings. i.e en, de, es.")
     private(set) var locale: String = "en"
 

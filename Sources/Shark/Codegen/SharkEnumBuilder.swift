@@ -8,10 +8,14 @@ enum SharkEnumBuilder {
 
     static func sharkEnumString(forOptions options: Options) throws -> String {
         let resourcePaths = try XcodeProjectHelper(options: options).resourcePaths()
-        
+
         let imagesString = try NestedEnumBuilder<ImageAsset>.enumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I")
         let colorsString = try NestedEnumBuilder<ColorAsset>.enumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "C")
-        let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L")
+        let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(
+            forFilesAtPaths: resourcePaths.localizationPaths,
+            separator: options.separator,
+            topLevelName: "L"
+        )
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F")
         let dataAssetsString = try NestedEnumBuilder<DataAsset>.enumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "D")
         let storyboardString = try StoryboardBuilder.storyboardEnumString(forFilesAtPaths: resourcePaths.storyboardPaths, topLevelName: "S")

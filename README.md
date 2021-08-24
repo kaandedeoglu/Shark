@@ -177,6 +177,21 @@ In case your Xcode project has multiple application targets, you should specify 
 shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --target MyAppTarget
 ```
 
+### --separator
+
+Shark will split localization keys using the separator character value, and create nested enums until we hit the last element. For example, the lines `login.button.positive = "Log in!";` and `login.button.negative = "Go back...";` will create the following structure inside the top level localizations enum `L`:
+
+```swift
+public enum login {
+    public enum button {
+        public static var positive: String { return NSLocalizedString("login.button.positive") }
+        public static var negative: String { return NSLocalizedString("login.button.negative") }
+    }
+}
+```
+
+By default, the separator is `.`, only single character inputs are accepted for this option.
+
 ### --top-level-scope
 
 Declares the `I, C, F, L` enums in the top level scope instead of nesting it in a top level `Shark` enum.

@@ -9,11 +9,36 @@ struct Shark: ParsableCommand {
     private var options: Options
 
     func run() throws {
+
+        guard !options.frameworks.isEmpty else {
+            throw ValidationError("Need to supply at least one framework to generate code for.")
+        }
+
         let enumString = try SharkEnumBuilder.sharkEnumString(forOptions: options)
 
         try FileBuilder
-            .fileContents(with: enumString, filename: options.outputPath.lastPathComponent)
+            .fileContents(with: enumString, options: options)
             .write(to: URL(fileURLWithPath: options.outputPath), atomically: true, encoding: .utf8)
+    }
+}
+
+enum Framework: String {
+    case uikit
+    case appkit
+    case swiftui
+
+    var importStatement: String {
+        let name: String
+        switch self {
+            case .uikit: name = "UIKit"
+            case .appkit: name = "AppKit"
+            case .swiftui: name = "SwiftUI"
+        }
+        return """
+#if canImport(\(name))
+import \(name)
+#endif
+"""
     }
 }
 
@@ -42,9 +67,22 @@ struct Options: ParsableArguments {
 
     @Flag(help: "Disable the top level enum and declare resource enums on the top level")
     private(set) var topLevelScope: Bool = false
+
+    @Option(name: .customLong("framework"),
+            help: "Enable code generation support for the specified framework. Valid frameworks are 'uikit', 'appkit', and 'swiftui'. You can use this option multiple time.",
+            transform: Self.frameworkEnum(forFramework:))
+    private(set) var frameworks: [Framework] = []
 }
 
 extension Options {
+
+    private static func frameworkEnum(forFramework framework: String) throws -> Framework {
+        guard let frameEnum = Framework(rawValue: framework.lowercased()) else {
+            throw ValidationError("Invalid framework name '\(framework)'. Valid frameworks are 'uikit', 'appkit', and 'swiftui'")
+        }
+        return frameEnum
+    }
+
     private static func transform(forProjectPath path: String) throws -> String {
         var isDirectory: ObjCBool = false
         if path.pathExtension == "xcodeproj" {

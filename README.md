@@ -102,10 +102,16 @@ There are a few things to notice:
 
 ## Installation
 
-### Brew
+### Homebrew
 
 ```bash
 brew install kaandedeoglu/formulae/shark
+```
+
+### Mint
+
+```bash
+mint install kaandedeoglu/formulae/shark
 ```
 
 ### Manually

@@ -10,10 +10,6 @@ struct Shark: ParsableCommand {
 
     func run() throws {
 
-        guard !options.frameworks.isEmpty else {
-            throw ValidationError("Need to supply at least one framework to generate code for.")
-        }
-
         let enumString = try SharkEnumBuilder.sharkEnumString(forOptions: options)
 
         try FileBuilder
@@ -34,11 +30,7 @@ enum Framework: String {
             case .appkit: name = "AppKit"
             case .swiftui: name = "SwiftUI"
         }
-        return """
-#if canImport(\(name))
-import \(name)
-#endif
-"""
+        return "import \(name)"
     }
 }
 
@@ -69,9 +61,9 @@ struct Options: ParsableArguments {
     private(set) var topLevelScope: Bool = false
 
     @Option(name: .customLong("framework"),
-            help: "Enable code generation support for the specified framework. Valid frameworks are 'uikit', 'appkit', and 'swiftui'. You can use this option multiple time.",
+            help: "Enable code generation support for the specified framework. Valid frameworks are 'uikit', 'appkit', and 'swiftui'.",
             transform: Self.frameworkEnum(forFramework:))
-    private(set) var frameworks: [Framework] = []
+    private(set) var framework: Framework = .uikit
 }
 
 extension Options {

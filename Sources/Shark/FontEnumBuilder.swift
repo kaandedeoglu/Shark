@@ -4,8 +4,15 @@ private struct FontValue: Equatable, Comparable {
     let methodName: String
     let fontName: String
 
-    func declaration(indentLevel: Int) -> String {
-        #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
+    func declaration(indentLevel: Int, framework: Framework) -> String {
+        switch framework {
+            case .uikit:
+                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
+            case .appkit:
+                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> NSFont { return NSFont(name: "\#(fontName)", size: size)! }"#
+            case .swiftui:
+                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> Font { return Font("\#(fontName)", fixedSize: size) }"#
+        }
     }
 
     static func <(lhs: FontValue, rhs: FontValue) -> Bool {
@@ -14,7 +21,7 @@ private struct FontValue: Equatable, Comparable {
 }
 
 enum FontEnumBuilder {
-    static func fontsEnumString(forFilesAtPaths paths: [String], topLevelName: String) throws -> String? {
+    static func fontsEnumString(forFilesAtPaths paths: [String], topLevelName: String, options: Options) throws -> String? {
         let fontValues: [FontValue] = paths.compactMap { path in
             guard
                 let data = try? Data(contentsOf: URL(fileURLWithPath: path)),
@@ -42,7 +49,7 @@ enum FontEnumBuilder {
         """
 
         for font in fontValues.sorted() {
-            result += font.declaration(indentLevel: 1)
+            result += font.declaration(indentLevel: 1, framework: options.framework)
             result += "\n"
         }
 

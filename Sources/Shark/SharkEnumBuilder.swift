@@ -10,7 +10,7 @@ enum SharkEnumBuilder {
         let resourcePaths = try XcodeProjectHelper(options: options).resourcePaths()
         
         let imagesString = try ImageEnumBuilder.imageEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I")
-        let colorsString = try ColorEnumBuilder.colorEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "C")
+        let colorsString = try ColorEnumBuilder.colorEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "C", options: options)
         let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(
             forFilesAtPaths: resourcePaths.localizationPaths,
             separator: options.separator,

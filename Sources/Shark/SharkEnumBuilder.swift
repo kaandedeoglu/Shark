@@ -12,11 +12,7 @@ enum SharkEnumBuilder {
         
         let imagesString = try ImageEnumBuilder.imageEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I", options: options)
         let colorsString = try ColorEnumBuilder.colorEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "C", options: options)
-        let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(
-            forFilesAtPaths: resourcePaths.localizationPaths,
-            separator: options.separator,
-            topLevelName: "L"
-        )
+        let localizationsString = try LocalizationEnumBuilder.localizationsEnumString(forFilesAtPaths: resourcePaths.localizationPaths, topLevelName: "L", options: options)
         let fontsString = try FontEnumBuilder.fontsEnumString(forFilesAtPaths: resourcePaths.fontPaths, topLevelName: "F", options: options)
         let dataAssetsString = try DataAssetEnumBuilder.dataAssetEnumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "D")
         let storyboardString = try StoryboardBuilder.storyboardEnumString(forFilesAtPaths: resourcePaths.storyboardPaths, topLevelName: "S", options: options)

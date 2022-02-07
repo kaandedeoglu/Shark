@@ -53,7 +53,7 @@ private enum LocalizationValue: Comparable {
         }
     }
     
-    func declaration(withBody body: String = "", indentLevel: Int) throws -> String {
+    func declaration(withBody body: String = "", indentLevel: Int, framework: Framework) throws -> String {
         var result = ""
         switch self {
         case .namespace(let name):
@@ -73,7 +73,12 @@ private enum LocalizationValue: Comparable {
             if interpolatedTypes.isEmpty == false {
                 result += interpolatedTypes.functionDeclaration(withName: name, key: key, indentLevel: indentLevel)
             } else {
-                result += #"\#(String.indent(indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: bundle, comment: "") }"#
+                switch framework {
+                    case .swiftui:
+                        result += #"\#(String.indent(indentLevel))public static var \#(name): LocalizedStringKey { return .init(NSLocalizedString("\#(key)", bundle: bundle, comment: "")) }"#
+                    default:
+                        result += #"\#(String.indent(indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: bundle, comment: "") }"#
+                }
             }
         }
         return result
@@ -117,7 +122,7 @@ enum LocalizationBuilderError: LocalizedError {
 }
 
 enum LocalizationEnumBuilder {
-    static func localizationsEnumString(forFilesAtPaths paths: [String], separator: Character, topLevelName: String) throws -> String? {
+    static func localizationsEnumString(forFilesAtPaths paths: [String], topLevelName: String, options: Options) throws -> String? {
         let termsDictionaries = try paths.compactMap({ path -> [String: String]? in
             guard FileManager.default.fileExists(atPath: path) else { return nil }
             guard let termsDictionary = NSDictionary(contentsOfFile: path) as? [String: String] else {
@@ -132,7 +137,7 @@ enum LocalizationEnumBuilder {
         
         for termsDictionary in termsDictionaries {
             for (name, value) in termsDictionary {
-                var parts = name.split(separator: separator)
+                var parts = name.split(separator: options.separator)
                 
                 guard parts.isEmpty == false else { continue }
                 
@@ -146,17 +151,17 @@ enum LocalizationEnumBuilder {
         
         rootNode.sort()
         rootNode.sanitize()
-        let result = try localizationEnumString(for: rootNode)
+        let result = try localizationEnumString(for: rootNode, framework: options.framework)
         return result
     }
     
-    private static func localizationEnumString(for node: Node<LocalizationValue>, indentLevel: Int = 0) throws -> String {
+    private static func localizationEnumString(for node: Node<LocalizationValue>, indentLevel: Int = 0, framework: Framework) throws -> String {
         switch node.value {
         case .namespace:
-            let childrenString = try node.children.map { try localizationEnumString(for: $0, indentLevel: indentLevel + 1) }
-            return try node.value.declaration(withBody: childrenString.joined(separator: "\n\n"), indentLevel: indentLevel)
+                let childrenString = try node.children.map { try localizationEnumString(for: $0, indentLevel: indentLevel + 1, framework: framework) }
+                return try node.value.declaration(withBody: childrenString.joined(separator: "\n\n"), indentLevel: indentLevel, framework: framework)
         case .localization:
-            return try node.value.declaration(indentLevel: indentLevel)
+            return try node.value.declaration(indentLevel: indentLevel, framework: framework)
         }
     }
 }

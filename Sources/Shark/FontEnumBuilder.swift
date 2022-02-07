@@ -11,7 +11,7 @@ private struct FontValue: Equatable, Comparable {
             case .appkit:
                 return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> NSFont { return NSFont(name: "\#(fontName)", size: size)! }"#
             case .swiftui:
-                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> Font { return Font("\#(fontName)", fixedSize: size) }"#
+                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> Font { return Font.custom("\#(fontName)", size: size) }"#
         }
     }
 

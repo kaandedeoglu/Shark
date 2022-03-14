@@ -7,6 +7,12 @@ enum SharkEnumBuilder {
         }()
         """
 
+    private static let localizedStringKeyString = """
+        extension String {
+            public var localizedStringKey: LocalizedStringKey { .init(self) }
+        }
+        """
+
     static func sharkEnumString(forOptions options: Options) throws -> String {
         let resourcePaths = try XcodeProjectHelper(options: options).resourcePaths()
         
@@ -26,6 +32,13 @@ enum SharkEnumBuilder {
 
 
         """
+        if options.framework == .swiftui {
+            result += """
+        \(localizedStringKeyString)
+
+
+        """
+        }
 
         if options.topLevelScope {
             result.append(resourcesEnumsString)

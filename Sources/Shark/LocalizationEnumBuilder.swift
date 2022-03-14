@@ -73,12 +73,7 @@ private enum LocalizationValue: Comparable {
             if interpolatedTypes.isEmpty == false {
                 result += interpolatedTypes.functionDeclaration(withName: name, key: key, indentLevel: indentLevel)
             } else {
-                switch framework {
-                    case .swiftui:
-                        result += #"\#(String.indent(indentLevel))public static var \#(name): LocalizedStringKey { return .init(NSLocalizedString("\#(key)", bundle: bundle, comment: "")) }"#
-                    default:
-                        result += #"\#(String.indent(indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: bundle, comment: "") }"#
-                }
+                result += #"\#(String.indent(indentLevel))public static var \#(name): String { return NSLocalizedString("\#(key)", bundle: bundle, comment: "") }"#
             }
         }
         return result

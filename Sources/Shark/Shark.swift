@@ -11,10 +11,14 @@ struct Shark: ParsableCommand {
     func run() throws {
 
         let enumString = try SharkEnumBuilder.sharkEnumString(forOptions: options)
-
-        try FileBuilder
-            .fileContents(with: enumString, options: options)
-            .write(to: URL(fileURLWithPath: options.outputPath), atomically: true, encoding: .utf8)
+        var lastContent: String = ""
+        if let data = try? Data(contentsOf: URL(fileURLWithPath: options.outputPath)),
+           let content = String(data: data, encoding: .utf8) {
+            lastContent = content
+        }
+        let newContent = FileBuilder.fileContents(with: enumString, options: options)
+        guard newContent != lastContent else { return }
+        try newContent.write(to: URL(fileURLWithPath: options.outputPath), atomically: true, encoding: .utf8)
     }
 }
 

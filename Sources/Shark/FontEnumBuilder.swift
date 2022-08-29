@@ -1,3 +1,4 @@
+import CoreGraphics
 import Foundation
 
 private struct FontValue: Equatable, Comparable {
@@ -44,7 +45,7 @@ enum FontEnumBuilder {
         guard fontValues.isEmpty == false else { return nil }
 
         var result = """
-        public enum \(topLevelName) {
+        public enum \(topLevelName): CaseIterable {
 
         """
 

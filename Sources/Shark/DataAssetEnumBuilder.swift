@@ -10,7 +10,7 @@ private enum DataAssetValue: Equatable, Comparable {
             return #"\#(String.indent(indentLevel))public static var \#(name): Data { return NSDataAsset(name: "\#(value)", bundle: bundle)!.data }"#
         case .namespace(let name):
             return #"""
-            \#(String.indent(indentLevel))public enum \#(name) {
+            \#(String.indent(indentLevel))public enum \#(name): CaseIterable {
             \#(body)
             \#(String.indent(indentLevel))}
 

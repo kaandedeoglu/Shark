@@ -28,7 +28,7 @@ enum ColorEnumBuilder {
         let colorAssetPaths = try paths.flatMap { try FileManager.default.subpathsOfDirectory(atPath: $0).filter({ $0.pathExtension == Constants.colorSetExtension }) }
         guard colorAssetPaths.isEmpty == false else { return nil }
 
-        var result = "public enum \(topLevelName) {\n"
+        var result = "public enum \(topLevelName): CaseIterable {\n"
         for name in colorAssetPaths.map({ $0.lastPathComponent.deletingPathExtension }).sorted() {
             result += ColorValue(name: name).declaration(indentLevel: 1, framework: options.framework)
             result += "\n"

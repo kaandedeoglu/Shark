@@ -17,7 +17,7 @@ private enum ImageValue: Equatable, Comparable {
                 }
             case .namespace(let name):
                 return #"""
-            \#(String.indent(indentLevel))public enum \#(name) {
+            \#(String.indent(indentLevel))public enum \#(name): CaseIterable {
             \#(body)
             \#(String.indent(indentLevel))}
 

@@ -137,8 +137,8 @@ enum LocalizationEnumBuilder {
                 guard parts.isEmpty == false else { continue }
                 
                 let lastComponent = parts.removeLast()
-                let variableName = LocalizationValue.localization(name: String(lastComponent).casenameSanitized, key: name, value: value)
-                var namespaces = parts.map({ LocalizationValue.namespace(name: String($0).casenameSanitized) })
+                let variableName = LocalizationValue.localization(name: String(lastComponent).propertyNameSanitized, key: name, value: value)
+                var namespaces = parts.map({ LocalizationValue.namespace(name: String($0).propertyNameSanitized) })
                 namespaces.append(variableName)
                 rootNode.add(childrenRelatively: namespaces.map(Node.init))
             }

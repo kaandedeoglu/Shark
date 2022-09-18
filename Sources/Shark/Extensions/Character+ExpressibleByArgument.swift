@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  File
-//
-//  Created by Kaan Dedeoglu on 24.08.21.
-//
-
 import ArgumentParser
 
 extension Character: ExpressibleByArgument {

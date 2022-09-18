@@ -6,9 +6,9 @@ private struct StoryboardValue: Equatable, Comparable {
     func declaration(indentLevel: Int, framework: Framework) -> String {
         switch framework {
             case .uikit:
-                return #"\#(String.indent(indentLevel))public static var \#(name.casenameSanitized): UIStoryboard { return UIStoryboard(name: "\#(name)", bundle: bundle) }"#
+                return #"\#(String.indent(indentLevel))public static var \#(name.propertyNameSanitized): UIStoryboard { return UIStoryboard(name: "\#(name)", bundle: bundle) }"#
             case .appkit:
-                return #"\#(String.indent(indentLevel))public static var \#(name.casenameSanitized): NSStoryboard { return NSStoryboard(name: "\#(name)", bundle: bundle) }"#
+                return #"\#(String.indent(indentLevel))public static var \#(name.propertyNameSanitized): NSStoryboard { return NSStoryboard(name: "\#(name)", bundle: bundle) }"#
             case .swiftui:
                 return "" // there are no storyboards in the land of SwiftUI
         }

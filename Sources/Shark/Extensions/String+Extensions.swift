@@ -45,7 +45,7 @@ extension String {
             .joined()
     }
     
-    var casenameSanitized: String {
+    var propertyNameSanitized: String {
         guard isEmpty == false else { return self }
 
         var result = replacingOccurrences(of: "-", with: "_")

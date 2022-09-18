@@ -38,7 +38,7 @@ enum FontEnumBuilder {
             let rest = components.map { $0.capitalized }
             let methodName = ([first] + rest).joined()
 
-            return FontValue(methodName: methodName.casenameSanitized,
+            return FontValue(methodName: methodName.propertyNameSanitized,
                              fontName: postScriptName)
         }
 

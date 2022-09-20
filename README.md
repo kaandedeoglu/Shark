@@ -96,8 +96,13 @@ view.backgroundColor = C.green1
 
 There are a few things to notice:
 
-- Image assets are namespaced by folder. For example all the images in your `Assets.xcassets/Buttons` folder will live under an enum called `Buttons`.
-- Localizations are namespaced with separators. Currently Shark uses the dot symbol `.` as the separator.
+First, have a look at this Xcode screenshot from the inspector pane of an asset catalogue's folder entry:
+
+![](https://user-images.githubusercontent.com/167469/190901709-d4cf52f9-43bb-4c5e-bc4e-dfce24dd2638.png)
+
+If you place your image and color assets in folders, Shark will create namespaced `enum`s ­– provided you have configured the respective Xcode setting _Provides Namespace_. If you have deeply nested folders, Shark will respect every one's individual namespace setting.
+
+Localizations are always namespaced with separators. Currently Shark uses the dot symbol `.` as the separator.
   As you can see localization keys are recursively namespaced until we get to the last component.
 
 ## Installation
@@ -215,7 +220,7 @@ Prints the overview, example usage and available flags to the console.
 
 The MIT License (MIT)
 
-Copyright (c) 2020 Kaan Dedeoglu
+Copyright (c) Kaan Dedeoglu and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

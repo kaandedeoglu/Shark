@@ -52,20 +52,41 @@ extension NestedValue: SanitizableValue {
 
 enum NestedEnumBuilder<Kind: AssetType> {
     static func enumString(forFilesAtPaths paths: [String], topLevelName: String, options: Options) throws -> String? {
-        let assetPaths = try paths.flatMap { try FileManager.default.subpathsOfDirectory(atPath: $0).filter({ $0.pathExtension == Kind.extension  }) }
+        let assetPaths = try paths.flatMap { try FileManager.default.subpathsOfDirectory(atPath: $0).filter({ $0.pathExtension == Kind.extension }) }
         guard assetPaths.isEmpty == false else { return nil }
 
         let rootNode: Node<NestedValue<Kind>> = Node(value: .namespace(name: topLevelName))
 
-        for path in assetPaths {
+        for (index, path) in assetPaths.enumerated() {
             var pathComponents = path.pathComponents
-            let name = pathComponents.removeLast().deletingPathExtension
+
+            if pathComponents.count > 1 {
+                // nested, so we have to traverse the folders for all Contents.json files
+                var fullPathToComponent = paths[index]
+                let components = pathComponents.dropLast()
+                for (componentIndex, component) in components.enumerated() {
+                    fullPathToComponent = fullPathToComponent.appendingPathComponent(component)
+                    let pathToContentsJson = fullPathToComponent.appendingPathComponent("Contents.json")
+                    let contents = try String(contentsOfFile: pathToContentsJson)
+                    if !contents.localizedCaseInsensitiveContains(#""provides-namespace" : true"#) {
+                        // this component does not provide a namespace, hence mark for removal
+                        pathComponents[componentIndex] = ""
+                    }
+                }
+                // remove the components where namespace is not requested
+                pathComponents = pathComponents.filter { !$0.isEmpty }
+            }
+            print("pathComponents: \(pathComponents)")
+
+            let name = pathComponents.joined(separator: "/").deletingPathExtension
+            let property = pathComponents.removeLast().deletingPathExtension
+            print("name: \(name)")
 
             var pathNodes = pathComponents
                 .map(\.propertyNameSanitized)
                 .map(NestedValue<Kind>.namespace(name:))
                 .map(Node.init)
-            pathNodes.append(Node(value: .value(propertyName: name.propertyNameSanitized, name: name)))
+            pathNodes.append(Node(value: .value(propertyName: property.propertyNameSanitized, name: name)))
 
             rootNode.add(childrenRelatively: pathNodes)
         }

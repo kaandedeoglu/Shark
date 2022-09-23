@@ -1,13 +1,13 @@
 struct ImageAsset: AssetType {
     static var `extension`: String = "imageset"
-    static func declaration(forPropertyName propertyName: String, value: String, framework: Framework) -> String {
-        switch framework {
+    static func declaration(forPropertyName propertyName: String, value: String, options: Options) -> String {
+        switch options.framework {
             case .uikit:
-                return #"public static var \#(propertyName): UIImage { return UIImage(named:"\#(value)", in: bundle, compatibleWith: nil)! }"#
+                return #"\#(options.visibility) static var \#(propertyName): UIImage { return UIImage(named:"\#(value)", in: bundle, compatibleWith: nil)! }"#
             case .appkit:
-                return #"public static var \#(propertyName): NSImage { return NSImage(named:"\#(value)")! }"#
+                return #"\#(options.visibility) static var \#(propertyName): NSImage { return NSImage(named:"\#(value)")! }"#
             case .swiftui:
-                return #"public static var \#(propertyName): Image { return Image("\#(value)", bundle: bundle) }"#
+                return #"\#(options.visibility) static var \#(propertyName): Image { return Image("\#(value)", bundle: bundle) }"#
         }
     }
 }

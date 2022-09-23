@@ -43,7 +43,7 @@ enum SharkEnumBuilder {
         if options.topLevelScope {
             result.append(resourcesEnumsString)
         } else {
-            result.append("public enum \(options.topLevelEnumName) {\n")
+            result.append("\(options.visibility) enum \(options.topLevelEnumName) {\n")
             result.append(resourcesEnumsString)
             result.append("\n}")
         }

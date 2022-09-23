@@ -33,6 +33,9 @@ struct Options: ParsableArguments {
             help: "The top level enum name")
     private(set) var topLevelEnumName: String = "Shark"
 
+    @Option(help: "The generated properties' visiblity")
+    private(set) var visibility: String = "public"
+
     @Option(name: .customLong("target"),
             help: "Target name of the application, useful in case there are multiple application targets")
     private(set) var targetName: String?

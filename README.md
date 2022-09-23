@@ -189,6 +189,10 @@ In case your Xcode project has multiple application targets, you should specify 
 shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --target MyAppTarget
 ```
 
+### --visibility
+
+By default, Shark will create all properties with the visibilty of `public`. Submit this option to change this to, e.g., `internal`.
+
 ### --framework
 
 By default, Shark creates code for `UIKit`. Specify `--framework appkit` to create code for `AppKit`, and `--framework swiftui` for `SwiftUI`.

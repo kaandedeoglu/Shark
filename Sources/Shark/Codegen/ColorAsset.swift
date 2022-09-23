@@ -1,13 +1,13 @@
 struct ColorAsset: AssetType {
     static var `extension`: String = "colorset"
-    static func declaration(forPropertyName propertyName: String, value: String, framework: Framework) -> String {
-        switch framework {
+    static func declaration(forPropertyName propertyName: String, value: String, options: Options) -> String {
+        switch options.framework {
             case .uikit:
-                return #"public static var \#(propertyName.propertyNameSanitized): UIColor { return UIColor(named: "\#(value)", in: bundle, compatibleWith: nil)! }"#
+                return #"\#(options.visibility) static var \#(propertyName.propertyNameSanitized): UIColor { return UIColor(named: "\#(value)", in: bundle, compatibleWith: nil)! }"#
             case .appkit:
-                return #"public static var \#(propertyName.propertyNameSanitized): NSColor { return NSColor(named: "\#(value)", bundle: bundle)! }"#
+                return #"\#(options.visibility) static var \#(propertyName.propertyNameSanitized): NSColor { return NSColor(named: "\#(value)", bundle: bundle)! }"#
             case .swiftui:
-                return #"public static var \#(propertyName.propertyNameSanitized): Color { return Color("\#(value)", bundle: bundle) }"#
+                return #"\#(options.visibility) static var \#(propertyName.propertyNameSanitized): Color { return Color("\#(value)", bundle: bundle) }"#
         }
     }
 }

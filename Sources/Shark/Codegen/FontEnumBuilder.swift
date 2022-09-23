@@ -5,14 +5,14 @@ private struct FontValue: Equatable, Comparable {
     let methodName: String
     let fontName: String
 
-    func declaration(indentLevel: Int, framework: Framework) -> String {
-        switch framework {
+    func declaration(indentLevel: Int, options: Options) -> String {
+        switch options.framework {
             case .uikit:
-                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
+                return #"\#(String.indent(indentLevel))\#(options.visibility) static func \#(methodName)(ofSize size: CGFloat) -> UIFont { return UIFont(name: "\#(fontName)", size: size)! }"#
             case .appkit:
-                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> NSFont { return NSFont(name: "\#(fontName)", size: size)! }"#
+                return #"\#(String.indent(indentLevel))\#(options.visibility) static func \#(methodName)(ofSize size: CGFloat) -> NSFont { return NSFont(name: "\#(fontName)", size: size)! }"#
             case .swiftui:
-                return #"\#(String.indent(indentLevel))public static func \#(methodName)(ofSize size: CGFloat) -> Font { return Font.custom("\#(fontName)", size: size) }"#
+                return #"\#(String.indent(indentLevel))\#(options.visibility) static func \#(methodName)(ofSize size: CGFloat) -> Font { return Font.custom("\#(fontName)", size: size) }"#
         }
     }
 
@@ -45,12 +45,12 @@ enum FontEnumBuilder {
         guard fontValues.isEmpty == false else { return nil }
 
         var result = """
-        public enum \(topLevelName): CaseIterable {
+        \(options.visibility) enum \(topLevelName): CaseIterable {
 
         """
 
         for font in fontValues.sorted() {
-            result += font.declaration(indentLevel: 1, framework: options.framework)
+            result += font.declaration(indentLevel: 1, options: options)
             result += "\n"
         }
 

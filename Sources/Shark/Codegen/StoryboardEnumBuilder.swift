@@ -3,12 +3,12 @@ import Foundation
 private struct StoryboardValue: Equatable, Comparable {
     let name: String
 
-    func declaration(indentLevel: Int, framework: Framework) -> String {
-        switch framework {
+    func declaration(indentLevel: Int, options: Options) -> String {
+        switch options.framework {
             case .uikit:
-                return #"\#(String.indent(indentLevel))public static var \#(name.propertyNameSanitized): UIStoryboard { return UIStoryboard(name: "\#(name)", bundle: bundle) }"#
+                return #"\#(String.indent(indentLevel))\(options.visibility) static var \#(name.propertyNameSanitized): UIStoryboard { return UIStoryboard(name: "\#(name)", bundle: bundle) }"#
             case .appkit:
-                return #"\#(String.indent(indentLevel))public static var \#(name.propertyNameSanitized): NSStoryboard { return NSStoryboard(name: "\#(name)", bundle: bundle) }"#
+                return #"\#(String.indent(indentLevel))\(options.visibility) static var \#(name.propertyNameSanitized): NSStoryboard { return NSStoryboard(name: "\#(name)", bundle: bundle) }"#
             case .swiftui:
                 return "" // there are no storyboards in the land of SwiftUI
         }
@@ -29,9 +29,9 @@ enum StoryboardBuilder {
 
         guard storyboardPaths.isEmpty == false else { return nil }
 
-        var result = "public enum \(topLevelName) {\n"
+        var result = "\(options.visibility) enum \(topLevelName) {\n"
         for name in storyboardPaths.map({ $0.deletingPathExtension }).sorted() {
-            result += StoryboardValue(name: name).declaration(indentLevel: 1, framework: options.framework)
+            result += StoryboardValue(name: name).declaration(indentLevel: 1, options: options)
             result += "\n"
         }
 

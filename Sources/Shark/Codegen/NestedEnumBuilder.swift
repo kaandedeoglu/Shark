@@ -4,14 +4,14 @@ enum NestedValue<Asset: AssetType>: Equatable, Comparable {
     case value(propertyName: String, name: String)
     case namespace(name: String)
 
-    func declaration(withBody body: String = "", indentLevel: Int, framework: Framework) -> String {
+    func declaration(withBody body: String = "", indentLevel: Int, options: Options) -> String {
         switch self {
             case let .value(propertyName, value):
-                let valueDeclaration = Asset.declaration(forPropertyName: propertyName, value: value, framework: framework)
+                let valueDeclaration = Asset.declaration(forPropertyName: propertyName, value: value, options: options)
                 return "\(String.indent(indentLevel))\(valueDeclaration)"
             case let .namespace(name):
                 return #"""
-            \#(String.indent(indentLevel))public enum \#(name): CaseIterable {
+            \#(String.indent(indentLevel))\#(options.visibility) enum \#(name): CaseIterable {
             \#(body)
             \#(String.indent(indentLevel))}
 
@@ -107,7 +107,7 @@ enum NestedEnumBuilder<Kind: AssetType> {
         rootNode.sort()
         rootNode.sanitize()
 
-        var result = enumString(for: rootNode, framework: options.framework)
+        var result = enumString(for: rootNode, options: options)
         result.removeLast()
 
         var lines = result.components(separatedBy: .newlines)
@@ -118,13 +118,13 @@ enum NestedEnumBuilder<Kind: AssetType> {
         return lines.joined(separator: "\n")
     }
 
-    private static func enumString(for node: Node<NestedValue<Kind>>, indentLevel: Int = 0, framework: Framework) -> String {
+    private static func enumString(for node: Node<NestedValue<Kind>>, indentLevel: Int = 0, options: Options) -> String {
         switch node.value {
             case .namespace:
-                let childrenString = node.children.map { enumString(for: $0, indentLevel: indentLevel + 1, framework: framework) }
-                return node.value.declaration(withBody: childrenString.joined(separator: "\n"), indentLevel: indentLevel, framework: framework)
+                let childrenString = node.children.map { enumString(for: $0, indentLevel: indentLevel + 1, options: options) }
+                return node.value.declaration(withBody: childrenString.joined(separator: "\n"), indentLevel: indentLevel, options: options)
             case .value:
-                return node.value.declaration(indentLevel: indentLevel, framework: framework)
+                return node.value.declaration(indentLevel: indentLevel, options: options)
         }
     }
 }

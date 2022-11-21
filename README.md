@@ -3,7 +3,7 @@
 ![Build](https://github.com/kaandedeoglu/Shark/workflows/Swift/badge.svg)
 
 Shark is a Swift command line tool that generates type safe enums for your images, colors, storyboards, fonts and localizations.
-Shark supports code generation for `UIKit`, `AppKit`, and `SwiftUI`.
+Shark supports code generation for the Apple UI frameworks `UIKit`, `AppKit`, and `SwiftUI`.
 
 Because Shark reads your `.xcodeproj` to find these assets, the setup is extremely simple.
 
@@ -216,6 +216,10 @@ By default, the separator is `.`, only single character inputs are accepted for 
 
 Declares the `I, C, F, L` enums in the top level scope instead of nesting it in a top level `Shark` enum.
 
+### --exclude
+
+By default, Shark will process all resource files it knows about. If you don't want that, you can specify exceptions. Note that Shark uses suffix matching to identify files to exclude.
+
 ### --help
 
 Prints the overview, example usage and available flags to the console.
@@ -224,7 +228,7 @@ Prints the overview, example usage and available flags to the console.
 
 The MIT License (MIT)
 
-Copyright (c) Kaan Dedeoglu and contributors.
+Copyright (c) Kaan Dedeoglu, Dr. Michael 'Mickey' Lauer, and contributors.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

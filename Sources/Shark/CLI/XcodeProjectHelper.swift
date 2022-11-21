@@ -18,8 +18,10 @@ struct XcodeProjectHelper {
     private let xcodeproj: XcodeProj
     private let targetName: String?
     private let locale: String
+    private let options: Options
     
     init(options: Options) throws {
+        self.options = options
         projectPath = Path(options.projectPath)
         xcodeproj = try XcodeProj(path: projectPath)
         targetName = options.targetName
@@ -56,21 +58,23 @@ struct XcodeProjectHelper {
             .compactMap { $0.file }
             .flatMap(paths(for:))
             .reduce(into: ResourcePaths(), { result, path in
-                switch path.pathExtension {
-                case "xcassets":
-                    result.assetsPaths.append(path)
-                case "strings" where path.pathComponents.contains("\(locale).lproj"):
-                    result.localizationPaths.append(path)
-                case "ttf", "otf", "ttc":
-                    result.fontPaths.append(path)
-                case "storyboard":
-                    result.storyboardPaths.append(path)
-                default:
-                    break
+                if !self.options.shouldExclude(path: path) {
+                    switch path.pathExtension {
+                        case "xcassets":
+                            result.assetsPaths.append(path)
+                        case "strings" where path.pathComponents.contains("\(locale).lproj"):
+                            result.localizationPaths.append(path)
+                        case "ttf", "otf", "ttc":
+                            result.fontPaths.append(path)
+                        case "storyboard":
+                            result.storyboardPaths.append(path)
+                        default:
+                            break
+                    }
                 }
             })
     }
- 
+
     private func paths(for fileElement: PBXFileElement) throws -> [String] {
         guard let filePath = try fileElement.fullPath(sourceRoot: projectPath.parent()) else {
             throw PBXFilePathError.cannotResolvePath

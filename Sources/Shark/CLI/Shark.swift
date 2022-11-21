@@ -2,7 +2,7 @@ import Foundation
 import ArgumentParser
 
 struct Shark: ParsableCommand {
-    static var configuration: CommandConfiguration = .init(abstract:"Paste the following line in a Xcode run phase script that runs before the \"Compile Sources\" run phase:",
+    static var configuration: CommandConfiguration = .init(abstract: "Paste the following line in a Xcode run phase script that runs before the \"Compile Sources\" run phase:",
                                                            discussion: "shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME")
 
     @OptionGroup()
@@ -55,6 +55,17 @@ struct Options: ParsableArguments {
             help: "Enable code generation support for the specified framework. Valid frameworks are 'uikit', 'appkit', and 'swiftui'.",
             transform: Self.frameworkEnum(forFramework:))
     private(set) var framework: Framework = .uikit
+
+    @Option(name: .customLong("exclude"),
+            help: "Exclude a file from processing (postfix matching).")
+    private(set) var exclude: [String]
+
+    func shouldExclude(path: String) -> Bool {
+        for exclude in self.exclude {
+            if path.hasSuffix(exclude) { return true }
+        }
+        return false
+    }
 }
 
 extension Options {

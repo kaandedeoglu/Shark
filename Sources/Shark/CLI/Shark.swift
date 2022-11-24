@@ -58,7 +58,7 @@ struct Options: ParsableArguments {
 
     @Option(name: .customLong("exclude"),
             help: "Exclude a file from processing (postfix matching).")
-    private(set) var exclude: [String]
+    private(set) var exclude: [String] = []
 
     func shouldExclude(path: String) -> Bool {
         for exclude in self.exclude {

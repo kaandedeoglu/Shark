@@ -117,15 +117,40 @@ enum LocalizationBuilderError: LocalizedError {
 }
 
 enum LocalizationEnumBuilder {
+
     static func localizationsEnumString(forFilesAtPaths paths: [String], topLevelName: String, options: Options) throws -> String? {
-        let termsDictionaries = try paths.compactMap({ path -> [String: String]? in
-            guard FileManager.default.fileExists(atPath: path) else { return nil }
+        
+        let paths = paths.filter { FileManager.default.fileExists(atPath: $0) }
+        // We now support both `.strings` and `.xcstrings` files.
+        let stringsPaths = paths.filter { $0.hasSuffix(".strings") }
+        let xcstringsPaths = paths.filter { $0.hasSuffix(".xcstrings") }
+
+        let stringsDictionaries = try stringsPaths.compactMap { path -> [String: String]? in
             guard let termsDictionary = NSDictionary(contentsOfFile: path) as? [String: String] else {
                 throw LocalizationBuilderError.invalidLocalizableStringsFile(path: path)
             }
             return termsDictionary
-        })
+        }
 
+        let xcstringsDictionaries = try xcstringsPaths.compactMap { path -> [String: String]? in
+            let url = URL(fileURLWithPath: path)
+            let fileContents = try Data(contentsOf: url)
+            let stringCatalog = try JSONDecoder().decode(StringCatalog.self, from: fileContents)
+
+            var terms: [String: String] = [:]
+            for (string, entry) in stringCatalog.strings {
+                guard let localizations = entry.localizations,
+                      let sourceLocalization = localizations[stringCatalog.sourceLanguage],
+                      let value = sourceLocalization.stringUnit?.value else {
+                    terms[string] = string
+                    continue
+                }
+                terms[string] = value
+            }
+            return terms
+        }
+
+        let termsDictionaries = stringsDictionaries + xcstringsDictionaries
         guard termsDictionaries.isEmpty == false else { return nil }
 
         let rootNode = Node(value: LocalizationValue.namespace(name: topLevelName))

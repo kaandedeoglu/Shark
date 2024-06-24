@@ -58,11 +58,14 @@ struct XcodeProjectHelper {
             .compactMap { $0.file }
             .flatMap(paths(for:))
             .reduce(into: ResourcePaths(), { result, path in
+                //print("Dealing with \(path)...")
                 if !self.options.shouldExclude(path: path) {
                     switch path.pathExtension {
                         case "xcassets":
                             result.assetsPaths.append(path)
                         case "strings" where path.pathComponents.contains("\(locale).lproj"):
+                            result.localizationPaths.append(path)
+                        case "xcstrings":
                             result.localizationPaths.append(path)
                         case "ttf", "otf", "ttc":
                             result.fontPaths.append(path)

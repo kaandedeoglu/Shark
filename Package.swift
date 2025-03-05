@@ -9,8 +9,8 @@ let package = Package(
         .executable(name: "Shark", targets: ["Shark"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/tuist/xcodeproj.git", .upToNextMajor(from: "8.0.0")),
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.1"),
+        .package(url: "https://github.com/tuist/xcodeproj.git", .upToNextMajor(from: "8.27.3")),
+        .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.5.0")),
     ],
     targets: [
         .target(

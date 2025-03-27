@@ -32,7 +32,10 @@ struct XcodeProjectHelper {
     func resourcePaths() async throws -> ResourcePaths {
 
         let xcodeproj = try await mapper.map(at: self.projectPath)
-        guard let mainProject = xcodeproj.projects.values.first(where: { $0.schemes.count >= 2 }) else { return .init() }
+        guard let mainProject = xcodeproj.projects.values.first(where: { !$0.schemes.isEmpty }) else {
+            print("Could not find main project")
+            exit(EXIT_FAILURE)
+        }
 
         let selectedTarget: Target
 

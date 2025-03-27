@@ -13,8 +13,8 @@ enum SharkEnumBuilder {
         }
         """
 
-    static func sharkEnumString(forOptions options: Options) throws -> String {
-        let resourcePaths = try XcodeProjectHelper(options: options).resourcePaths()
+    static func sharkEnumString(forOptions options: Options) async throws -> String {
+        let resourcePaths = try await XcodeProjectHelper(options: options).resourcePaths()
         
         let imagesString = try NestedEnumBuilder<ImageAsset>.enumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I", options: options)
         let colorsString = try NestedEnumBuilder<ColorAsset>.enumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "C", options: options)

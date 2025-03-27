@@ -1,6 +1,7 @@
 import Foundation
-import XcodeProj
-import PathKit
+import XcodeGraph
+import XcodeGraphMapper
+import Path
 
 enum PBXFilePathError: String, Error {
     case cannotResolvePath
@@ -14,79 +15,69 @@ struct XcodeProjectHelper {
         fileprivate(set) var storyboardPaths: [String] = []
     }
     
-    private let projectPath: Path
-    private let xcodeproj: XcodeProj
+    private let projectPath: AbsolutePath
     private let targetName: String?
     private let locale: String
     private let options: Options
-    
+
+    private let mapper: XcodeGraphMapper = .init()
+
     init(options: Options) throws {
         self.options = options
-        projectPath = Path(options.projectPath)
-        xcodeproj = try XcodeProj(path: projectPath)
-        targetName = options.targetName
-        locale = options.locale
+        self.projectPath = try AbsolutePath(validating: options.projectPath)
+        self.targetName = options.targetName
+        self.locale = options.locale
     }
     
-    func resourcePaths() throws -> ResourcePaths {
-        let eligibleTargets = xcodeproj.pbxproj.nativeTargets.filter({ $0.productType == .application || $0.productType == .framework })
-        let eligibleTargetsHelpString = "The available targets are:\n\(eligibleTargets.map({ "- \($0.name)" }).joined(separator: "\n"))"
-        let selectedTarget: PBXNativeTarget
-        
-        if let targetName = targetName {
-            guard let target = eligibleTargets.first(where: { $0.name == targetName }) else {
-                print("No target found with name \(targetName).\n\(eligibleTargetsHelpString)")
+    func resourcePaths() async throws -> ResourcePaths {
+
+        let xcodeproj = try await mapper.map(at: self.projectPath)
+        guard let mainProject = xcodeproj.projects.values.first(where: { $0.schemes.count >= 2 }) else { return .init() }
+
+        let selectedTarget: Target
+
+        if let targetName = self.targetName {
+            guard let target = mainProject.targets.first(where: { $0.key == targetName }) else {
+                let eligibleTargets = mainProject.targets.map { $0.key }
+                print("No target found with name \(targetName). Eligible targets are: \(eligibleTargets)")
                 exit(EXIT_FAILURE)
             }
-            
-            selectedTarget = target
+            selectedTarget = target.value
         } else {
-            guard eligibleTargets.count == 1 else {
-                print("Multiple application targets found, please specify the target by using the --target flag.\n\(eligibleTargetsHelpString)")
+            guard mainProject.targets.count == 1 else {
+                let eligibleTargets = mainProject.targets.map { $0.key }
+                print("Multiple application targets found, please specify the target by using the --target flag. Eligible targets are: \(eligibleTargets)")
                 exit(EXIT_FAILURE)
             }
-            
-            selectedTarget = eligibleTargets[0]
+            selectedTarget = mainProject.targets.first!.value
         }
-        
-        guard let targetResourcesFiles = try selectedTarget.resourcesBuildPhase()?.files else {
-            print("Cannot locate the resources build phase in the target")
+        let targetResources = selectedTarget.resources.resources
+        guard !targetResources.isEmpty else {
+            print("No resources found for target")
             exit(EXIT_FAILURE)
         }
 
-        return try targetResourcesFiles
-            .compactMap { $0.file }
-            .flatMap(paths(for:))
-            .reduce(into: ResourcePaths(), { result, path in
-                //print("Dealing with \(path)...")
-                if !self.options.shouldExclude(path: path) {
-                    switch path.pathExtension {
-                        case "xcassets":
-                            result.assetsPaths.append(path)
-                        case "strings" where path.pathComponents.contains("\(locale).lproj"):
-                            result.localizationPaths.append(path)
-                        case "xcstrings":
-                            result.localizationPaths.append(path)
-                        case "ttf", "otf", "ttc":
-                            result.fontPaths.append(path)
-                        case "storyboard":
-                            result.storyboardPaths.append(path)
-                        default:
-                            break
-                    }
-                }
-            })
-    }
+        var result = ResourcePaths()
 
-    private func paths(for fileElement: PBXFileElement) throws -> [String] {
-        guard let filePath = try fileElement.fullPath(sourceRoot: projectPath.parent()) else {
-            throw PBXFilePathError.cannotResolvePath
+        for resource in targetResources {
+            guard case let .file(path, _, _) = resource else { continue }
+            guard !self.options.shouldExclude(path: path.pathString) else { continue }
+
+            switch path.extension {
+                case "xcassets":
+                    result.assetsPaths.append(path.pathString)
+                case "strings" where path.components.contains("\(locale).lproj"):
+                    result.localizationPaths.append(path.pathString)
+                case "xcstrings":
+                    result.localizationPaths.append(path.pathString)
+                case "ttf", "otf", "ttc":
+                    result.fontPaths.append(path.pathString)
+                case "storyboard":
+                    result.storyboardPaths.append(path.pathString)
+                default:
+                    break
+            }
         }
-        
-        if let variant = fileElement as? PBXVariantGroup {
-            return variant.children.compactMap { filePath.string.appendingPathComponent($0.path!) }
-        } else {
-            return [filePath.string]
-        }
+        return result
     }
 }

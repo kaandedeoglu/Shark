@@ -6,8 +6,62 @@
         "repositoryURL": "https://github.com/tadija/AEXML.git",
         "state": {
           "branch": null,
-          "revision": "38f7d00b23ecd891e1ee656fa6aeebd6ba04ecc3",
-          "version": "4.6.1"
+          "revision": "db806756c989760b35108146381535aec231092b",
+          "version": "4.7.0"
+        }
+      },
+      {
+        "package": "AnyCodable",
+        "repositoryURL": "https://github.com/Flight-School/AnyCodable",
+        "state": {
+          "branch": null,
+          "revision": "862808b2070cd908cb04f9aafe7de83d35f81b05",
+          "version": "0.6.7"
+        }
+      },
+      {
+        "package": "Command",
+        "repositoryURL": "https://github.com/tuist/Command.git",
+        "state": {
+          "branch": null,
+          "revision": "079a7803b581d3022469b3a331bccd51d48d2fc0",
+          "version": "0.13.0"
+        }
+      },
+      {
+        "package": "FileSystem",
+        "repositoryURL": "https://github.com/tuist/FileSystem.git",
+        "state": {
+          "branch": null,
+          "revision": "1bfd79b9f27d7748b1bde4dc238ea1ca283fd44e",
+          "version": "0.7.9"
+        }
+      },
+      {
+        "package": "MachOKit",
+        "repositoryURL": "https://github.com/p-x9/MachOKit",
+        "state": {
+          "branch": null,
+          "revision": "62d22e1ecef3dda702c039f03dd83f674ad59bfc",
+          "version": "0.30.0"
+        }
+      },
+      {
+        "package": "Mockable",
+        "repositoryURL": "https://github.com/Kolos65/Mockable.git",
+        "state": {
+          "branch": null,
+          "revision": "203336d0ccb7ff03a8a03db54a4fa18fc2b0c771",
+          "version": "0.3.0"
+        }
+      },
+      {
+        "package": "Path",
+        "repositoryURL": "https://github.com/tuist/Path.git",
+        "state": {
+          "branch": null,
+          "revision": "7c74ac435e03a927c3a73134c48b61e60221abcb",
+          "version": "0.3.8"
         }
       },
       {
@@ -38,12 +92,102 @@
         }
       },
       {
-        "package": "XcodeProj",
-        "repositoryURL": "https://github.com/tuist/xcodeproj.git",
+        "package": "swift-atomics",
+        "repositoryURL": "https://github.com/apple/swift-atomics.git",
         "state": {
           "branch": null,
-          "revision": "02bc2dd6224aa59147941d85fdc45a7677af62f6",
-          "version": "8.27.3"
+          "revision": "cd142fd2f64be2100422d658e7411e39489da985",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "swift-collections",
+        "repositoryURL": "https://github.com/apple/swift-collections.git",
+        "state": {
+          "branch": null,
+          "revision": "671108c96644956dddcd89dd59c203dcdb36cec7",
+          "version": "1.1.4"
+        }
+      },
+      {
+        "package": "swift-log",
+        "repositoryURL": "https://github.com/apple/swift-log",
+        "state": {
+          "branch": null,
+          "revision": "3d8596ed08bd13520157f0355e35caed215ffbfa",
+          "version": "1.6.3"
+        }
+      },
+      {
+        "package": "swift-nio",
+        "repositoryURL": "https://github.com/apple/swift-nio",
+        "state": {
+          "branch": null,
+          "revision": "c51907a839e63ebf0ba2076bba73dd96436bd1b9",
+          "version": "2.81.0"
+        }
+      },
+      {
+        "package": "swift-service-context",
+        "repositoryURL": "https://github.com/apple/swift-service-context",
+        "state": {
+          "branch": null,
+          "revision": "8946c930cae601452149e45d31d8ddfac973c3c7",
+          "version": "1.2.0"
+        }
+      },
+      {
+        "package": "swift-syntax",
+        "repositoryURL": "https://github.com/swiftlang/swift-syntax.git",
+        "state": {
+          "branch": null,
+          "revision": "0687f71944021d616d34d922343dcef086855920",
+          "version": "600.0.1"
+        }
+      },
+      {
+        "package": "swift-system",
+        "repositoryURL": "https://github.com/apple/swift-system.git",
+        "state": {
+          "branch": null,
+          "revision": "a34201439c74b53f0fd71ef11741af7e7caf01e1",
+          "version": "1.4.2"
+        }
+      },
+      {
+        "package": "XcodeGraph",
+        "repositoryURL": "https://github.com/tuist/XcodeGraph.git",
+        "state": {
+          "branch": null,
+          "revision": "bb1becbdc92f4a1519711e3d5f5a61658c7770bd",
+          "version": "1.9.3"
+        }
+      },
+      {
+        "package": "XcodeProj",
+        "repositoryURL": "https://github.com/tuist/XcodeProj",
+        "state": {
+          "branch": null,
+          "revision": "128d90e4633a8e6941586dea75426e177dfb92e6",
+          "version": "9.0.0"
+        }
+      },
+      {
+        "package": "xctest-dynamic-overlay",
+        "repositoryURL": "https://github.com/pointfreeco/xctest-dynamic-overlay",
+        "state": {
+          "branch": null,
+          "revision": "39de59b2d47f7ef3ca88a039dff3084688fe27f4",
+          "version": "1.5.2"
+        }
+      },
+      {
+        "package": "ZIPFoundation",
+        "repositoryURL": "https://github.com/tuist/ZIPFoundation",
+        "state": {
+          "branch": null,
+          "revision": "e9b1917bd4d7d050e0ff4ec157b5d6e253c84385",
+          "version": "0.9.20"
         }
       }
     ]

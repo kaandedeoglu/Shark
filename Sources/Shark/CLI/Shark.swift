@@ -1,16 +1,17 @@
 import Foundation
 import ArgumentParser
 
-struct Shark: ParsableCommand {
+@main
+struct Shark: AsyncParsableCommand {
     static var configuration: CommandConfiguration = .init(abstract: "Paste the following line in a Xcode run phase script that runs before the \"Compile Sources\" run phase:",
                                                            discussion: "shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME")
 
     @OptionGroup()
     private var options: Options
 
-    func run() throws {
+    func run() async throws {
 
-        let enumString = try SharkEnumBuilder.sharkEnumString(forOptions: options)
+        let enumString = try await SharkEnumBuilder.sharkEnumString(forOptions: options)
         var lastContent: String = ""
         if let data = try? Data(contentsOf: URL(fileURLWithPath: options.outputPath)),
            let content = String(data: data, encoding: .utf8) {

@@ -31,7 +31,10 @@ struct XcodeProjectHelper {
     
     func resourcePaths() async throws -> ResourcePaths {
 
+        //let start = CFAbsoluteTimeGetCurrent()
         let xcodeproj = try await mapper.map(at: self.projectPath)
+        //let stop = CFAbsoluteTimeGetCurrent()
+        //print("Mapping took \(stop - start) seconds")
         guard let mainProject = xcodeproj.projects.values.first(where: { !$0.schemes.isEmpty }) else {
             print("Could not find main project")
             exit(EXIT_FAILURE)
@@ -80,6 +83,22 @@ struct XcodeProjectHelper {
                 default:
                     break
             }
+        }
+
+        if let deps = self.options.deps {
+            print("Generating dependency file at `\(deps)`")
+            FileManager.default.createFile(atPath: deps, contents: nil, attributes: nil)
+            let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: deps))
+            defer { fileHandle.closeFile() }
+            let sharkFile = "\(options.outputPath):".data(using: .utf8)!
+            try fileHandle.write(contentsOf: sharkFile)
+
+            for resource in result.assetsPaths {
+                var resource = resource.replacingOccurrences(of: " ", with: "\\ ")
+                let dependency = " \(resource)".data(using: .utf8)!
+                try fileHandle.write(contentsOf: dependency)
+            }
+            try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
         }
         return result
     }

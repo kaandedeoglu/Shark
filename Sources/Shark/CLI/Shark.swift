@@ -61,9 +61,13 @@ struct Options: ParsableArguments {
             help: "Exclude a file from processing (postfix matching).")
     private(set) var exclude: [String] = []
 
+    @Option(name: .long,
+            help: "Path to a dependency file. Set, if Shark should generate a dependency file for Xcode")
+    private(set) var deps: String? = nil
+
     func shouldExclude(path: String) -> Bool {
         for exclude in self.exclude {
-            if path.hasSuffix(exclude) { return true }
+            if path.contains(exclude) { return true }
         }
         return false
     }

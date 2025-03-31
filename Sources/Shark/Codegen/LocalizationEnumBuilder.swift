@@ -66,7 +66,7 @@ private enum LocalizationValue: Comparable {
                 let translationComment = value.mapLines { "/// \($0)" }
                 result += """
             \(translationComment.indented(withLevel: indentLevel))
-
+            
             """
 
                 let interpolatedTypes = try LocalizationValue.interpolationTypes(forValue: value)
@@ -119,7 +119,7 @@ enum LocalizationBuilderError: LocalizedError {
 enum LocalizationEnumBuilder {
 
     static func localizationsEnumString(forFilesAtPaths paths: [String], topLevelName: String, options: Options) throws -> String? {
-        
+
         let paths = paths.filter { FileManager.default.fileExists(atPath: $0) }
         // We now support both `.strings` and `.xcstrings` files.
         let stringsPaths = paths.filter { $0.hasSuffix(".strings") }
@@ -203,4 +203,3 @@ extension Array where Element == LocalizationValue.InterpolationType {
         """#
     }
 }
-

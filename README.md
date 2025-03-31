@@ -244,9 +244,13 @@ By default, the separator is `.`, only single character inputs are accepted for 
 
 Declares the `I, C, F, L` enums in the top level scope instead of nesting it in a top level `Shark` enum.
 
+### --deps
+
+Add the path to a Makefile-style dependency file. This gives Xcode a hint when to skip calling build phase because nothing has changed.
+
 ### --exclude
 
-By default, Shark will process all resource files it knows about. If you don't want that, you can specify exceptions. Note that Shark uses suffix matching to identify files to exclude.
+By default, Shark will process all resource files it knows about. If you don't want that, you can specify exceptions. Note that Shark uses infix matching to identify files to exclude.
 
 ### --help
 

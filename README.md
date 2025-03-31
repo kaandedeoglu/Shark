@@ -186,10 +186,7 @@ If you want to run Shark only when it really needs to, then make the following a
 
 At the end of all that, your run Script phase should look similar to this:
 
-
-
-
-
+![Shark build phase in Xcode](https://github.com/user-attachments/assets/1a767515-ddf0-4e59-ae8f-6aa36e291b31)
 
 ## Options & Flags
 

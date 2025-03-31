@@ -138,11 +138,12 @@ You can then verify the installation by doing
 > shark --help
 ```
 
-## Setup
+## Setup (Easy)
 
 - Add a new Run Script phase to your target's build phases. This build phase should ideally run before the `Compile Sources` phase. The script body should look like the following:
 
   ```bash
+  unset SDKROOT
   if [ -x "$(command -v shark)" ]; then
   shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/
   fi
@@ -163,6 +164,32 @@ You can then verify the installation by doing
   # Write to a specific file in a different folder
   shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/Utility/MyAssets.swift
   ```
+  
+  With this setup, Shark will generate the resource files on every code run.
+  This can add several seconds to the build time which you may not like.
+
+## Setup (Advanced)
+
+If you want to run Shark only when it really needs to, then make the following adjustments:
+
+1. Edit the command line to have Shark create a dependency file. This file will contain the paths of all the assets in your project.
+
+  ```bash
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --deps /tmp/deps.d
+  ```
+
+2. Add the output file (e.g. `${SRCROOT}/Shark.swift`) as a dependency to the Run Script phase.
+
+3. Check the [x] Based on dependency analyses in the build phase.
+
+4. Check the [x] Use discovered dependency file: and enter the path to the dependency file.
+
+At the end of all that, your run Script phase should look similar to this:
+
+
+
+
+
 
 ## Options & Flags
 

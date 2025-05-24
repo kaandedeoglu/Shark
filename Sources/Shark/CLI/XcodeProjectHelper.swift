@@ -93,9 +93,10 @@ struct XcodeProjectHelper {
             let sharkFile = "\(options.outputPath):".data(using: .utf8)!
             try fileHandle.write(contentsOf: sharkFile)
 
-            for resource in result.assetsPaths {
-                var resource = resource.replacingOccurrences(of: " ", with: "\\ ")
-                let dependency = " \(resource)".data(using: .utf8)!
+            let flattenedResources: [String] = (result.localizationPaths + result.assetsPaths + result.fontPaths + result.storyboardPaths).compactMap { $0 }
+            for resource in flattenedResources {
+                let safeName = resource.replacingOccurrences(of: " ", with: "\\ ")
+                let dependency = " \(safeName)".data(using: .utf8)!
                 try fileHandle.write(contentsOf: dependency)
             }
             try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)

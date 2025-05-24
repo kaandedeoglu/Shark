@@ -175,14 +175,14 @@ If you want to run Shark only when it really needs to, then make the following a
 1. Edit the command line to have Shark create a dependency file. This file will contain the paths of all the assets in your project.
 
   ```bash
-  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --deps /tmp/deps.d
+  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --deps /tmp/deps-$PROJECT_NAME.d
   ```
 
 2. Add the output file (e.g. `${SRCROOT}/Shark.swift`) as a dependency to the Run Script phase.
 
-3. Check the [x] Based on dependency analyses in the build phase.
+3. Check the *[x] Based on dependency analyses* in the build phase.
 
-4. Check the [x] Use discovered dependency file: and enter the path to the dependency file.
+4. Check the *[x] Use discovered dependency file:* and enter the path to the dependency file.
 
 At the end of all that, your run Script phase should look similar to this:
 

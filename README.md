@@ -7,9 +7,9 @@ Shark supports code generation for the Apple UI frameworks `UIKit`, `AppKit`, an
 
 Because Shark reads your `.xcodeproj` to find these assets, the setup is extremely simple.
 
-**WWDC 2023 NEWS** Although Shark has been a bit __sherlocked__ by the new `Color` and `Image` resources in
-Xcode 15, there's still no support for fonts, storyboards, and localizations. We will therefore continue to maintain
-Shark!
+**WWDC 2023 NEWS** Although Shark has been a bit [sherlocked](https://umatechnology.org/what-does-it-mean-when-an-app-gets-sherlocked-by-apple/)
+by the new `Color` and `Image` resources in Xcode 15, there's still no support for fonts, storyboards, and localizations.
+We will therefore continue to maintain Shark!
 
 ## Motivation
 

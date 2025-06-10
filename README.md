@@ -11,6 +11,9 @@ Because Shark reads your `.xcodeproj` to find these assets, the setup is extreme
 by the new `Color` and `Image` resources in Xcode 15, there's still no support for fonts, storyboards, and localizations.
 We will therefore continue to maintain Shark!
 
+**WWDC 2025 NEWS** This year, Shark has been [sherlocked](https://umatechnology.org/what-does-it-mean-when-an-app-gets-sherlocked-by-apple/) again
+with type-safe localization resources. We still have the leading edge for fonts and storyboards though ;-)
+
 ## Motivation
 
 Here's what a generated `Shark.swift` file for `UIKit` looks like and how it is used in a codebase:

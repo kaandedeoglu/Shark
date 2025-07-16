@@ -35,8 +35,8 @@ struct XcodeProjectHelper {
         let xcodeproj = try await mapper.map(at: self.projectPath)
         //let stop = CFAbsoluteTimeGetCurrent()
         //print("Mapping took \(stop - start) seconds")
-        guard let mainProject = xcodeproj.projects.values.first(where: { !$0.schemes.isEmpty }) else {
-            print("Could not find main project")
+        guard let mainProject = xcodeproj.projects.values.first(where: { !$0.targets.isEmpty }) else {
+            print("Could not find a project with at least one target")
             exit(EXIT_FAILURE)
         }
 

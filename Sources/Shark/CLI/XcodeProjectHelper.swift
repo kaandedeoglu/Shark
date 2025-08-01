@@ -35,28 +35,37 @@ struct XcodeProjectHelper {
         let xcodeproj = try await mapper.map(at: self.projectPath)
         //let stop = CFAbsoluteTimeGetCurrent()
         //print("Mapping took \(stop - start) seconds")
-        guard let mainProject = xcodeproj.projects.values.first(where: { !$0.targets.isEmpty }) else {
-            print("Could not find a project with at least one target")
-            exit(EXIT_FAILURE)
-        }
 
-        let selectedTarget: Target
-
+        var selectedTarget: Target? = nil // will host the found target
+        
         if let targetName = self.targetName {
-            guard let target = mainProject.targets.first(where: { $0.key == targetName }) else {
-                let eligibleTargets = mainProject.targets.map { $0.key }
-                print("No target found with name \(targetName). Eligible targets are: \(eligibleTargets)")
+            print("Looking for target \(targetName) in project at \(self.projectPath.pathString)...")
+            for project in xcodeproj.projects.values {
+                if project.targets.keys.contains(targetName) {
+                    print("Found target \(targetName) in project \(project.name)")
+                    selectedTarget = project.targets[targetName]!
+                    break
+                }
+            }
+        } else {
+            print("No target specified, using the first target found in the first project at \(self.projectPath.pathString)...")
+            guard let mainProject = xcodeproj.projects.values.first(where: { !$0.targets.isEmpty }) else {
+                print("Could not find a project with at least one target")
                 exit(EXIT_FAILURE)
             }
-            selectedTarget = target.value
-        } else {
             guard mainProject.targets.count == 1 else {
                 let eligibleTargets = mainProject.targets.map { $0.key }
                 print("Multiple application targets found, please specify the target by using the --target flag. Eligible targets are: \(eligibleTargets)")
                 exit(EXIT_FAILURE)
             }
-            selectedTarget = mainProject.targets.first!.value
+            selectedTarget = mainProject.targets.values.first!
         }
+        guard let selectedTarget else {
+            print("Could not find suitable target)")
+            exit(EXIT_FAILURE)
+        }
+
+        // target found, let's find its resources
         let targetResources = selectedTarget.resources.resources
         guard !targetResources.isEmpty else {
             print("No resources found for target")

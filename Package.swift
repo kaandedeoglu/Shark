@@ -23,6 +23,11 @@ let package = Package(
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
+        .testTarget(
+            name: "SharkTests",
+            dependencies: ["Shark"],
+            swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
+        ),
     ],
     swiftLanguageVersions: [.v5]
 )

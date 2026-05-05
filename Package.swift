@@ -12,7 +12,7 @@ let package = Package(
         .executable(name: "Shark", targets: ["Shark"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/tuist/XcodeGraph.git", .upToNextMajor(from: "1.8.17")),
+        .package(url: "https://github.com/tuist/XcodeGraph.git", .upToNextMajor(from: "1.34.5")),
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.5.0")),
     ],
     targets: [

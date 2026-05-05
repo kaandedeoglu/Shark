@@ -61,6 +61,24 @@ shark MyApp.xcodeproj ./Sources/MyApp/ --target MyAppTarget --framework swiftui 
 - **XcodeGraph**: Parses Xcode project files and workspace structures
 - **ArgumentParser**: Handles command-line interface and option parsing
 
+#### Note on XcodeGraph maintenance status
+
+The standalone `tuist/XcodeGraph` repo was archived on 2026-02-26; final release is **1.34.5**. Its sources have moved into `tuist/tuist:cli/Sources/XcodeGraph`, but that copy uses Swift Package Registry IDs (`.package(id:)`) and is not exposed as a public product, so it can't be consumed as a Swift Package dependency without additional work.
+
+We deliberately stay on `tuist/XcodeGraph` 1.34.5 because:
+- The actually consequential parser lives in `tuist/XcodeProj` (still actively maintained — 9.12.0+).
+- 1.34.5's `Package.swift` pins XcodeProj as `.upToNextMajor(from: "9.9.0")`, so XcodeProj fixes (e.g. the Xcode 16.3 `objectVersion = 90` shellScript-as-array fix in 9.7.1) flow through transitively.
+
+Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven changes — until then, the standalone 1.34.5 release plus a fresh XcodeProj is the cheapest correct setup.
+
+### Regression fixture
+
+`Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54. Smoke-test the toolchain against it after dependency bumps:
+
+```bash
+swift run Shark Examples/Format90Example/Format90Example.xcodeproj Examples/Format90Example/Format90Example/
+```
+
 ### Resource Processing Flow
 1. XcodeProjectHelper parses the `.xcodeproj` file using XcodeGraph
 2. Extracts resource file paths based on target selection

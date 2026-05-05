@@ -69,4 +69,29 @@ extension String {
     func mapLines(_ transform: (String) -> String) -> String {
         return components(separatedBy: .newlines).map(transform).joined(separator: "\n")
     }
+
+    /// Escape this string so it can be safely emitted inside a Swift `"…"` literal.
+    var swiftStringLiteralEscaped: String {
+        var result = ""
+        result.reserveCapacity(count)
+        for scalar in unicodeScalars {
+            switch scalar {
+                case "\\":
+                    result += "\\\\"
+                case "\"":
+                    result += "\\\""
+                case "\n":
+                    result += "\\n"
+                case "\r":
+                    result += "\\r"
+                case "\t":
+                    result += "\\t"
+                case "\0":
+                    result += "\\0"
+                default:
+                    result.unicodeScalars.append(scalar)
+            }
+        }
+        return result
+    }
 }

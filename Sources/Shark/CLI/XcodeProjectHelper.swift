@@ -7,6 +7,23 @@ enum PBXFilePathError: String, Error {
     case cannotResolvePath
 }
 
+struct ProjectMappingError: LocalizedError {
+    let underlying: Error
+    let projectPath: String
+    let hint: String?
+
+    var errorDescription: String? {
+        var lines: [String] = []
+        lines.append("Failed to parse \(projectPath):")
+        lines.append("  \(underlying.localizedDescription)")
+        if let hint {
+            lines.append("")
+            lines.append(hint)
+        }
+        return lines.joined(separator: "\n")
+    }
+}
+
 struct XcodeProjectHelper {
     struct ResourcePaths {
         fileprivate(set) var localizationPaths: [String] = []
@@ -31,10 +48,12 @@ struct XcodeProjectHelper {
     
     func resourcePaths() async throws -> ResourcePaths {
 
-        //let start = CFAbsoluteTimeGetCurrent()
-        let xcodeproj = try await mapper.map(at: self.projectPath)
-        //let stop = CFAbsoluteTimeGetCurrent()
-        //print("Mapping took \(stop - start) seconds")
+        let xcodeproj: XcodeGraph.Graph
+        do {
+            xcodeproj = try await mapper.map(at: self.projectPath)
+        } catch {
+            throw Self.diagnosticError(wrapping: error, projectPath: self.projectPath.pathString)
+        }
 
         var selectedTarget: Target? = nil // will host the found target
         
@@ -111,5 +130,23 @@ struct XcodeProjectHelper {
             try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
         }
         return result
+    }
+
+    /// Wraps low-level XcodeGraph mapping errors with actionable guidance.
+    /// See https://github.com/kaandedeoglu/Shark/issues/52 — most reports are stale
+    /// frameworks-build-phase entries the user can fix in Xcode.
+    private static func diagnosticError(wrapping error: Error, projectPath: String) -> Error {
+        let description = error.localizedDescription
+        var hint: String?
+        if description.contains("PBXBuildFile") {
+            hint = """
+            Hint: Shark relies on XcodeGraph to parse the project, and one of the entries in
+            the target's "Link Binary With Libraries" / Frameworks build phase points to a
+            file Xcode can no longer resolve. Open the target in Xcode, look for a missing
+            (red) framework reference in the Frameworks build phase, remove or fix it, and
+            re-run Shark.
+            """
+        }
+        return ProjectMappingError(underlying: error, projectPath: projectPath, hint: hint)
     }
 }

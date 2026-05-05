@@ -70,10 +70,11 @@ private enum LocalizationValue: Comparable {
             """
 
                 let interpolatedTypes = try LocalizationValue.interpolationTypes(forValue: value)
+                let escapedKey = key.swiftStringLiteralEscaped
                 if interpolatedTypes.isEmpty == false {
-                    result += interpolatedTypes.functionDeclaration(withName: name, key: key, indentLevel: indentLevel, options: options)
+                    result += interpolatedTypes.functionDeclaration(withName: name, key: escapedKey, indentLevel: indentLevel, options: options)
                 } else {
-                    result += #"\#(String.indent(indentLevel))\#(options.visibility) static var \#(name): String { return NSLocalizedString("\#(key)", bundle: bundle, comment: "") }"#
+                    result += #"\#(String.indent(indentLevel))\#(options.visibility) static var \#(name): String { return NSLocalizedString("\#(escapedKey)", bundle: bundle, comment: "") }"#
                 }
         }
         return result

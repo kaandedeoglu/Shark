@@ -266,4 +266,36 @@ struct LocalizationEnumBuilderTests {
         #expect(fixedJSON.contains("\\n"))
         #expect(!fixedJSON.contains("value\" : \"Welcome to our amazing app!\n"))
     }
+
+    // Locks the generated signatures while the specifier parsing is shared
+    // with lint/translate — codegen output must not change
+    @Test func interpolationFunctionGeneration() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let stringsFile = tempDir.appendingPathComponent("interpolation-test.strings")
+        defer { try? FileManager.default.removeItem(at: stringsFile) }
+
+        let content = #"""
+        "Items_COUNT_LABEL" = "%d items of %@";
+        "Money_AMOUNT" = "%.2f total";
+        "Big_COUNT" = "%ld entries";
+        "Unsigned_COUNT" = "%u tries";
+        "Plain_TITLE" = "Hello";
+        "Percent_LABEL" = "100%% done";
+        """#
+        try content.write(to: stringsFile, atomically: true, encoding: .utf8)
+
+        let options = try Options.parse(["dummy.xcodeproj", "dummy.swift"])
+        let result = try #require(try LocalizationEnumBuilder.localizationsEnumString(
+            forFilesAtPaths: [stringsFile.path],
+            topLevelName: "L",
+            options: options
+        ))
+
+        #expect(result.contains("func Items_COUNT_LABEL(_ value1: Int,_ value2: String) -> String"))
+        #expect(result.contains("func Money_AMOUNT(_ value1: Double) -> String"))
+        #expect(result.contains("func Big_COUNT(_ value1: Int64) -> String"))
+        #expect(result.contains("func Unsigned_COUNT(_ value1: UInt) -> String"))
+        #expect(result.contains("static var Plain_TITLE: String"))
+        #expect(result.contains("static var Percent_LABEL: String"))
+    }
 }

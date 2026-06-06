@@ -8,17 +8,22 @@ private enum LocalizationValue: Comparable {
         case double
         case string
 
-        init(value: String) {
-            if value.contains("ld") {
-                self = .int64
-            } else if value.contains("d") || value.contains("i") {
-                self = .int
-            } else if value.contains("u") {
-                self = .uint
-            } else if value.contains("f") {
-                self = .double
-            } else {
-                self = .string
+        // Mirrors the historical mapping; conversions the codegen never
+        // supported (%x, %e, …) stay ignored so generated code is unchanged
+        init?(specifier: FormatSpecifier) {
+            switch specifier.conversion {
+                case "@":
+                    self = .string
+                case "d" where specifier.lengthModifier.hasPrefix("l"):
+                    self = .int64
+                case "d", "i":
+                    self = .int
+                case "u":
+                    self = .uint
+                case "f":
+                    self = .double
+                default:
+                    return nil
             }
         }
 
@@ -81,10 +86,7 @@ private enum LocalizationValue: Comparable {
     }
 
     private static func interpolationTypes(forValue value: String) throws -> [InterpolationType] {
-        let regex = try NSRegularExpression(pattern: "%([0-9]*.[0-9]*(d|i|u|f|ld)|(\\d\\$)?@|d|i|u|f|ld)", options: [])
-
-        let results = regex.matches(in: value, options: [], range: NSRange(location: 0, length: value.utf16.count))
-        return results.map { (value as NSString).substring(with: $0.range) }.map(InterpolationType.init)
+        FormatSpecifierParser.specifiers(in: value).compactMap(InterpolationType.init(specifier:))
     }
 }
 

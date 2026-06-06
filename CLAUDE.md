@@ -76,7 +76,8 @@ Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven chan
 `Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54. Smoke-test the toolchain against it after dependency bumps:
 
 ```bash
-swift run Shark Examples/Format90Example/Format90Example.xcodeproj Examples/Format90Example/Format90Example/
+# Shark requires absolute paths
+swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"
 ```
 
 ### Resource Processing Flow

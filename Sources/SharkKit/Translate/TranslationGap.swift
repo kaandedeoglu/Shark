@@ -2,7 +2,7 @@ import Foundation
 
 /// One missing translation: a key that has a source value but no usable
 /// translation in the target locale.
-public struct TranslationGap: Equatable {
+public struct TranslationGap: Equatable, Sendable {
     public let tableName: String
     public let origin: LocalizationTable.Origin
     public let key: String

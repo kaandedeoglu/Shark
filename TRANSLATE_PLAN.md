@@ -1,5 +1,7 @@
 # Shark `lint` & `translate` — Implementation Plan
 
+> **Status: implemented** on the `2.0` branch (M1–M5). One addition beyond the original plan: `shark translate` supports a second backend (`--backend claude-code`) that pipes through a locally installed Claude Code binary instead of the API — see README → Localization workflow.
+
 Two new subcommands that make Shark a localization *workflow* tool, not just a codegen tool:
 
 - **`shark lint`** — find localization gaps (keys missing per locale, placeholder mismatches). CI-friendly, no AI involved.

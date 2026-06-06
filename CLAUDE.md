@@ -53,6 +53,15 @@ The package is split into a library and a thin executable (see TRANSLATE_PLAN.md
 **CLI Layer (`Sources/Shark/`)**
 - `Shark.swift`: Root command declaring the subcommands.
 - `GenerateCommand.swift`: The codegen subcommand (default); orchestrates the generation process.
+- `LintCommand.swift`: `shark lint` — missing-key / orphaned-key / placeholder-mismatch checks across all locales; exit code 1 on findings (CI gate).
+- `TranslateCommand.swift`: `shark translate` — translates missing keys via Claude; backend selection (api vs. claude-code pipe), confirmation prompt with cost estimate.
+
+**Localization Workflow (`Sources/SharkKit/Localization/`, `Lint/`, `Translate/`)**
+- `LocalizationTable` + readers/writers: multi-locale model over `.strings` groups and `.xcstrings` catalogs. Writers are additive-only; the `.xcstrings` writer serializes in Xcode's JSON style (byte-identical round trip) to avoid whole-file diffs.
+- `FormatSpecifierParser`: shared printf-specifier parsing used by codegen, lint, and translate validation.
+- `LocalizationLinter` / `LintReportFormatter`: rules and text/json/github output.
+- `Translator` + `CompletionProviding` backends: `ClaudeClient` (Messages API; structured output, prompt caching, retries, parallel batches — first batch runs alone to write the cache) and `ClaudeCodeBackend` (pipes through a local `claude -p` binary, billed to the user's subscription). Every translation is validated (placeholder preservation) and written back as `needs_review`.
+- Plurals are out of scope for now: readers skip and report them (`skippedPluralKeys`).
 
 **Options & Project Parsing (`Sources/SharkKit/`)**
 - `Options.swift`: Shared ArgumentParser options used by `generate` and the builders.

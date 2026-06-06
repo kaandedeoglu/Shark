@@ -22,11 +22,11 @@ struct TranslatorPromptTests {
     }
 
     @Test func systemBlocksMarkStablePrefixAsCached() {
-        let bare = Translator(client: TestAPI.client()).systemBlocks()
+        let bare = Translator(provider: TestAPI.client()).systemBlocks()
         #expect(bare.count == 1)
         #expect(bare[0].cached)
 
-        let withGlossary = Translator(client: TestAPI.client(), glossary: "Fahrzeug = vehicle").systemBlocks()
+        let withGlossary = Translator(provider: TestAPI.client(), glossary: "Fahrzeug = vehicle").systemBlocks()
         #expect(withGlossary.count == 2)
         #expect(withGlossary[0].cached == false)
         #expect(withGlossary[1].cached)

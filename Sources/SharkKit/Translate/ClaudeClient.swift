@@ -6,25 +6,31 @@ import FoundationNetworking
 /// Minimal client for the Anthropic Messages API. There is no official Swift
 /// SDK, and Shark's needs are narrow — one endpoint, structured output — so a
 /// thin URLSession wrapper beats a third-party dependency.
-public struct ClaudeClient {
-    public struct Configuration {
+public struct ClaudeClient: Sendable {
+    public struct Configuration: Sendable {
         public let apiKey: String
         public let model: String
         public let maxTokens: Int
         public let baseURL: URL
+        public let maxRetries: Int
+        public let retryBaseDelay: TimeInterval
 
         public init(apiKey: String,
                     model: String = "claude-opus-4-8",
                     maxTokens: Int = 16000,
-                    baseURL: URL = URL(string: "https://api.anthropic.com")!) {
+                    baseURL: URL = URL(string: "https://api.anthropic.com")!,
+                    maxRetries: Int = 3,
+                    retryBaseDelay: TimeInterval = 2) {
             self.apiKey = apiKey
             self.model = model
             self.maxTokens = maxTokens
             self.baseURL = baseURL
+            self.maxRetries = maxRetries
+            self.retryBaseDelay = retryBaseDelay
         }
     }
 
-    public struct SystemBlock {
+    public struct SystemBlock: Sendable {
         public let text: String
         /// Marks the end of the stable prompt prefix — the API caches up to
         /// this block, so repeated batch requests reuse the expensive part
@@ -36,7 +42,7 @@ public struct ClaudeClient {
         }
     }
 
-    public struct Usage: Decodable, Equatable {
+    public struct Usage: Decodable, Equatable, Sendable {
         public let inputTokens: Int?
         public let outputTokens: Int?
         public let cacheCreationInputTokens: Int?
@@ -57,7 +63,7 @@ public struct ClaudeClient {
         }
     }
 
-    public struct Completion {
+    public struct Completion: Sendable {
         public let text: String
         public let usage: Usage?
     }
@@ -94,6 +100,24 @@ public struct ClaudeClient {
     }
 
     public func complete(system: [SystemBlock], userMessage: String, jsonSchema: [String: Any]) async throws -> Completion {
+        var attempt = 0
+        while true {
+            do {
+                return try await performRequest(system: system, userMessage: userMessage, jsonSchema: jsonSchema)
+            } catch let error as ClientError where error.isRetryable && attempt < configuration.maxRetries {
+                attempt += 1
+                let delay: TimeInterval
+                if case .httpError(_, _, let retryAfterSeconds) = error, let retryAfterSeconds {
+                    delay = TimeInterval(retryAfterSeconds)
+                } else {
+                    delay = configuration.retryBaseDelay * pow(2, Double(attempt - 1))
+                }
+                try await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            }
+        }
+    }
+
+    private func performRequest(system: [SystemBlock], userMessage: String, jsonSchema: [String: Any]) async throws -> Completion {
         var body: [String: Any] = [
             "model": configuration.model,
             "max_tokens": configuration.maxTokens,

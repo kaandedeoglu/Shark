@@ -44,6 +44,16 @@ struct Translate: AsyncParsableCommand {
             help: "Claude model to use. 'claude-sonnet-4-6' or 'claude-haiku-4-5' trade quality for cost.")
     private var model: String = "claude-opus-4-8"
 
+    enum Backend: String, ExpressibleByArgument {
+        case auto
+        case api
+        case claudeCode = "claude-code"
+    }
+
+    @Option(name: .long,
+            help: "Model backend: 'api' (ANTHROPIC_API_KEY; structured output and prompt caching — best for CI), 'claude-code' (pipes through a local Claude Code install, billed to your Claude subscription), or 'auto' (api if a key is set, otherwise claude-code).")
+    private var backend: Backend = .auto
+
     @Option(name: .long,
             help: "Keys per API request")
     private var batchSize: Int = 30
@@ -81,31 +91,34 @@ struct Translate: AsyncParsableCommand {
         let summary = countsByLocale.sorted { $0.key < $1.key }.map { "\($0.value) → \($0.key)" }.joined(separator: ", ")
         print("Missing translations: \(summary) (model: \(model))")
 
+        let glossaryText = try glossary.map { try String(contentsOfFile: $0, encoding: .utf8) }
+        let contextText = try context.map { try String(contentsOfFile: $0, encoding: .utf8) }
+        let estimate = TranslationCostEstimator.estimate(gaps: gaps,
+                                                         glossary: glossaryText,
+                                                         appContext: contextText,
+                                                         batchSize: batchSize,
+                                                         model: model)
+
         if dryRun {
             for gap in gaps {
                 print("  [\(gap.tableName)] \(gap.key) → \(gap.targetLocale)")
             }
+            print("Estimate: \(estimate.description)")
             return
         }
 
-        guard let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"], apiKey.isEmpty == false else {
-            throw ValidationError("ANTHROPIC_API_KEY is not set. Export your Anthropic API key to use shark translate.")
-        }
-
-        let glossaryText = try glossary.map { try String(contentsOfFile: $0, encoding: .utf8) }
-        let contextText = try context.map { try String(contentsOfFile: $0, encoding: .utf8) }
+        let (provider, backendDescription) = try resolvedProvider()
+        print("Backend: \(backendDescription)")
 
         if skipConfirmation == false {
-            let batchCount = (gaps.count + batchSize - 1) / batchSize
-            print("This sends \(gaps.count) key(s) in ~\(batchCount) request(s) to \(model). Continue? [y/N] ", terminator: "")
+            print("This sends \(gaps.count) key(s) — \(estimate.description). Continue? [y/N] ", terminator: "")
             guard let answer = readLine(), ["y", "yes"].contains(answer.lowercased()) else {
                 print("Aborted.")
                 return
             }
         }
 
-        let client = ClaudeClient(configuration: .init(apiKey: apiKey, model: model))
-        let translator = Translator(client: client,
+        let translator = Translator(provider: provider,
                                     appContext: contextText,
                                     glossary: glossaryText,
                                     batchSize: batchSize,
@@ -129,6 +142,40 @@ struct Translate: AsyncParsableCommand {
 
         if failures.isEmpty == false {
             throw ExitCode(1)
+        }
+    }
+
+    private func resolvedProvider() throws -> (any CompletionProviding, String) {
+        let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]
+
+        func apiProvider() throws -> (any CompletionProviding, String) {
+            guard let apiKey, apiKey.isEmpty == false else {
+                throw ValidationError("ANTHROPIC_API_KEY is not set. Export your Anthropic API key, or use --backend claude-code with a local Claude Code install.")
+            }
+            return (ClaudeClient(configuration: .init(apiKey: apiKey, model: model)), "Claude API")
+        }
+
+        func claudeCodeProvider() throws -> (any CompletionProviding, String) {
+            guard let binaryPath = ClaudeCodeBackend.findBinary() else {
+                throw ValidationError("No 'claude' binary found in PATH. Install Claude Code, or use --backend api with ANTHROPIC_API_KEY.")
+            }
+            return (ClaudeCodeBackend(binaryPath: binaryPath, model: model),
+                    "Claude Code (\(binaryPath), billed to your Claude subscription)")
+        }
+
+        switch backend {
+            case .api:
+                return try apiProvider()
+            case .claudeCode:
+                return try claudeCodeProvider()
+            case .auto:
+                if let apiKey, apiKey.isEmpty == false {
+                    return try apiProvider()
+                }
+                if ClaudeCodeBackend.findBinary() != nil {
+                    return try claudeCodeProvider()
+                }
+                throw ValidationError("Neither ANTHROPIC_API_KEY is set nor a 'claude' binary was found in PATH. Set up one of the two backends.")
         }
     }
 }

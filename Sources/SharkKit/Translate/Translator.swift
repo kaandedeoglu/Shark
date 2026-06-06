@@ -2,11 +2,17 @@ import Foundation
 
 /// Translates gaps batch-wise via the Claude API and machine-checks every
 /// returned value before it is accepted.
-public struct Translator {
-    public struct Outcome {
+public struct Translator: Sendable {
+    public struct Outcome: Sendable {
         public internal(set) var translated: [(gap: TranslationGap, value: String)] = []
         public internal(set) var failed: [(gap: TranslationGap, reason: String)] = []
         public internal(set) var usage = ClaudeClient.Usage(inputTokens: 0, outputTokens: 0, cacheCreationInputTokens: 0, cacheReadInputTokens: 0)
+
+        mutating func merge(_ other: Outcome) {
+            translated += other.translated
+            failed += other.failed
+            usage = usage.adding(other.usage)
+        }
     }
 
     static let roleInstructions = """
@@ -39,17 +45,24 @@ public struct Translator {
         "additionalProperties": false,
     ]
 
-    private let client: ClaudeClient
+    private let provider: any CompletionProviding
     private let appContext: String?
     private let glossary: String?
     private let batchSize: Int
-    private let progress: (String) -> Void
+    private let maxConcurrentRequests: Int
+    private let progress: @Sendable (String) -> Void
 
-    public init(client: ClaudeClient, appContext: String? = nil, glossary: String? = nil, batchSize: Int = 30, progress: @escaping (String) -> Void = { _ in }) {
-        self.client = client
+    public init(provider: any CompletionProviding,
+                appContext: String? = nil,
+                glossary: String? = nil,
+                batchSize: Int = 30,
+                maxConcurrentRequests: Int = 3,
+                progress: @escaping @Sendable (String) -> Void = { _ in }) {
+        self.provider = provider
         self.appContext = appContext
         self.glossary = glossary
         self.batchSize = max(1, batchSize)
+        self.maxConcurrentRequests = max(1, maxConcurrentRequests)
         self.progress = progress
     }
 
@@ -58,19 +71,45 @@ public struct Translator {
 
         // Batches never mix tables or locales, so keys stay unambiguous in
         // the response and the prompt stays coherent
+        var batches: [[TranslationGap]] = []
         let groups = Dictionary(grouping: gaps) { "\($0.tableName)\u{1F}\($0.targetLocale)" }
         for groupKey in groups.keys.sorted() {
-            let groupGaps = groups[groupKey]!
-            let batches = groupGaps.chunked(into: batchSize)
-            for (index, batch) in batches.enumerated() {
-                progress("Translating \(batch.count) key(s) into \(batch[0].targetLocale) [\(batch[0].tableName), batch \(index + 1)/\(batches.count)]…")
-                try await translate(batch: batch, into: &outcome)
+            batches += groups[groupKey]!.chunked(into: batchSize)
+        }
+        guard batches.isEmpty == false else { return outcome }
+
+        // The first batch runs alone: its response writes the prompt cache
+        // that all following batches read. Only then is it worth fanning out.
+        outcome.merge(try await translate(batch: batches[0], index: 0, of: batches.count))
+
+        let remaining = Array(batches.dropFirst())
+        guard remaining.isEmpty == false else { return outcome }
+
+        try await withThrowingTaskGroup(of: Outcome.self) { group in
+            var nextIndex = 0
+            func addNextBatch() {
+                guard nextIndex < remaining.count else { return }
+                let batch = remaining[nextIndex]
+                let index = nextIndex + 1
+                nextIndex += 1
+                group.addTask {
+                    try await self.translate(batch: batch, index: index, of: batches.count)
+                }
+            }
+            for _ in 0..<maxConcurrentRequests {
+                addNextBatch()
+            }
+            while let partial = try await group.next() {
+                outcome.merge(partial)
+                addNextBatch()
             }
         }
         return outcome
     }
 
-    private func translate(batch: [TranslationGap], into outcome: inout Outcome) async throws {
+    private func translate(batch: [TranslationGap], index: Int, of batchCount: Int) async throws -> Outcome {
+        var outcome = Outcome()
+        progress("Translating \(batch.count) key(s) into \(batch[0].targetLocale) [\(batch[0].tableName), batch \(index + 1)/\(batchCount)]…")
         let received = try await requestTranslations(for: batch, rejectionNotes: [:], outcome: &outcome)
 
         var rejected: [TranslationGap] = []
@@ -83,7 +122,7 @@ public struct Translator {
                 outcome.translated.append((gap, received[gap.key]!))
             }
         }
-        guard rejected.isEmpty == false else { return }
+        guard rejected.isEmpty == false else { return outcome }
 
         // One retry for the rejected keys, telling the model what was wrong
         progress("Retrying \(rejected.count) rejected key(s)…")
@@ -95,10 +134,11 @@ public struct Translator {
                 outcome.translated.append((gap, retried[gap.key]!))
             }
         }
+        return outcome
     }
 
     private func requestTranslations(for batch: [TranslationGap], rejectionNotes: [String: String], outcome: inout Outcome) async throws -> [String: String] {
-        let completion = try await client.complete(system: systemBlocks(),
+        let completion = try await provider.complete(system: systemBlocks(),
                                                    userMessage: Self.userMessage(for: batch, rejectionNotes: rejectionNotes),
                                                    jsonSchema: Self.responseSchema)
         outcome.usage = outcome.usage.adding(completion.usage)

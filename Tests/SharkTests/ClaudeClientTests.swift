@@ -52,8 +52,9 @@ enum TestAPI {
         return URLSession(configuration: configuration)
     }
 
-    static func client(model: String = "claude-opus-4-8") -> ClaudeClient {
-        ClaudeClient(configuration: .init(apiKey: "test-key", model: model), session: session())
+    static func client(model: String = "claude-opus-4-8", maxRetries: Int = 0) -> ClaudeClient {
+        ClaudeClient(configuration: .init(apiKey: "test-key", model: model, maxRetries: maxRetries, retryBaseDelay: 0),
+                     session: session())
     }
 
     static func response(status: Int = 200, headers: [String: String] = [:], body: Data) -> (URLRequest) -> (HTTPURLResponse, Data) {
@@ -139,6 +140,36 @@ enum TestAPI {
         }
     }
 
+    @Test func retryableErrorsAreRetried() async throws {
+        nonisolated(unsafe) var requestCount = 0
+        let errorBody = try JSONSerialization.data(withJSONObject: ["error": ["message": "overloaded"]])
+        MockURLProtocol.handler = { request in
+            requestCount += 1
+            if requestCount < 3 {
+                return TestAPI.response(status: 529, body: errorBody)(request)
+            }
+            return TestAPI.response(body: TestAPI.completionBody(text: "ok"))(request)
+        }
+
+        let completion = try await TestAPI.client(maxRetries: 3).complete(system: [], userMessage: "x", jsonSchema: [:])
+        #expect(completion.text == "ok")
+        #expect(requestCount == 3)
+    }
+
+    @Test func nonRetryableErrorsAreNotRetried() async throws {
+        nonisolated(unsafe) var requestCount = 0
+        let errorBody = try JSONSerialization.data(withJSONObject: ["error": ["message": "bad request"]])
+        MockURLProtocol.handler = { request in
+            requestCount += 1
+            return TestAPI.response(status: 400, body: errorBody)(request)
+        }
+
+        await #expect(throws: ClaudeClient.ClientError.self) {
+            _ = try await TestAPI.client(maxRetries: 3).complete(system: [], userMessage: "x", jsonSchema: [:])
+        }
+        #expect(requestCount == 1)
+    }
+
     @Test func translatorAcceptsValidTranslations() async throws {
         MockURLProtocol.handler = { request in
             TestAPI.response(body: TestAPI.translationsBody([
@@ -147,7 +178,7 @@ enum TestAPI {
             ]))(request)
         }
 
-        let translator = Translator(client: TestAPI.client())
+        let translator = Translator(provider: TestAPI.client())
         let outcome = try await translator.translate(gaps: [TestAPI.gap(key: "GREETING", source: "Hello %@"),
                                                             TestAPI.gap(key: "BYE", source: "Goodbye")])
 
@@ -172,7 +203,7 @@ enum TestAPI {
             return TestAPI.response(body: TestAPI.translationsBody([("GREETING", "Hallo %@")]))(request)
         }
 
-        let translator = Translator(client: TestAPI.client())
+        let translator = Translator(provider: TestAPI.client())
         let outcome = try await translator.translate(gaps: [TestAPI.gap(key: "GREETING", source: "Hello %@")])
 
         #expect(requestCount == 2)
@@ -189,7 +220,7 @@ enum TestAPI {
             TestAPI.response(body: TestAPI.translationsBody([("COUNT", "Falsch ohne Specifier")]))(request)
         }
 
-        let translator = Translator(client: TestAPI.client())
+        let translator = Translator(provider: TestAPI.client())
         let outcome = try await translator.translate(gaps: [TestAPI.gap(key: "COUNT", source: "%d items")])
 
         #expect(outcome.translated.isEmpty)
@@ -202,7 +233,7 @@ enum TestAPI {
             TestAPI.response(body: TestAPI.translationsBody([]))(request)
         }
 
-        let translator = Translator(client: TestAPI.client())
+        let translator = Translator(provider: TestAPI.client())
         let outcome = try await translator.translate(gaps: [TestAPI.gap(key: "GREETING", source: "Hello")])
 
         #expect(outcome.failed.count == 1)

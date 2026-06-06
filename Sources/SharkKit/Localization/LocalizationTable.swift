@@ -28,7 +28,7 @@ public struct LocalizationTerm: Equatable {
 /// `.xcstrings` catalog, or a group of same-named `.strings` files from
 /// different `.lproj` folders.
 public struct LocalizationTable {
-    public enum Origin: Equatable {
+    public enum Origin: Equatable, Sendable {
         case stringCatalog(path: String)
         case stringsFiles(pathsByLocale: [String: String])
     }

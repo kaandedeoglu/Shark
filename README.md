@@ -259,6 +259,50 @@ By default, Shark will process all resource files it knows about. If you don't w
 
 Prints the overview, example usage and available flags to the console.
 
+## Localization workflow: lint & translate
+
+Beyond code generation (`shark generate`, the default subcommand), Shark 2.0 helps with the localization workflow itself.
+
+### shark lint
+
+Checks all localization tables of a target across **all** locales:
+
+```bash
+shark lint MyApp.xcodeproj
+```
+
+| Rule | Severity |
+|---|---|
+| `missing-key` — key exists in the source locale but is missing or empty in another | fails the run |
+| `placeholder-mismatch` — format specifiers differ between source and translation (catches `String(format:)` crashes; positional reordering like `%2$@ … %1$@` is *not* a mismatch) | fails the run |
+| `orphaned-key` — key exists only outside the source locale | fails only with `--strict` |
+
+Exit code 1 on findings makes it a CI gate. `--format github` emits workflow annotations, `--format json` is for tooling. Plural keys are reported but not checked yet.
+
+### shark translate
+
+Finds keys that are missing in the target locale(s) and translates them with Claude:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-…
+shark translate MyApp.xcodeproj --to de,fr --glossary Glossary.md --context AppContext.md
+```
+
+How it stays safe:
+
+- Only **missing or empty** entries are candidates — existing translations (including ones in review) are never overwritten.
+- Every returned value is **machine-validated**: format specifiers must survive translation exactly (normalized by position). Rejected values get one retry with the rejection reason; persistent failures are reported, never written.
+- Results land as **`needs_review`** in `.xcstrings`, so Xcode's String Catalog editor surfaces them for human review. For `.strings` files, new keys are appended under a review comment.
+- A confirmation prompt shows a token/cost estimate before anything is sent (`--yes` skips it, `--dry-run` only lists).
+
+Backends (`--backend auto|api|claude-code`):
+
+- **api** — direct Messages API via `ANTHROPIC_API_KEY`: structured output, prompt caching across batches, parallel requests. The right choice for CI.
+- **claude-code** — pipes through a locally installed [Claude Code](https://claude.com/claude-code) binary and bills against your existing Claude subscription. No API key needed.
+- **auto** (default) — `api` if a key is set, otherwise `claude-code`.
+
+`--glossary` takes a Markdown file with project terminology, `--context` a short app description — both are passed to the model (and cached across batches on the api backend). `--model` selects the Claude model (default `claude-opus-4-8`).
+
 ## License
 
 The MIT License (MIT)

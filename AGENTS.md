@@ -35,6 +35,15 @@ The project uses Swift Package Manager's built-in testing. Look for test files i
 swift test
 ```
 
+### Running Smoke Tests
+```bash
+# Stable committed fixtures used by CI
+Scripts/smoke-fixtures.sh
+
+# Optional local pass over real-world projects
+SHARK_REAL_WORLD_ROOT="$HOME/Documents/late" Scripts/smoke-real-world.sh
+```
+
 ### Running the Tool
 ```bash
 # Basic usage - generates Shark.swift in specified directory (generate is the default subcommand)
@@ -109,12 +118,17 @@ Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven chan
 
 ### Regression fixture
 
-`Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54. Smoke-test the toolchain against it after dependency bumps:
+`Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54.
+
+`Examples/LocalizationWorkflowExample/` is a hand-crafted localization workflow fixture with expected lint findings across `.strings` and `.xcstrings`, skipped plural catalog entries, and stable `translate --dry-run` gaps.
+
+Smoke-test the toolchain against committed fixtures after dependency bumps:
 
 ```bash
-# Shark requires absolute paths
-swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"
+Scripts/smoke-fixtures.sh
 ```
+
+Real-world projects under `$HOME/Documents/late` are useful before release tags, but they are not CI fixtures. If one fails, reduce it to the smallest synthetic `.xcodeproj` and commit that under `Examples/`.
 
 ### Resource Processing Flow
 1. XcodeProjectHelper parses the `.xcodeproj` file using XcodeGraph

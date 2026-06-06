@@ -2,9 +2,9 @@ name: Swift
 
 on:
   push:
-    branches: [ master ]
+    branches: [ master, 2.0 ]
   pull_request:
-    branches: [ master ]
+    branches: [ master, 2.0 ]
 
 jobs:
   build:
@@ -20,5 +20,5 @@ jobs:
       run: swift build -v
     - name: Test
       run: swift test
-    - name: Smoke test against objectVersion 90 fixture
-      run: swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"
+    - name: Smoke test synthetic fixtures
+      run: Scripts/smoke-fixtures.sh

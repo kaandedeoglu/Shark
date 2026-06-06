@@ -327,6 +327,27 @@ Backends (`--backend claude-code|api|codex|auto`):
 
 `--glossary` takes a Markdown file with project terminology, `--context` a short app description — both are passed to the model (and cached across batches on the api backend). `--model` selects the model; Claude backends default to `claude-opus-4-8`, while `codex` uses your Codex CLI default unless set.
 
+## Smoke tests
+
+Shark keeps committed synthetic `.xcodeproj` fixtures under `Examples/` and runs them in CI:
+
+```bash
+Scripts/smoke-fixtures.sh
+```
+
+The fixture smoke covers:
+
+- `Format90Example` — objectVersion 90 and the Xcode 16.3 shell-script array form, plus a clean generate/lint path.
+- `LocalizationWorkflowExample` — expected localization findings across `.strings` and `.xcstrings`, skipped plural catalog entries, and `translate --dry-run` gap discovery without calling a model backend.
+
+Real-world projects are useful before release tags, but they are intentionally opt-in because they may be private, target-dependent, or machine-specific:
+
+```bash
+SHARK_REAL_WORLD_ROOT="$HOME/Documents/late" Scripts/smoke-real-world.sh
+```
+
+When a real-world smoke exposes a bug, reduce it to the smallest reproducible synthetic fixture and commit that fixture with the regression test.
+
 ## License
 
 The MIT License (MIT)

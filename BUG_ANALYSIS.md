@@ -4,14 +4,14 @@ This document tracks technical risks that are still relevant after the 2.0 branc
 
 ## Release-Critical Checks
 
-1. Run `swift test` and the Format90 smoke test before every dependency bump or 2.0 release candidate:
+1. Run `swift test` and the committed synthetic fixture smoke before every dependency bump or 2.0 release candidate:
 
    ```bash
    swift test
-   swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"
+   Scripts/smoke-fixtures.sh
    ```
 
-2. Smoke-test `shark lint` and `shark translate --dry-run` on at least one real `.strings` project and one `.xcstrings` project.
+2. Before release tags, optionally run `SHARK_REAL_WORLD_ROOT="$HOME/Documents/late" Scripts/smoke-real-world.sh` to catch unknown real-project shapes.
 3. Before advertising local agent backends as stable, run one real small-batch translation through `--backend claude-code` and `--backend codex`.
 
 ## Open Risks
@@ -84,6 +84,6 @@ Add startup/version checks with actionable error messages before the 2.0 release
 ## Recommended Next Actions
 
 1. Add CLI capability checks for `claude` and `codex`.
-2. Run real-project localization workflow smoke tests.
+2. When real-world smokes fail, reduce them to committed synthetic fixtures under `Examples/`.
 3. Clean up the remaining low-risk force unwraps and path joining.
 4. Decide whether generated force unwraps are an explicit design contract or whether Shark 2.x should offer an opt-in safe-access generation mode.

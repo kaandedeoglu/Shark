@@ -1,0 +1,3 @@
+"Greeting_HELLO" = "Hello, world!";
+"Greeting_WELCOME_FORMAT" = "Welcome, %@!";
+"Progress_PERCENT" = "25% complete";

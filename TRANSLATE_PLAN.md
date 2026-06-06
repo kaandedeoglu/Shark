@@ -172,6 +172,7 @@ Failures → single retry of just the failed keys with the validation error in t
 - `ClaudeCodeBackend`: CLI argument construction, structured-output schema flag, JSON envelope parsing, code-fence stripping.
 - `CodexBackend`: CLI argument construction, structured-output schema file, final-message parsing, code-fence stripping.
 - Translate validation: crafted "bad model responses" (dropped specifier, extra key, empty value) must be rejected.
+- Synthetic smoke fixtures: `Scripts/smoke-fixtures.sh` runs committed `.xcodeproj` fixtures for generate/lint and `translate --dry-run`. Real-world projects stay opt-in through `Scripts/smoke-real-world.sh`; reduce any discovered breakage to a committed fixture.
 
 ## 6. Milestones
 

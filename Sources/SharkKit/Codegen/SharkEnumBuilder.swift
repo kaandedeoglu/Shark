@@ -1,5 +1,5 @@
 import Foundation
-enum SharkEnumBuilder {
+public enum SharkEnumBuilder {
     private static let bundleString = """
         private let bundle: Bundle = {
             class Custom {}
@@ -13,7 +13,7 @@ enum SharkEnumBuilder {
         }
         """
 
-    static func sharkEnumString(forOptions options: Options) async throws -> String {
+    public static func sharkEnumString(forOptions options: Options) async throws -> String {
         let resourcePaths = try await XcodeProjectHelper(options: options).resourcePaths()
         
         let imagesString = try NestedEnumBuilder<ImageAsset>.enumString(forFilesAtPaths: resourcePaths.assetsPaths, topLevelName: "I", options: options)

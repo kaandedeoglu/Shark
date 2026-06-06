@@ -16,16 +16,23 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.5.0")),
     ],
     targets: [
-        .executableTarget(
-            name: "Shark",
+        .target(
+            name: "SharkKit",
             dependencies: [
                 .product(name: "XcodeGraphMapper", package: "XcodeGraph"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),
+        .executableTarget(
+            name: "Shark",
+            dependencies: [
+                "SharkKit",
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ]
+        ),
         .testTarget(
             name: "SharkTests",
-            dependencies: ["Shark"],
+            dependencies: ["SharkKit"],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         ),
     ],

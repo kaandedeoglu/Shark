@@ -1,69 +1,49 @@
 import Foundation
 import ArgumentParser
 
-@main
-struct Shark: AsyncParsableCommand {
-    static var configuration: CommandConfiguration = .init(abstract: "Paste the following line in a Xcode run phase script that runs before the \"Compile Sources\" run phase:",
-                                                           discussion: "shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME")
-
-    @OptionGroup()
-    private var options: Options
-
-    func run() async throws {
-
-        let enumString = try await SharkEnumBuilder.sharkEnumString(forOptions: options)
-        var lastContent: String = ""
-        if let data = try? Data(contentsOf: URL(fileURLWithPath: options.outputPath)),
-           let content = String(data: data, encoding: .utf8) {
-            lastContent = content
-        }
-        let newContent = FileBuilder.fileContents(with: enumString, options: options)
-        guard newContent != lastContent else { return }
-        try newContent.write(to: URL(fileURLWithPath: options.outputPath), atomically: true, encoding: .utf8)
-    }
-}
-
-struct Options: ParsableArguments {
+public struct Options: ParsableArguments {
     @Argument(help: "The .xcodeproj file path", transform: Self.transform(forProjectPath:))
-    fileprivate(set) var projectPath: String
+    public fileprivate(set) var projectPath: String
 
     @Argument(help: "The output file path", transform: Self.transform(forOutputPath:))
-    fileprivate(set) var outputPath: String
+    public fileprivate(set) var outputPath: String
 
     @Option(name: .customLong("name"),
             help: "The top level enum name")
-    private(set) var topLevelEnumName: String = "Shark"
+    public private(set) var topLevelEnumName: String = "Shark"
 
     @Option(help: "The generated properties' visiblity")
-    private(set) var visibility: String = "public"
+    public private(set) var visibility: String = "public"
 
     @Option(name: .customLong("target"),
             help: "Target name of the application, useful in case there are multiple application targets")
-    private(set) var targetName: String?
+    public private(set) var targetName: String?
 
     @Option(name: .long,
             help: "Separator character used to split localization keys")
-    private(set) var separator: Character = "."
+    public private(set) var separator: Character = "."
 
     @Option(name: .long,
             help: "Localization code to use when selecting the Localizable.strings. i.e en, de, es.")
-    private(set) var locale: String = "en"
+    public private(set) var locale: String = "en"
 
     @Flag(help: "Disable the top level enum and declare resource enums on the top level")
-    private(set) var topLevelScope: Bool = false
+    public private(set) var topLevelScope: Bool = false
 
     @Option(name: .customLong("framework"),
             help: "Enable code generation support for the specified framework. Valid frameworks are 'uikit', 'appkit', and 'swiftui'.",
             transform: Self.frameworkEnum(forFramework:))
-    private(set) var framework: Framework = .uikit
+    public private(set) var framework: Framework = .uikit
 
     @Option(name: .customLong("exclude"),
             help: "Exclude a file from processing (postfix matching).")
-    private(set) var exclude: [String] = []
+    public private(set) var exclude: [String] = []
 
     @Option(name: .long,
             help: "Path to a dependency file. Set, if Shark should generate a dependency file for Xcode")
-    private(set) var deps: String? = nil
+    public private(set) var deps: String? = nil
+
+    public init() {}
 
     func shouldExclude(path: String) -> Bool {
         for exclude in self.exclude {

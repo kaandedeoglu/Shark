@@ -1,6 +1,6 @@
 import Testing
 import Foundation
-@testable import Shark
+@testable import SharkKit
 
 struct FrameworkTests {
     

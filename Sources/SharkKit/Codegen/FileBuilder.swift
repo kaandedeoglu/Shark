@@ -1,5 +1,5 @@
-enum FileBuilder {
-    static func fileContents(with enumString: String, options: Options) -> String {
+public enum FileBuilder {
+    public static func fileContents(with enumString: String, options: Options) -> String {
 
         return """
         // \(options.outputPath.lastPathComponent)

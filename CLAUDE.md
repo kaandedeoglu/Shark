@@ -41,19 +41,30 @@ shark MyApp.xcodeproj ./Sources/MyApp/ --target MyAppTarget --framework swiftui 
 
 ## Architecture
 
+### Target Layout
+
+The package is split into a library and a thin executable (see TRANSLATE_PLAN.md for the rationale — this boundary also serves the planned SPM build plugin, issue #46):
+
+- **`SharkKit` (library)** — all logic: options, project parsing, codegen. Tests run against this target (`@testable import SharkKit`).
+- **`Shark` (executable)** — ArgumentParser commands only. `Generate` is the `defaultSubcommand`, so the classic `shark PROJECT OUTPUT` invocation from Xcode build phases keeps working without naming a subcommand.
+
 ### Core Components
 
-**CLI Layer (`Sources/Shark/CLI/`)**
-- `Shark.swift`: Main command-line interface using ArgumentParser. Handles options parsing and orchestrates the generation process.
-- `XcodeProjectHelper.swift`: Interfaces with XcodeGraph library to parse `.xcodeproj` files and extract resource paths. Handles target selection and resource discovery.
+**CLI Layer (`Sources/Shark/`)**
+- `Shark.swift`: Root command declaring the subcommands.
+- `GenerateCommand.swift`: The codegen subcommand (default); orchestrates the generation process.
 
-**Code Generation (`Sources/Shark/Codegen/`)**
+**Options & Project Parsing (`Sources/SharkKit/`)**
+- `Options.swift`: Shared ArgumentParser options used by `generate` and the builders.
+- `Project/XcodeProjectHelper.swift`: Interfaces with XcodeGraph library to parse `.xcodeproj` files and extract resource paths. Handles target selection and resource discovery.
+
+**Code Generation (`Sources/SharkKit/Codegen/`)**
 - `SharkEnumBuilder.swift`: Main orchestrator that coordinates generation of all asset types (images, colors, fonts, localizations, storyboards, data assets).
 - `FileBuilder.swift`: Handles final file output formatting with proper headers and import statements.
 - Asset-specific builders: `FontEnumBuilder.swift`, `LocalizationEnumBuilder.swift`, `NestedEnumBuilder.swift`, `StoryboardEnumBuilder.swift`
 - Asset type definitions: `ImageAsset.swift`, `ColorAsset.swift`, `DataAsset.swift`
 
-**Framework Support (`Sources/Shark/Types/Framework.swift`)**
+**Framework Support (`Sources/SharkKit/Types/Framework.swift`)**
 - Enum defining supported frameworks: UIKit, AppKit, SwiftUI
 - Each framework has different import statements and API generation patterns
 

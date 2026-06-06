@@ -1,4 +1,4 @@
-enum Framework: String {
+public enum Framework: String {
     case uikit
     case appkit
     case swiftui

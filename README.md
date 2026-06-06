@@ -2,19 +2,36 @@
 
 ![Build](https://github.com/kaandedeoglu/Shark/workflows/Swift/badge.svg)
 
-Shark is a Swift command line tool that generates type safe enums for your images, colors, storyboards, fonts and localizations.
-Shark supports code generation for the Apple UI frameworks `UIKit`, `AppKit`, and `SwiftUI`.
+Shark is a Swift command line tool for type-safe resources *and* a complete localization workflow:
 
-Because Shark reads your `.xcodeproj` to find these assets, the setup is extremely simple.
+- **`shark generate`** (the default) — type-safe enums for your images, colors, storyboards, fonts, data assets, and localizations, for `UIKit`, `AppKit`, and `SwiftUI`.
+- **`shark lint`** — a CI gate that catches missing translations, dead keys, and format-specifier mismatches across *all* locales.
+- **`shark translate`** — fills localization gaps with Claude (via API key or your existing Claude Code install), machine-validated and routed through human review.
 
-**WWDC 2023 NEWS** Although Shark has been a bit [sherlocked](https://umatechnology.org/what-does-it-mean-when-an-app-gets-sherlocked-by-apple/)
-by the new `Color` and `Image` resources in Xcode 15, there's still no support for fonts, storyboards, and localizations.
-We will therefore continue to maintain Shark!
+Because Shark reads your `.xcodeproj` to find these assets, the setup is extremely simple: one binary, one build phase line, no config file.
 
-**WWDC 2025 NEWS** This year, Shark has been [sherlocked](https://umatechnology.org/what-does-it-mean-when-an-app-gets-sherlocked-by-apple/) again
-with type-safe localization resources. We still have the leading edge for fonts and storyboards though ;-)
+## Why Shark?
 
-## Motivation
+Xcode has been nibbling at this space for years — asset symbols arrived with Xcode 15, type-safe string symbols with String Catalogs after that. SwiftGen and R.swift have generated resource accessors for even longer. So why Shark, in 2026?
+
+**Versus Xcode's generated symbols:**
+
+- Generated symbols cover images, colors, and strings — the latter only if you've migrated to String Catalogs. Shark additionally covers **fonts**, **storyboards**, and **data assets**, speaks both `.xcstrings` *and* classic `.strings` (which is what long-lived production apps actually contain), and generates the same API across UIKit, AppKit, and SwiftUI.
+- Shark namespaces by your asset-catalog folder structure (*Provides Namespace*) and by localization key separators: `L.login.error.message("…")` instead of a flat symbol soup. With `--target`, `--exclude`, and `--name` it handles white-label/multi-target setups that symbol generation has no answer for.
+- Most importantly: **codegen was never the whole problem — keeping localizations complete is.** Xcode will not tell your CI that 21 keys are missing in Japanese. `shark lint` will, and `shark translate` will fix it, with format-specifier preservation checked by machine and the result parked as `needs_review` for a human.
+
+**Versus SwiftGen / R.swift:**
+
+- Shark reads the `.xcodeproj` directly and is target-aware — no `swiftgen.yml`, no templates, no resource-bundle plumbing. The generated file is plain Swift with zero runtime dependency.
+- Both are codegen-only tools. Neither lints localization completeness, neither translates, and neither validates that `%1$@` survived a translator.
+
+**Versus project generators** (XcodeGen, Tuist): different problem — they generate *projects*, not resource accessors or localization workflows. Shark happily works on projects they generate.
+
+The three subcommands share one project model and one format-specifier parser: what `generate` turns into a function signature is exactly what `lint` checks and what `translate` refuses to let a model break.
+
+*A bit of history: WWDC 2023 [sherlocked](https://umatechnology.org/what-does-it-mean-when-an-app-gets-sherlocked-by-apple/) our colors and images, WWDC 2025 our localization accessors. We took it as a compliment — and built the workflow parts Apple didn't.*
+
+## The generated code
 
 Here's what a generated `Shark.swift` file for `UIKit` looks like and how it is used in a codebase:
 

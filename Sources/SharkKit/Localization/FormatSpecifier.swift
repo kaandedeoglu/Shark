@@ -5,6 +5,9 @@ public struct FormatSpecifier: Equatable, Hashable {
     public let position: Int?
     public let lengthModifier: String
     public let conversion: Character
+    /// A letter right after the conversion is a prose signal ("100%ig",
+    /// "25% and") — real placeholders end at a word boundary
+    public let followedByLetter: Bool
 
     /// Identity used to compare placeholders between a source string and its
     /// translation — flags, width, and precision don't affect the argument
@@ -91,7 +94,8 @@ public enum FormatSpecifierParser {
             result.append(FormatSpecifier(raw: String(characters[start..<index]),
                                           position: position,
                                           lengthModifier: lengthModifier,
-                                          conversion: conversion))
+                                          conversion: conversion,
+                                          followedByLetter: index < characters.count && characters[index].isLetter))
         }
         return result
     }

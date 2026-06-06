@@ -55,16 +55,28 @@ public enum LocalizationLinter {
     /// a translation that reorders via `%2$@ … %1$@` is *not* a mismatch.
     static func placeholderMismatch(source: String, translation: String) -> String? {
         let sourceSet = normalizedPlaceholders(in: source)
+        // Without source placeholders no String(format:) call ever happens
+        // for this key, so prose percent signs in a translation are harmless
+        guard sourceSet.isEmpty == false else { return nil }
         let translationSet = normalizedPlaceholders(in: translation)
         guard sourceSet != translationSet else { return nil }
         let describe = { (set: Set<String>) in set.isEmpty ? "none" : set.sorted().joined(separator: ", ") }
         return "placeholders don't match — source has [\(describe(sourceSet))], translation has [\(describe(translationSet))]"
     }
 
+    /// Conversions worth comparing in UI strings. Scientific/hex-float and
+    /// C-string conversions (a, e, g, s, c, p) are excluded — they don't occur
+    /// in app localizations but constantly false-positive on prose like
+    /// "25% and …" or "25% e la …" (space is a printf flag).
+    private static let comparedConversions: Set<Character> = ["@", "d", "D", "i", "u", "U", "f", "x", "X", "o", "O"]
+
     private static func normalizedPlaceholders(in value: String) -> Set<String> {
         var implicitPosition = 0
         var result: Set<String> = []
         for specifier in FormatSpecifierParser.specifiers(in: value) {
+            guard comparedConversions.contains(specifier.conversion) else { continue }
+            // "100%ig", "% in" — a letter glued to the conversion is prose
+            if specifier.conversion != "@", specifier.followedByLetter { continue }
             let position: Int
             if let explicit = specifier.position {
                 position = explicit

@@ -41,6 +41,11 @@ struct Lint: AsyncParsableCommand {
             skippedPluralKeys[table.name, default: []].formUnion(table.skippedPluralKeys)
         }
 
+        if format == .text {
+            let keyCount = tables.reduce(0) { $0 + $1.terms.count }
+            let locales = Set(tables.flatMap(\.locales)).sorted().joined(separator: ", ")
+            print("Checked \(keyCount) key(s) in \(tables.count) table(s) across: \(locales)")
+        }
         print(LintReportFormatter.report(findings: findings, skippedPluralKeys: skippedPluralKeys, format: format))
 
         let fails = findings.contains { $0.rule.failsByDefault || (strict && $0.rule == .orphanedKey) }

@@ -63,6 +63,29 @@ struct LocalizationLinterTests {
         #expect(LocalizationLinter.placeholderMismatch(source: "100%% done", translation: "100%% fertig") == nil)
     }
 
+    // Real-world regression: prose percent signs are not placeholders.
+    // The space is a printf flag and a/e/i are valid conversions, so a naive
+    // parse reads "25% and" as %a and "25% e la" as %e.
+    @Test func prosePercentSignsAreNotPlaceholders() {
+        #expect(LocalizationLinter.placeholderMismatch(
+            source: "the battery level needs to be at least 25% and the low power mode disabled",
+            translation: "il livello della batteria deve essere almeno del 25% e la modalità disattivata") == nil)
+        #expect(LocalizationLinter.placeholderMismatch(
+            source: "the battery level needs to be at least 25% and the low power mode disabled",
+            translation: "der Akkustand muss mindestens 25% betragen") == nil)
+        // A letter glued to the conversion is prose, not a placeholder
+        #expect(LocalizationLinter.placeholderMismatch(
+            source: "We are 100% in agreement",
+            translation: "Wir sind 100%ig einverstanden") == nil)
+        // Real placeholders right next to prose percent signs still count
+        #expect(LocalizationLinter.placeholderMismatch(
+            source: "%d attempts left at 25% and falling",
+            translation: "Noch Versuche übrig") != nil)
+        #expect(LocalizationLinter.placeholderMismatch(
+            source: "%d attempts left at 25% and falling",
+            translation: "Noch %d Versuche übrig bei 25% und sinkend") == nil)
+    }
+
     @Test func cleanTableProducesNoFindings() {
         let table = makeTable(terms: ["GREETING": ["en": "Hello %@", "de": "Hallo %@"]], locales: ["en", "de"])
         #expect(LocalizationLinter.lint(tables: [table]).isEmpty)

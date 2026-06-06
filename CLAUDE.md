@@ -80,7 +80,8 @@ XcodeGraph 1.34.5's `PackageInfoLoader` collects stdout and stderr together befo
 `Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54. Smoke-test the toolchain against it after dependency bumps:
 
 ```bash
-swift run Shark Examples/Format90Example/Format90Example.xcodeproj Examples/Format90Example/Format90Example/
+# Shark requires absolute paths
+swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"
 ```
 
 Also smoke-test against a real project with local Swift package dependencies that can emit manifest warnings:

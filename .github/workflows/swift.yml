@@ -12,9 +12,13 @@ jobs:
     runs-on: macos-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v4
     - uses: maxim-lobanov/setup-xcode@v1
       with:
-        xcode-version: latest-stable    
+        xcode-version: latest-stable
     - name: Build
       run: swift build -v
+    - name: Test
+      run: swift test
+    - name: Smoke test against objectVersion 90 fixture
+      run: swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"

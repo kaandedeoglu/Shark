@@ -136,7 +136,18 @@ enum LocalizationEnumBuilder {
         let xcstringsDictionaries = try xcstringsPaths.compactMap { path -> [String: String]? in
             let url = URL(fileURLWithPath: path)
             let fileContents = try Data(contentsOf: url)
-            let stringCatalog = try JSONDecoder().decode(StringCatalog.self, from: fileContents)
+
+            let stringCatalog: StringCatalog
+            do {
+                stringCatalog = try JSONDecoder().decode(StringCatalog.self, from: fileContents)
+            } catch {
+                // Some tools write raw newlines into .xcstrings values, producing invalid JSON — repair and retry
+                guard let jsonString = String(data: fileContents, encoding: .utf8),
+                      let fixedContents = fixMultilineStringsInJSON(jsonString).data(using: .utf8) else {
+                    throw error
+                }
+                stringCatalog = try JSONDecoder().decode(StringCatalog.self, from: fixedContents)
+            }
 
             var terms: [String: String] = [:]
             for (string, entry) in stringCatalog.strings {
@@ -202,5 +213,47 @@ extension Array where Element == LocalizationValue.InterpolationType {
         \#(String.indent(indentLevel + 1))return String(format: NSLocalizedString("\#(key)", bundle: bundle, comment: ""), \#(formatValuesString))
         \#(String.indent(indentLevel))}
         """#
+    }
+}
+
+extension LocalizationEnumBuilder {
+    /// Repairs .xcstrings JSON containing raw newlines inside string literals, which the JSON
+    /// spec forbids. Only literal control characters are escaped — existing escape sequences,
+    /// quotes, and backslashes pass through untouched, so valid JSON is returned unchanged.
+    static func fixMultilineStringsInJSON(_ jsonString: String) -> String {
+        var result = ""
+        result.reserveCapacity(jsonString.count)
+        var insideString = false
+        var afterBackslash = false
+
+        for character in jsonString {
+            guard insideString else {
+                if character == "\"" { insideString = true }
+                result.append(character)
+                continue
+            }
+            if afterBackslash {
+                afterBackslash = false
+                result.append(character)
+                continue
+            }
+            switch character {
+                case "\\":
+                    afterBackslash = true
+                    result.append(character)
+                case "\"":
+                    insideString = false
+                    result.append(character)
+                case "\n":
+                    result.append("\\n")
+                case "\r":
+                    result.append("\\r")
+                case "\t":
+                    result.append("\\t")
+                default:
+                    result.append(character)
+            }
+        }
+        return result
     }
 }

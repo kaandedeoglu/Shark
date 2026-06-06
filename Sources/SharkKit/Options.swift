@@ -55,6 +55,11 @@ public struct Options: ParsableArguments {
 
 extension Options {
 
+    /// Shared by the other subcommands' project-path arguments
+    public static func validatedProjectPath(_ path: String) throws -> String {
+        try transform(forProjectPath: path)
+    }
+
     private static func frameworkEnum(forFramework framework: String) throws -> Framework {
         guard let frameEnum = Framework(rawValue: framework.lowercased()) else {
             throw ValidationError("Invalid framework name '\(framework)'. Valid frameworks are 'uikit', 'appkit', and 'swiftui'")

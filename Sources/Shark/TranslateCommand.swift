@@ -138,7 +138,14 @@ struct Translate: AsyncParsableCommand {
             let cached = outcome.usage.cacheReadInputTokens ?? 0
             print("Tokens: \(input) in (\(cached) cached), \(output) out")
         }
-        print("Review the new translations in Xcode's String Catalog editor (filter: NEEDS REVIEW).")
+        let wroteCatalog = outcome.translated.contains { if case .stringCatalog = $0.gap.origin { return true } else { return false } }
+        let wroteStrings = outcome.translated.contains { if case .stringsFiles = $0.gap.origin { return true } else { return false } }
+        if wroteCatalog {
+            print("Review the new translations in Xcode's String Catalog editor (filter: NEEDS REVIEW).")
+        }
+        if wroteStrings {
+            print("Review the blocks appended under the \"Added by shark translate\" comment in each .lproj file.")
+        }
 
         if failures.isEmpty == false {
             throw ExitCode(1)

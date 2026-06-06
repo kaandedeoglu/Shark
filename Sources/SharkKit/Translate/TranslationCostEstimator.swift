@@ -1,7 +1,7 @@
 import Foundation
 
 /// Rough upper-bound estimate (~4 characters per token) so the confirmation
-/// prompt can show what a run will send before any API call is made.
+/// prompt can show what a run will send before any backend call is made.
 public enum TranslationCostEstimator {
     private static let pricingPerMTok: [String: (input: Double, output: Double)] = [
         "claude-opus-4-8": (5, 25),

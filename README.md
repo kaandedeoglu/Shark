@@ -6,7 +6,7 @@ Shark is a Swift command line tool for type-safe resources *and* a complete loca
 
 - **`shark generate`** (the default) — type-safe enums for your images, colors, storyboards, fonts, data assets, and localizations, for `UIKit`, `AppKit`, and `SwiftUI`.
 - **`shark lint`** — a CI gate that catches missing translations, dead keys, and format-specifier mismatches across *all* locales.
-- **`shark translate`** — fills localization gaps with Claude (via API key or your existing Claude Code install), machine-validated and routed through human review.
+- **`shark translate`** — fills localization gaps with a local Claude Code or Codex install, or the Claude API for CI, machine-validated and routed through human review.
 
 Because Shark reads your `.xcodeproj` to find these assets, the setup is extremely simple: one binary, one build phase line, no config file.
 
@@ -299,11 +299,16 @@ Exit code 1 on findings makes it a CI gate. `--format github` emits workflow ann
 
 ### shark translate
 
-Finds keys that are missing in the target locale(s) and translates them with Claude:
+Finds keys that are missing in the target locale(s) and translates them with a local agent by default:
 
 ```bash
-export ANTHROPIC_API_KEY=sk-ant-…
 shark translate MyApp.xcodeproj --to de,fr --glossary Glossary.md --context AppContext.md
+
+# CI / direct API
+ANTHROPIC_API_KEY=sk-ant-... shark translate MyApp.xcodeproj --to de,fr --backend api --yes
+
+# Codex CLI
+shark translate MyApp.xcodeproj --to de,fr --backend codex --yes
 ```
 
 How it stays safe:
@@ -313,13 +318,14 @@ How it stays safe:
 - Results land as **`needs_review`** in `.xcstrings`, so Xcode's String Catalog editor surfaces them for human review. For `.strings` files, new keys are appended under a review comment.
 - A confirmation prompt shows a token/cost estimate before anything is sent (`--yes` skips it, `--dry-run` only lists).
 
-Backends (`--backend auto|api|claude-code`):
+Backends (`--backend claude-code|api|codex|auto`):
 
+- **claude-code** (default) — pipes through a locally installed [Claude Code](https://claude.com/claude-code) binary with structured-output validation and bills against your existing Claude subscription. No API key needed.
 - **api** — direct Messages API via `ANTHROPIC_API_KEY`: structured output, prompt caching across batches, parallel requests. The right choice for CI.
-- **claude-code** — pipes through a locally installed [Claude Code](https://claude.com/claude-code) binary and bills against your existing Claude subscription. No API key needed.
-- **auto** (default) — `api` if a key is set, otherwise `claude-code`.
+- **codex** — pipes through a locally installed Codex CLI binary (`codex exec`) and writes the final response through Codex's structured-output schema support.
+- **auto** — `api` if a key is set, otherwise `claude-code`, otherwise `codex`.
 
-`--glossary` takes a Markdown file with project terminology, `--context` a short app description — both are passed to the model (and cached across batches on the api backend). `--model` selects the Claude model (default `claude-opus-4-8`).
+`--glossary` takes a Markdown file with project terminology, `--context` a short app description — both are passed to the model (and cached across batches on the api backend). `--model` selects the model; Claude backends default to `claude-opus-4-8`, while `codex` uses your Codex CLI default unless set.
 
 ## License
 

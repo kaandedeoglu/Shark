@@ -1,139 +1,89 @@
-# Bug Analysis Report - Shark Codebase
+# Shark 2.0 Follow-up Analysis
 
-This document contains a comprehensive analysis of bugs and potential issues found in the Shark codebase during code review.
+This document tracks technical risks that are still relevant after the 2.0 branch split the package into `SharkKit` and the thin `Shark` executable, and after the `lint` / `translate` workflow landed.
 
-## Critical Issues
+## Release-Critical Checks
 
-### 1. **Potential Crash from Force Unwrapping** 
-**Severity:** High  
-**Location:** `Sources/Shark/Extensions/String+Extensions.swift:58`
-```swift
-return result.filter { !CharacterSet.forbidden.contains($0.unicodeScalars.first!) }
-```
-**Issue:** Force unwrapping `$0.unicodeScalars.first!` can crash if the character has no unicode scalars. While this is rare, it's still a potential crash point.
+1. Run `swift test` and the Format90 smoke test before every dependency bump or 2.0 release candidate:
 
-**Recommendation:** Use safe unwrapping:
-```swift
-return result.filter { char in
-    guard let firstScalar = char.unicodeScalars.first else { return false }
-    return !CharacterSet.forbidden.contains(firstScalar)
-}
-```
+   ```bash
+   swift test
+   swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/Examples/Format90Example/Format90Example/"
+   ```
 
-### 2. **Multiple Force Unwraps in Generated Code**
-**Severity:** High  
-**Locations:** 
-- `Sources/Shark/Codegen/DataAsset.swift:4`
-- `Sources/Shark/Codegen/ImageAsset.swift:6`
+2. Smoke-test `shark lint` and `shark translate --dry-run` on at least one real `.strings` project and one `.xcstrings` project.
+3. Before advertising local agent backends as stable, run one real small-batch translation through `--backend claude-code` and `--backend codex`.
 
-**Issue:** The generated code includes force unwraps like `NSDataAsset(name: "\(value)", bundle: bundle)!.data` and `UIImage(named:"\(value)", in: bundle, compatibleWith: nil)!`. If assets are missing at runtime, these will crash the app.
+## Open Risks
 
-**Recommendation:** Generate code with safe unwrapping and fallbacks or at minimum add documentation warning about missing assets.
+### 1. Generated Asset Accessors Still Force-Unwrap
 
-### 3. **Unsafe Character Conversion**
-**Severity:** High  
-**Locations:** 
-- `Sources/Shark/Extensions/Character+ExpressibleByArgument.swift:9`
-- `Sources/Shark/Extensions/Character+ExpressibleByArgument.swift:18`
-
-```swift
-self = argument.first!
-```
-**Issue:** Force unwrapping `argument.first!` assumes the string is never empty, which could crash if an empty string is passed.
-
-**Recommendation:** Add validation:
-```swift
-guard let first = argument.first else {
-    throw ValidationError("Character argument cannot be empty")
-}
-self = first
-```
-
-## Medium Priority Issues
-
-### 4. **Dictionary Force Unwrap**
 **Severity:** Medium  
-**Location:** `Sources/Shark/CLI/XcodeProjectHelper.swift:46`
-```swift
-selectedTarget = project.targets[targetName]!
-```
-**Issue:** This assumes the target exists after checking `contains(targetName)`, but there's a race condition possibility or the check might not guarantee the key exists.
+**Locations:**
+- `Sources/SharkKit/Codegen/ImageAsset.swift`
+- `Sources/SharkKit/Codegen/ColorAsset.swift`
+- `Sources/SharkKit/Codegen/DataAsset.swift`
+- `Sources/SharkKit/Codegen/FontEnumBuilder.swift`
 
-**Recommendation:** Use safe dictionary access:
-```swift
-guard let target = project.targets[targetName] else {
-    print("Target \(targetName) not found in project")
-    exit(EXIT_FAILURE)
-}
-selectedTarget = target
-```
+Shark intentionally generates force-unwrapped resource accessors so missing assets fail loudly during development. That behavior matches the historical API, but it should be documented as a contract: generated code assumes the Xcode project and bundle contain the discovered resources at runtime.
 
-### 5. **String-to-Data Conversion Force Unwraps**
-**Severity:** Medium  
-**Locations:** `Sources/Shark/CLI/XcodeProjectHelper.swift:102,108,111`
-```swift
-let sharkFile = "\(options.outputPath):".data(using: .utf8)!
-let dependency = " \(safeName)".data(using: .utf8)!
-try fileHandle.write(contentsOf: "\n".data(using: .utf8)!)
-```
-**Issue:** While UTF-8 encoding of these strings should never fail, force unwrapping is still risky practice.
+### 2. Sanitization Uses a Force-Unwrap
 
-**Recommendation:** Use safe conversion with error handling.
+**Severity:** Low
+**Location:** `Sources/SharkKit/Extensions/String+Extensions.swift`
 
-### 6. **Unsafe Path Handling**
-**Severity:** Medium  
-**Location:** `Sources/Shark/CLI/Shark.swift:110`
-```swift
-path.append("Shark.swift")
-```
-**Issue:** Direct string appending without proper path joining could create malformed paths on different systems or with trailing slashes.
+`propertyNameSanitized` filters characters with `unicodeScalars.first!`. Swift `Character` values normally contain at least one scalar, so this is not a practical crash path, but replacing it with a guarded form would remove a noisy audit finding.
 
-**Recommendation:** Use proper path APIs:
-```swift
-path = path.appendingPathComponent("Shark.swift")
-```
+### 3. Character Argument Parsing Uses a Force-Unwrap
 
-### 7. **Missing Error Handling for JSON Parsing**
-**Severity:** Medium  
-**Location:** `Sources/Shark/Codegen/NestedEnumBuilder.swift:85-86`
-```swift
-let contents = try String(contentsOfFile: pathToContentsJson)
-if !contents.localizedCaseInsensitiveContains(#""provides-namespace" : true"#) {
-```
-**Issue:** Uses naive string contains check instead of proper JSON parsing, which could give false positives/negatives with malformed JSON or different formatting.
+**Severity:** Low
+**Location:** `Sources/SharkKit/Extensions/Character+ExpressibleByArgument.swift`
 
-**Recommendation:** Parse JSON properly and check the actual boolean value.
+The initializer checks `argument.count == 1` before `argument.first!`, so the force unwrap is guarded by the count check. This can be cleaned up for style, but it is not a release blocker.
 
-## Design Issues
+### 4. Dependency File Writing Force-Unwraps UTF-8 Encoding
 
-### 8. **Process Termination Instead of Error Handling**
-**Severity:** Medium  
-**Locations:** `Sources/Shark/CLI/XcodeProjectHelper.swift:54,59,65,72`
-```swift
-exit(EXIT_FAILURE)
-```
-**Issue:** Multiple `exit(EXIT_FAILURE)` calls terminate the entire process instead of throwing proper errors that could be handled by calling code.
+**Severity:** Low
+**Location:** `Sources/SharkKit/Project/XcodeProjectHelper.swift`
 
-**Recommendation:** Replace with proper error throwing for better composability and testing.
+The dependency-file writer force-unwraps `.data(using: .utf8)`. UTF-8 encoding of Swift strings should not fail, but converting this to a small helper would make the code easier to audit.
 
-## Summary
+### 5. Output Directory Path Joining Uses String Append
 
-The codebase has several critical issues primarily around force unwrapping that could lead to runtime crashes. The most concerning are:
+**Severity:** Low
+**Location:** `Sources/SharkKit/Options.swift`
 
-1. Force unwraps in the generated asset access code that will crash if assets are missing
-2. Force unwraps in string processing that could crash on edge cases
-3. Unsafe character handling in argument parsing
+When the output argument points to an existing directory, `transform(forOutputPath:)` currently appends `"Shark.swift"` directly. Use `appendingPathComponent(_:)` to handle trailing slashes consistently.
 
-## Recommended Actions
+### 6. Asset Namespace Detection Uses String Matching
 
-1. **Immediate:** Replace all force unwraps with safe unwrapping and proper error handling
-2. **Short term:** Use proper path manipulation APIs instead of string concatenation
-3. **Medium term:** Replace `exit()` calls with proper error throwing for better composability
-4. **Long term:** Add comprehensive error handling and validation throughout the codebase
+**Severity:** Low
+**Location:** `Sources/SharkKit/Codegen/NestedEnumBuilder.swift`
 
-## Testing Recommendations
+Namespace detection checks `Contents.json` text for `"provides-namespace" : true`. It works for Xcode's current formatting, but a structured JSON read would be more robust.
 
-- Add unit tests for edge cases (empty strings, missing files, malformed JSON)
-- Test with projects that have missing assets to verify generated code behavior
-- Test path handling on different operating systems
-- Add integration tests for various Xcode project configurations
+### 7. CLI Backend Version Checks Are Missing
+
+**Severity:** Medium
+**Locations:**
+- `Sources/SharkKit/Translate/ClaudeCodeBackend.swift`
+- `Sources/SharkKit/Translate/CodexBackend.swift`
+
+The local translate backends assume recent CLIs:
+- Claude Code must support `--json-schema`.
+- Codex CLI must support `exec --output-schema` and `--output-last-message`.
+
+Add startup/version checks with actionable error messages before the 2.0 release.
+
+## Resolved Since The Original Report
+
+- `XcodeProjectHelper` no longer exits the process for target-selection failures; it throws typed errors.
+- Target lookup no longer force-unwraps `project.targets[targetName]`.
+- The codebase now has focused tests for format-specifier parsing, localization linting, `.strings` / `.xcstrings` read-write behavior, API request construction, and local backend command construction.
+
+## Recommended Next Actions
+
+1. Add CLI capability checks for `claude` and `codex`.
+2. Run real-project localization workflow smoke tests.
+3. Clean up the remaining low-risk force unwraps and path joining.
+4. Decide whether generated force unwraps are an explicit design contract or whether Shark 2.x should offer an opt-in safe-access generation mode.

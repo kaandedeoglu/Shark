@@ -1,6 +1,6 @@
-# CLAUDE.md
+# AGENTS.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance to Codex (Codex.ai/code) when working with code in this repository.
 
 ## Overview
 
@@ -49,7 +49,6 @@ shark MyApp.xcodeproj ./Sources/MyApp/ --target MyAppTarget --framework swiftui 
 # Localization workflow (note: Shark requires absolute paths)
 shark lint MyApp.xcodeproj --target MyAppTarget --format github
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --dry-run
-shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --yes
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --backend claude-code --yes
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --backend codex --yes
 ```
@@ -122,7 +121,7 @@ swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/
 2. Extracts resource file paths based on target selection
 3. Different builders process each asset type:
    - `.xcassets` → Images, Colors, Data Assets
-   - `.strings`/`.xcstrings` → Localizations  
+   - `.strings`/`.xcstrings` → Localizations
    - `.ttf`/`.otf`/`.ttc` → Fonts
    - `.storyboard` → Storyboards
 4. Generated enums are namespaced based on folder structure (if "Provides Namespace" is enabled)
@@ -130,7 +129,7 @@ swift run Shark "$PWD/Examples/Format90Example/Format90Example.xcodeproj" "$PWD/
 
 ### Framework-Specific Generation
 - **UIKit**: Uses `UIImage`, `UIColor`, `UIFont` APIs
-- **AppKit**: Uses `NSImage`, `NSColor`, `NSFont` APIs  
+- **AppKit**: Uses `NSImage`, `NSColor`, `NSFont` APIs
 - **SwiftUI**: Uses `Image`, `Color`, `Font` APIs with `LocalizedStringKey` extension
 
 ### Build Integration

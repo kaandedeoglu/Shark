@@ -3,13 +3,15 @@ import ArgumentParser
 import SharkKit
 
 struct Translate: AsyncParsableCommand {
+    private static let defaultClaudeModel = "claude-opus-4-8"
+
     static var configuration: CommandConfiguration = .init(commandName: "translate",
-                                                           abstract: "Translate missing localization keys via the Claude API",
+                                                           abstract: "Translate missing localization keys via a local agent or API backend",
                                                            discussion: """
                                                            Finds keys that exist in the source locale but are missing in the target locale(s) \
-                                                           and translates them with Claude. Format specifiers are machine-validated and results \
+                                                           and translates them with a local agent or API backend. Format specifiers are machine-validated and results \
                                                            are written as 'needs_review', so Xcode's String Catalog editor keeps the human in \
-                                                           the loop. Requires the ANTHROPIC_API_KEY environment variable.
+                                                           the loop.
                                                            """)
 
     @Argument(help: "The .xcodeproj file path", transform: Options.validatedProjectPath)
@@ -41,25 +43,26 @@ struct Translate: AsyncParsableCommand {
     private var context: String?
 
     @Option(name: .long,
-            help: "Claude model to use. 'claude-sonnet-4-6' or 'claude-haiku-4-5' trade quality for cost.")
-    private var model: String = "claude-opus-4-8"
+            help: "Model to use. Defaults to 'claude-opus-4-8' for Claude backends; the codex backend uses your Codex CLI default unless set.")
+    private var model: String?
 
     enum Backend: String, ExpressibleByArgument {
         case auto
         case api
         case claudeCode = "claude-code"
+        case codex
     }
 
     @Option(name: .long,
-            help: "Model backend: 'api' (ANTHROPIC_API_KEY; structured output and prompt caching — best for CI), 'claude-code' (pipes through a local Claude Code install, billed to your Claude subscription), or 'auto' (api if a key is set, otherwise claude-code).")
-    private var backend: Backend = .auto
+            help: "Model backend: 'claude-code' (default; local Claude Code install), 'api' (ANTHROPIC_API_KEY; structured output and prompt caching — best for CI), 'codex' (local Codex CLI), or 'auto' (api if a key is set, otherwise claude-code, otherwise codex).")
+    private var backend: Backend = .claudeCode
 
     @Option(name: .long,
-            help: "Keys per API request")
+            help: "Keys per model request")
     private var batchSize: Int = 30
 
     @Flag(name: .long,
-          help: "List what would be translated without calling the API")
+          help: "List what would be translated without calling the selected backend")
     private var dryRun: Bool = false
 
     @Flag(name: .customLong("yes"),
@@ -89,7 +92,8 @@ struct Translate: AsyncParsableCommand {
             countsByLocale[gap.targetLocale, default: 0] += 1
         }
         let summary = countsByLocale.sorted { $0.key < $1.key }.map { "\($0.value) → \($0.key)" }.joined(separator: ", ")
-        print("Missing translations: \(summary) (model: \(model))")
+        let estimateModel = model ?? defaultEstimateModel()
+        print("Missing translations: \(summary) (model: \(estimateModel))")
 
         let glossaryText = try glossary.map { try String(contentsOfFile: $0, encoding: .utf8) }
         let contextText = try context.map { try String(contentsOfFile: $0, encoding: .utf8) }
@@ -97,7 +101,7 @@ struct Translate: AsyncParsableCommand {
                                                          glossary: glossaryText,
                                                          appContext: contextText,
                                                          batchSize: batchSize,
-                                                         model: model)
+                                                         model: estimateModel)
 
         if dryRun {
             for gap in gaps {
@@ -154,20 +158,30 @@ struct Translate: AsyncParsableCommand {
 
     private func resolvedProvider() throws -> (any CompletionProviding, String) {
         let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]
+        let claudeModel = model ?? Self.defaultClaudeModel
 
         func apiProvider() throws -> (any CompletionProviding, String) {
             guard let apiKey, apiKey.isEmpty == false else {
                 throw ValidationError("ANTHROPIC_API_KEY is not set. Export your Anthropic API key, or use --backend claude-code with a local Claude Code install.")
             }
-            return (ClaudeClient(configuration: .init(apiKey: apiKey, model: model)), "Claude API")
+            return (ClaudeClient(configuration: .init(apiKey: apiKey, model: claudeModel)), "Claude API")
         }
 
         func claudeCodeProvider() throws -> (any CompletionProviding, String) {
             guard let binaryPath = ClaudeCodeBackend.findBinary() else {
-                throw ValidationError("No 'claude' binary found in PATH. Install Claude Code, or use --backend api with ANTHROPIC_API_KEY.")
+                throw ValidationError("No 'claude' binary found in PATH. Install Claude Code, or use --backend api with ANTHROPIC_API_KEY, or use --backend codex with a local Codex CLI install.")
             }
-            return (ClaudeCodeBackend(binaryPath: binaryPath, model: model),
+            return (ClaudeCodeBackend(binaryPath: binaryPath, model: claudeModel),
                     "Claude Code (\(binaryPath), billed to your Claude subscription)")
+        }
+
+        func codexProvider() throws -> (any CompletionProviding, String) {
+            guard let binaryPath = CodexBackend.findBinary() else {
+                throw ValidationError("No 'codex' binary found in PATH. Install Codex CLI, or use --backend claude-code with a local Claude Code install.")
+            }
+            let modelDescription = model.map { ", model: \($0)" } ?? ", model: Codex CLI default"
+            return (CodexBackend(binaryPath: binaryPath, model: model),
+                    "Codex CLI (\(binaryPath)\(modelDescription))")
         }
 
         switch backend {
@@ -175,6 +189,8 @@ struct Translate: AsyncParsableCommand {
                 return try apiProvider()
             case .claudeCode:
                 return try claudeCodeProvider()
+            case .codex:
+                return try codexProvider()
             case .auto:
                 if let apiKey, apiKey.isEmpty == false {
                     return try apiProvider()
@@ -182,7 +198,31 @@ struct Translate: AsyncParsableCommand {
                 if ClaudeCodeBackend.findBinary() != nil {
                     return try claudeCodeProvider()
                 }
-                throw ValidationError("Neither ANTHROPIC_API_KEY is set nor a 'claude' binary was found in PATH. Set up one of the two backends.")
+                if CodexBackend.findBinary() != nil {
+                    return try codexProvider()
+                }
+                throw ValidationError("Neither ANTHROPIC_API_KEY is set nor a 'claude' or 'codex' binary was found in PATH. Set up one of the supported backends.")
+        }
+    }
+
+    private func defaultEstimateModel() -> String {
+        switch backend {
+            case .codex:
+                return "codex-default"
+            case .auto:
+                let apiKey = ProcessInfo.processInfo.environment["ANTHROPIC_API_KEY"]
+                if let apiKey, apiKey.isEmpty == false {
+                    return Self.defaultClaudeModel
+                }
+                if ClaudeCodeBackend.findBinary() != nil {
+                    return Self.defaultClaudeModel
+                }
+                if CodexBackend.findBinary() != nil {
+                    return "codex-default"
+                }
+                return Self.defaultClaudeModel
+            case .api, .claudeCode:
+                return Self.defaultClaudeModel
         }
     }
 }

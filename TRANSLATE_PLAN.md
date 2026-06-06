@@ -1,11 +1,11 @@
 # Shark `lint` & `translate` — Implementation Plan
 
-> **Status: implemented** on the `2.0` branch (M1–M5). One addition beyond the original plan: `shark translate` supports a second backend (`--backend claude-code`) that pipes through a locally installed Claude Code binary instead of the API — see README → Localization workflow.
+> **Status: implemented** on the `2.0` branch (M1–M5). Additions beyond the original plan: `shark translate` defaults to `--backend claude-code`, still supports the direct API backend, and also supports a local Codex CLI backend (`--backend codex`) — see README → Localization workflow.
 
 Two new subcommands that make Shark a localization *workflow* tool, not just a codegen tool:
 
 - **`shark lint`** — find localization gaps (keys missing per locale, placeholder mismatches). CI-friendly, no AI involved.
-- **`shark translate`** — fill those gaps via the Claude API, with machine-checked format-specifier preservation and human review built into the workflow.
+- **`shark translate`** — fill those gaps via a local agent by default or the Claude API in CI, with machine-checked format-specifier preservation and human review built into the workflow.
 
 `lint` is the foundation; `translate` builds on top of it.
 
@@ -32,13 +32,13 @@ struct Shark: AsyncParsableCommand {
 
 **Library/executable split.** As part of M1, `Package.swift` is restructured into a `SharkKit` library target (all logic: codegen, localization model, lint rules, translate engine) plus a thin `Shark` executable target (ArgumentParser commands only). Rationale: the planned SPM Build Tool Plugin (backlog, issue #46) needs a library boundary anyway, and it keeps the door open for a future GUI (`import SharkKit`) without committing to one now. Decision: the product stays CLI-only — `shark lint` as a CI gate and translate-after-merge automation require it, and the `needs_review` workflow deliberately delegates review UI to Xcode's String Catalog editor instead of rebuilding it.
 
-## 2. Shared localization model (`Sources/Shark/Localization/`)
+## 2. Shared localization model (`Sources/SharkKit/Localization/`)
 
 `LocalizationEnumBuilder` currently parses *one* locale and discards everything else. `lint`/`translate` need the full multi-locale picture. Extract a reusable reader/writer layer — the enum builder keeps its own parsing for now (no risky refactor); the new layer is additive:
 
 ```
-Sources/Shark/Localization/
-    LocalizationCatalog.swift      // model: [Key: [Locale: Entry]], entry state, source language
+Sources/SharkKit/Localization/
+    LocalizationTable.swift        // model: [Key: [Locale: Entry]], entry state, source language
     StringsFileReader.swift        // .lproj/*.strings via NSDictionary (reuse existing approach)
     StringCatalogReader.swift      // .xcstrings via existing StringCatalogModels (extended: read ALL locales + state)
     StringCatalogWriter.swift      // write .xcstrings back
@@ -73,7 +73,8 @@ shark lint PROJECT_FILE_PATH [--target T] [--source-locale en] [--format text|js
 ```
 shark translate PROJECT_FILE_PATH --to de,fr [--source-locale en]
                 [--glossary Glossary.md] [--context AppContext.md]
-                [--model claude-opus-4-8] [--batch-size 30] [--dry-run] [--yes]
+                [--backend claude-code|api|codex|auto]
+                [--model MODEL] [--batch-size 30] [--dry-run] [--yes]
 ```
 
 ### Flow
@@ -81,20 +82,31 @@ shark translate PROJECT_FILE_PATH --to de,fr [--source-locale en]
 1. Run the lint gap analysis → list of `(key, sourceValue, targetLocale)` to translate. Only **missing/empty** entries are candidates; existing translations are never overwritten (no `--force` in v1 — keep the tool incapable of destroying human work).
 2. `--dry-run`: print the candidate list + token/cost estimate and exit.
 3. Without `--yes`: show summary (N keys → M locales, estimated cost) and ask for confirmation.
-4. Chunk into batches, call the Claude API per batch (per target locale), validate, write back.
+4. Chunk into batches, call the selected backend per batch (per target locale), validate, write back.
 
-### API integration (`Sources/Shark/Translate/ClaudeClient.swift`)
+### Backend selection
+
+`shark translate` now supports three model backends behind the shared `CompletionProviding` protocol:
+
+- **`claude-code`** (default): local Claude Code binary, invoked as `claude -p --output-format json --json-schema ...`; no API key required, billed through the user's Claude subscription.
+- **`api`**: direct Anthropic Messages API via `ANTHROPIC_API_KEY`; best fit for CI because it has explicit retries, prompt caching, structured output, and no dependency on a locally installed agent binary.
+- **`codex`**: local Codex CLI binary, invoked as `codex exec --output-schema ... --output-last-message ...`; no additional Swift API client.
+- **`auto`**: resolve in order `api` (when `ANTHROPIC_API_KEY` is set), `claude-code`, then `codex`.
+
+Claude backends default to `claude-opus-4-8`; `codex` uses the user's Codex CLI default unless `--model` is provided.
+
+### API integration (`Sources/SharkKit/Translate/ClaudeClient.swift`)
 
 No Swift SDK exists → thin `URLSession` client against `POST https://api.anthropic.com/v1/messages`. Async/await, `Codable` request/response types, ~150 lines. No new SPM dependency.
 
 - Auth: `ANTHROPIC_API_KEY` env var (header `x-api-key`), `anthropic-version: 2023-06-01`.
-- Model: default `claude-opus-4-8`, overridable via `--model` (translation quality matters; users can drop to `claude-sonnet-4-6` or `claude-haiku-4-5` for cost — document tradeoff in help text).
+- Model: default `claude-opus-4-8`, overridable via `--model`.
 - `thinking: {"type": "adaptive"}`, `max_tokens: 16000` per batch request.
 - Retries: respect `retry-after` on 429; exponential backoff on 5xx/529 (max 3 attempts).
 
-### Prompt design (caching-aware)
+### Prompt design (API caching-aware)
 
-The Messages API caches by **prefix match** — stable content first, volatile last:
+The direct API backend caches by **prefix match** — stable content first, volatile last:
 
 ```
 system[0]: role instructions (fixed text: professional iOS localizer; rules:
@@ -105,13 +117,19 @@ system[1]: app context (--context file) + glossary (--glossary file)
 user:      JSON array of the batch: [{ "key": …, "source": … }] + target locale
 ```
 
-- One cache write on the first batch, cache reads on every subsequent batch of the run → the (potentially large) glossary/context is paid for ~once.
+- On the API backend, one cache write on the first batch and cache reads on every subsequent batch of the run mean the (potentially large) glossary/context is paid for ~once.
 - Note: Opus only caches prefixes ≥ 4096 tokens — with a small glossary the marker is simply a no-op, no harm.
 - **Keys are context!** The naming convention `ViewName_ELEMENT_DESCRIPTION` carries UI placement information ("BUTTON" → keep it short) — the system prompt instructs the model to use the key as context.
 
 ### Structured output
 
-Use `output_config.format` with a JSON schema so the response is guaranteed parseable — no regex-scraping of prose:
+Every backend gets the same response schema:
+
+- `api` uses Messages API `output_config.format`.
+- `claude-code` passes the schema through `--json-schema`.
+- `codex` writes the schema to a temp file and passes it through `--output-schema`, reading the final answer from `--output-last-message`.
+
+The schema shape:
 
 ```json
 { "type": "json_schema", "schema": {
@@ -142,7 +160,7 @@ Failures → single retry of just the failed keys with the validation error in t
 ### Batching & concurrency
 
 - `--batch-size 30` keys per request (bounded output size, granular retry).
-- Up to 3 batches concurrently via `TaskGroup` — but the **first** request runs alone and the rest start only after it completes, so they read the cache the first one wrote.
+- Up to 3 batches concurrently via `TaskGroup` — but the **first** request runs alone and the rest start only after it completes, so API runs can read the cache the first one wrote.
 - v2 idea (not now): `--async` using the Message Batches API (50 % cost) for very large catalogs.
 
 ## 5. Testing
@@ -151,6 +169,8 @@ Failures → single retry of just the failed keys with the validation error in t
 - Readers/writers: round-trip fixtures, incl. byte-identical re-serialization of an Xcode-written `.xcstrings`.
 - Lint rules: small fixture catalogs per rule.
 - `ClaudeClient`: `URLProtocol` mock — request shape (headers, schema, cache_control placement) and response handling (success, 429 + retry-after, malformed) without network.
+- `ClaudeCodeBackend`: CLI argument construction, structured-output schema flag, JSON envelope parsing, code-fence stripping.
+- `CodexBackend`: CLI argument construction, structured-output schema file, final-message parsing, code-fence stripping.
 - Translate validation: crafted "bad model responses" (dropped specifier, extra key, empty value) must be rejected.
 
 ## 6. Milestones

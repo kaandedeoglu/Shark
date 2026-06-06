@@ -1,6 +1,6 @@
 import Foundation
 
-/// Translates gaps batch-wise via the Claude API and machine-checks every
+/// Translates gaps batch-wise via the selected backend and machine-checks every
 /// returned value before it is accepted.
 public struct Translator: Sendable {
     public struct Outcome: Sendable {

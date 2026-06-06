@@ -3,6 +3,15 @@ import Foundation
 @testable import SharkKit
 
 struct ClaudeCodeBackendTests {
+    @Test func argumentsUseClaudeStructuredOutput() throws {
+        let arguments = try ClaudeCodeBackend.arguments(model: "claude-sonnet-4-6",
+                                                        jsonSchema: Translator.responseSchema)
+        #expect(arguments.starts(with: ["-p", "--output-format", "json", "--json-schema"]))
+        #expect(arguments.contains { $0.contains("\"translations\"") })
+        #expect(arguments.contains("--model"))
+        #expect(arguments.contains("claude-sonnet-4-6"))
+    }
+
     @Test func promptEmbedsSystemBlocksUserMessageAndSchema() {
         let prompt = ClaudeCodeBackend.prompt(system: [.init(text: "role"), .init(text: "glossary", cached: true)],
                                               userMessage: "translate",
@@ -38,6 +47,49 @@ struct ClaudeCodeBackendTests {
     @Test func stripsMarkdownFences() {
         #expect(ClaudeCodeBackend.strippingCodeFence("```json\n{\"a\":1}\n```") == "{\"a\":1}")
         #expect(ClaudeCodeBackend.strippingCodeFence("{\"a\":1}") == "{\"a\":1}")
+    }
+}
+
+struct CodexBackendTests {
+    @Test func argumentsUseNonInteractiveSchemaMode() {
+        let arguments = CodexBackend.arguments(model: "gpt-5.1",
+                                               schemaPath: "/tmp/schema.json",
+                                               outputPath: "/tmp/output.json",
+                                               workingDirectory: "/tmp/work")
+        #expect(arguments.starts(with: ["exec", "--cd", "/tmp/work"]))
+        #expect(arguments.contains("--skip-git-repo-check"))
+        #expect(arguments.contains("--ephemeral"))
+        #expect(arguments.contains("--ignore-rules"))
+        #expect(arguments.contains("--output-schema"))
+        #expect(arguments.contains("/tmp/schema.json"))
+        #expect(arguments.contains("--output-last-message"))
+        #expect(arguments.contains("/tmp/output.json"))
+        #expect(arguments.contains("--model"))
+        #expect(arguments.contains("gpt-5.1"))
+        #expect(arguments.last == "-")
+    }
+
+    @Test func argumentsOmitModelWhenCodexDefaultIsRequested() {
+        let arguments = CodexBackend.arguments(model: nil,
+                                               schemaPath: "/tmp/schema.json",
+                                               outputPath: "/tmp/output.json",
+                                               workingDirectory: "/tmp/work")
+        #expect(arguments.contains("--model") == false)
+    }
+
+    @Test func promptEmbedsSystemBlocksAndUserMessage() {
+        let prompt = CodexBackend.prompt(system: [.init(text: "role"), .init(text: "glossary", cached: true)],
+                                         userMessage: "translate")
+        #expect(prompt.hasPrefix("role\n\nglossary\n\ntranslate"))
+        #expect(prompt.contains("Return only the JSON object"))
+    }
+
+    @Test func parsesPlainJsonAndStripsFences() throws {
+        #expect(try CodexBackend.parse(#"{"translations":[{"key":"K","value":"V"}]}"#.data(using: .utf8)!) == #"{"translations":[{"key":"K","value":"V"}]}"#)
+        #expect(try CodexBackend.parse("```json\n{\"translations\":[]}\n```".data(using: .utf8)!) == "{\"translations\":[]}")
+        #expect(throws: CodexBackend.BackendError.self) {
+            _ = try CodexBackend.parse("not json".data(using: .utf8)!)
+        }
     }
 }
 

@@ -1,10 +1,10 @@
 import Foundation
 
 /// Backend that pipes prompts through a locally installed Claude Code binary
-/// (`claude -p --output-format json`). Useful for individual developers: it
-/// bills against the existing Claude subscription and needs no API key. The
-/// direct API backend remains the better fit for CI — guaranteed structured
-/// output, prompt caching, and no dependency on an installed binary.
+/// (`claude -p --output-format json --json-schema ...`). Useful for individual
+/// developers: it bills against the existing Claude subscription and needs no
+/// API key. The direct API backend remains the better fit for CI — prompt
+/// caching, retries, and no dependency on an installed binary.
 public struct ClaudeCodeBackend: CompletionProviding {
     public enum BackendError: LocalizedError {
         case processFailed(status: Int32, stderr: String)
@@ -41,17 +41,27 @@ public struct ClaudeCodeBackend: CompletionProviding {
     }
 
     public func complete(system: [ClaudeClient.SystemBlock], userMessage: String, jsonSchema: [String: Any]) async throws -> ClaudeClient.Completion {
-        var arguments = ["-p", "--output-format", "json"]
-        if let model {
-            arguments += ["--model", model]
-        }
+        let arguments = try Self.arguments(model: model, jsonSchema: jsonSchema)
         let prompt = Self.prompt(system: system, userMessage: userMessage, jsonSchema: jsonSchema)
         let output = try Self.run(binaryPath: binaryPath, arguments: arguments, stdin: prompt)
         return try Self.parse(output)
     }
 
-    /// Unlike the API there is no enforced output schema, so the schema goes
-    /// into the prompt and the Translator's validation layer catches strays
+    static func arguments(model: String?, jsonSchema: [String: Any]) throws -> [String] {
+        let schemaData = try JSONSerialization.data(withJSONObject: jsonSchema, options: [.sortedKeys])
+        guard let schema = String(data: schemaData, encoding: .utf8) else {
+            throw BackendError.unexpectedOutput("Could not encode JSON schema")
+        }
+
+        var arguments = ["-p", "--output-format", "json", "--json-schema", schema]
+        if let model {
+            arguments += ["--model", model]
+        }
+        return arguments
+    }
+
+    /// The schema is enforced by Claude Code and mirrored in the prompt. The
+    /// Translator's validation layer still catches semantic strays.
     static func prompt(system: [ClaudeClient.SystemBlock], userMessage: String, jsonSchema: [String: Any]) -> String {
         var sections = system.map(\.text)
         sections.append(userMessage)

@@ -5,11 +5,12 @@ public struct LintFinding: Equatable, Codable {
         case missingKey = "missing-key"
         case orphanedKey = "orphaned-key"
         case placeholderMismatch = "placeholder-mismatch"
+        case emptySourceValue = "empty-source-value"
 
         /// Orphaned keys are clutter, not breakage — they only fail the run in --strict mode
         public var failsByDefault: Bool {
             switch self {
-                case .missingKey, .placeholderMismatch: return true
+                case .missingKey, .placeholderMismatch, .emptySourceValue: return true
                 case .orphanedKey: return false
             }
         }

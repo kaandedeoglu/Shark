@@ -27,6 +27,18 @@ public enum LocalizationLinter {
                 continue
             }
 
+            // A dead key: per-locale "not translated" findings would point
+            // away from the root cause, so report the source once instead
+            if sourceTerm.value.isEmpty {
+                findings.append(LintFinding(rule: .emptySourceValue,
+                                            table: table.name,
+                                            key: key,
+                                            locale: table.sourceLocale,
+                                            message: "\"\(key)\" has an empty value in the source locale \(table.sourceLocale)",
+                                            path: table.path(forLocale: table.sourceLocale)))
+                continue
+            }
+
             for locale in targetLocales {
                 guard let term = termsByLocale[locale], term.value.isEmpty == false else {
                     findings.append(LintFinding(rule: .missingKey,

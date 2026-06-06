@@ -22,7 +22,7 @@ public enum LintReportFormatter {
     private static func textReport(findings: [LintFinding], skippedPluralKeys: [String: Set<String>]) -> String {
         var lines: [String] = []
         let byRule = Dictionary(grouping: findings, by: \.rule)
-        for rule in [LintFinding.Rule.missingKey, .placeholderMismatch, .orphanedKey] {
+        for rule in [LintFinding.Rule.missingKey, .placeholderMismatch, .emptySourceValue, .orphanedKey] {
             guard let ruleFindings = byRule[rule], ruleFindings.isEmpty == false else { continue }
             lines.append("\(rule.rawValue) (\(ruleFindings.count)):")
             for finding in ruleFindings {

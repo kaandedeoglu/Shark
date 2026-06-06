@@ -30,6 +30,18 @@ struct LocalizationLinterTests {
         #expect(findings.map(\.rule) == [.missingKey])
     }
 
+    // Real-world regression: a key that is empty everywhere (including the
+    // source) is one dead key, not N missing translations
+    @Test func emptySourceValueIsReportedOnceAtTheRoot() {
+        let table = makeTable(terms: ["DEAD_KEY": ["en": "", "de": "", "fr": ""]], locales: ["en", "de", "fr"])
+        let findings = LocalizationLinter.lint(tables: [table])
+
+        #expect(findings.count == 1)
+        #expect(findings[0].rule == .emptySourceValue)
+        #expect(findings[0].locale == "en")
+        #expect(findings[0].rule.failsByDefault)
+    }
+
     @Test func orphanedKeyIsFound() {
         let table = makeTable(terms: ["OLD_KEY": ["de": "Veraltet"]], locales: ["en", "de"])
         let findings = LocalizationLinter.lint(tables: [table])

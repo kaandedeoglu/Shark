@@ -274,7 +274,8 @@ shark lint MyApp.xcodeproj
 | Rule | Severity |
 |---|---|
 | `missing-key` — key exists in the source locale but is missing or empty in another | fails the run |
-| `placeholder-mismatch` — format specifiers differ between source and translation (catches `String(format:)` crashes; positional reordering like `%2$@ … %1$@` is *not* a mismatch) | fails the run |
+| `placeholder-mismatch` — format specifiers differ between source and translation (catches `String(format:)` crashes; positional reordering like `%2$@ … %1$@` is *not* a mismatch, and prose percent signs like "25% and" are filtered) | fails the run |
+| `empty-source-value` — key has an empty value in the source locale itself (a dead key, reported once at the root instead of per locale) | fails the run |
 | `orphaned-key` — key exists only outside the source locale | fails only with `--strict` |
 
 Exit code 1 on findings makes it a CI gate. `--format github` emits workflow annotations, `--format json` is for tooling. Plural keys are reported but not checked yet.

@@ -132,4 +132,138 @@ struct LocalizationEnumBuilderTests {
         // Clean up
         try? FileManager.default.removeItem(at: invalidFile)
     }
+    
+    @Test func multilineStringParsingWithXCStrings() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let xcstringsFile = tempDir.appendingPathComponent("test.xcstrings")
+        
+        // Create a string catalog with multiline strings - testing both escaped and actual multiline
+        let multilineXCStringsContent = """
+        {
+          "sourceLanguage" : "en",
+          "strings" : {
+            "Simple Key" : {
+              "localizations" : {
+                "en" : {
+                  "stringUnit" : {
+                    "state" : "translated",
+                    "value" : "Simple value"
+                  }
+                }
+              }
+            },
+            "Multiline Message" : {
+              "localizations" : {
+                "en" : {
+                  "stringUnit" : {
+                    "state" : "translated",
+                    "value" : "This is the first line\\nThis is the second line\\nThis is the third line"
+                  }
+                }
+              }
+            },
+            "Welcome Text" : {
+              "localizations" : {
+                "en" : {
+                  "stringUnit" : {
+                    "state" : "translated",
+                    "value" : "Welcome to our app!\\n\\nPlease read our terms:\\n- Privacy policy\\n- User agreement\\n\\nThank you!"
+                  }
+                }
+              }
+            }
+          },
+          "version" : "1.0"
+        }
+        """
+        
+        try multilineXCStringsContent.write(to: xcstringsFile, atomically: true, encoding: .utf8)
+        
+        // Test parsing StringCatalog directly first
+        let url = URL(fileURLWithPath: xcstringsFile.path)
+        let fileContents = try Data(contentsOf: url)
+        let stringCatalog = try JSONDecoder().decode(StringCatalog.self, from: fileContents)
+        
+        // Verify string catalog parsing works
+        #expect(stringCatalog.sourceLanguage == "en")
+        #expect(stringCatalog.strings.count == 3)
+        
+        let simpleEntry = stringCatalog.strings["Simple Key"]
+        #expect(simpleEntry != nil)
+        #expect(simpleEntry?.localizations?["en"]?.stringUnit?.value == "Simple value")
+        
+        let multilineEntry = stringCatalog.strings["Multiline Message"]
+        #expect(multilineEntry != nil)
+        let multilineValue = multilineEntry?.localizations?["en"]?.stringUnit?.value
+        
+        // The issue: JSON decoder automatically converts escaped \n to actual newlines
+        #expect(multilineValue == "This is the first line\nThis is the second line\nThis is the third line")
+        
+        // The multiline string contains actual newlines, not escaped ones
+        #expect(multilineValue?.contains("\n") == true)
+        #expect(multilineValue?.contains("\\n") == false)
+        
+        // The problem is that these multiline strings should be properly escaped 
+        // when generating Swift code comments and string literals
+        let lines = multilineValue?.components(separatedBy: "\n")
+        #expect(lines?.count == 3)
+        #expect(lines?[0] == "This is the first line")
+        #expect(lines?[1] == "This is the second line")
+        #expect(lines?[2] == "This is the third line")
+        
+        // Clean up
+        try? FileManager.default.removeItem(at: xcstringsFile)
+    }
+    
+    @Test func fixMultilineStringsInJSONFunction() throws {
+        // Test the fix function directly
+        let problematicJSON = """
+        {
+          "sourceLanguage" : "en",
+          "strings" : {
+            "Welcome Message" : {
+              "localizations" : {
+                "en" : {
+                  "stringUnit" : {
+                    "state" : "translated",
+                    "value" : "Welcome to our amazing app!
+
+        Please take a moment to read our:
+        • Privacy Policy
+        • Terms of Service
+
+        Thank you for joining us!"
+                  }
+                }
+              }
+            }
+          },
+          "version" : "1.0"
+        }
+        """
+        
+        // This should fail without the fix
+        #expect(throws: Error.self) {
+            _ = try JSONDecoder().decode(StringCatalog.self, from: problematicJSON.data(using: .utf8)!)
+        }
+        
+        // Apply the fix
+        let fixedJSON = LocalizationEnumBuilder.fixMultilineStringsInJSON(problematicJSON)
+        
+        // Now it should parse successfully
+        let stringCatalog = try JSONDecoder().decode(StringCatalog.self, from: fixedJSON.data(using: .utf8)!)
+        
+        let welcomeEntry = stringCatalog.strings["Welcome Message"]
+        #expect(welcomeEntry != nil)
+        let welcomeValue = welcomeEntry?.localizations?["en"]?.stringUnit?.value
+        
+        // The multiline content should be preserved
+        #expect(welcomeValue?.contains("Welcome to our amazing app!") == true)
+        #expect(welcomeValue?.contains("Privacy Policy") == true)
+        #expect(welcomeValue?.contains("\n") == true)
+        
+        // Check that it properly escaped the newlines in the fixed JSON
+        #expect(fixedJSON.contains("\\n"))
+        #expect(!fixedJSON.contains("value\" : \"Welcome to our amazing app!\n"))
+    }
 }

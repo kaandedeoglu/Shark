@@ -55,7 +55,7 @@ shark MyApp.xcodeproj ./Sources/MyApp/
 # With options
 shark MyApp.xcodeproj ./Sources/MyApp/ --target MyAppTarget --framework swiftui --name Assets
 
-# Localization workflow (note: Shark requires absolute paths)
+# Localization workflow
 shark lint MyApp.xcodeproj --target MyAppTarget --format github
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --dry-run
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --yes
@@ -119,7 +119,7 @@ Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven chan
 
 #### SwiftPM warning output during package mapping
 
-`XcodeGraphMapper` shells out to `swift package dump-package` while mapping Swift package references. Some SwiftPM releases print non-fatal diagnostics to stderr even when stdout contains valid JSON; older XcodeGraph plumbing can feed those bytes into JSON decoding and surface only "The data couldn't be read because it isn't in the correct format." Keep `SwiftPackageDumpWrapper` in `Project/XcodeProjectHelper.swift`: it is intentionally scoped around `mapper.map(at:)`, suppresses stderr only for successful `dump-package` calls, and forwards stderr on failures so real SwiftPM errors remain visible.
+XcodeGraph 1.34.5's `PackageInfoLoader` shells out to `swift package dump-package` while mapping Swift package references and can collect stdout and stderr together before decoding JSON. Some package manifests, notably newer Swift manifests using deprecated PackageDescription APIs, emit non-fatal diagnostics to stderr while still returning valid JSON on stdout. Keep `SwiftPackageDumpWrapper` in `Project/XcodeProjectHelper.swift`: it is intentionally scoped around `mapper.map(at:)`, suppresses stderr only for successful `dump-package` calls, and forwards stderr on failures so real SwiftPM errors remain visible.
 
 ### Regression fixture
 
@@ -131,6 +131,12 @@ Smoke-test the toolchain against committed fixtures after dependency bumps:
 
 ```bash
 Scripts/smoke-fixtures.sh
+```
+
+Also smoke-test against a real project with local Swift package dependencies that can emit manifest warnings:
+
+```bash
+swift run Shark /path/to/App.xcodeproj /tmp/SharkSmoke.swift --target App --deps /tmp/shark-smoke.d
 ```
 
 Real-world projects under `$HOME/Documents/late` are useful before release tags, but they are not CI fixtures. If one fails, reduce it to the smallest synthetic `.xcodeproj` and commit that under `Examples/`.

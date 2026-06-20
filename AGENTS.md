@@ -55,7 +55,7 @@ shark MyApp.xcodeproj ./Sources/MyApp/
 # With options
 shark MyApp.xcodeproj ./Sources/MyApp/ --target MyAppTarget --framework swiftui --name Assets
 
-# Localization workflow (note: Shark requires absolute paths)
+# Localization workflow
 shark lint MyApp.xcodeproj --target MyAppTarget --format github
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --dry-run
 shark translate MyApp.xcodeproj --target MyAppTarget --to de,fr --backend claude-code --yes

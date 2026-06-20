@@ -68,18 +68,19 @@ extension Options {
     }
 
     private static func transform(forProjectPath path: String) throws -> String {
+        let expandedPath = path.expandingTildeInPath
         var isDirectory: ObjCBool = false
-        if path.pathExtension == "xcodeproj" {
-            return path
-        } else if FileManager.default.fileExists(atPath: path, isDirectory: &isDirectory), isDirectory.boolValue {
+        if expandedPath.pathExtension == "xcodeproj" {
+            return absolutePath(expandedPath)
+        } else if FileManager.default.fileExists(atPath: expandedPath, isDirectory: &isDirectory), isDirectory.boolValue {
             let projectFiles = try FileManager
                 .default
-                .contentsOfDirectory(atPath: path).filter { $0.pathExtension == "xcodeproj" }
+                .contentsOfDirectory(atPath: expandedPath).filter { $0.pathExtension == "xcodeproj" }
 
             if projectFiles.isEmpty {
                 throw ValidationError("\(path) should point to a .xcodeproj file")
             } else if projectFiles.count == 1 {
-                return path.appendingPathComponent(projectFiles[0])
+                return absolutePath(expandedPath.appendingPathComponent(projectFiles[0]))
             } else {
                 throw ValidationError("There are multiple .xcodeproj files in directory: \(path). Please provide an exact path")
             }
@@ -98,5 +99,17 @@ extension Options {
         }
 
         return path
+    }
+
+    private static func absolutePath(_ path: String) -> String {
+        let url = URL(fileURLWithPath: path)
+        if url.path.hasPrefix("/") {
+            return url.standardizedFileURL.path
+        }
+
+        return URL(fileURLWithPath: path,
+                   relativeTo: URL(fileURLWithPath: FileManager.default.currentDirectoryPath, isDirectory: true))
+            .standardizedFileURL
+            .path
     }
 }

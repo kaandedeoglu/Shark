@@ -122,7 +122,7 @@ struct XcodeProjectHelper {
         }
 
         if let deps = self.depsPath, let outputPath = self.outputPath {
-            print("Generating dependency file at `\(deps)`")
+            Self.log("Generating dependency file at `\(deps)`")
             FileManager.default.createFile(atPath: deps, contents: nil, attributes: nil)
             let fileHandle = try FileHandle(forWritingTo: URL(fileURLWithPath: deps))
             defer { fileHandle.closeFile() }
@@ -166,17 +166,17 @@ struct XcodeProjectHelper {
 
     private func selectedTarget(in graph: XcodeGraph.Graph) throws -> Target {
         if let targetName = self.targetName {
-            print("Looking for target \(targetName) in project at \(self.projectPath.pathString)...")
+            Self.log("Looking for target \(targetName) in project at \(self.projectPath.pathString)...")
             for project in graph.projects.values {
                 if let target = project.targets[targetName] {
-                    print("Found target \(targetName) in project \(project.name)")
+                    Self.log("Found target \(targetName) in project \(project.name)")
                     return target
                 }
             }
             throw TargetSelectionError.targetNotFound(name: targetName)
         }
 
-        print("No target specified, using the first target found in the first project at \(self.projectPath.pathString)...")
+        Self.log("No target specified, using the first target found in the first project at \(self.projectPath.pathString)...")
         guard let mainProject = graph.projects.values.first(where: { !$0.targets.isEmpty }) else {
             throw TargetSelectionError.noTargets
         }
@@ -206,6 +206,10 @@ struct XcodeProjectHelper {
             """
         }
         return ProjectMappingError(underlying: error, projectPath: projectPath, hint: hint)
+    }
+
+    private static func log(_ message: String) {
+        FileHandle.standardError.write(Data((message + "\n").utf8))
     }
 }
 

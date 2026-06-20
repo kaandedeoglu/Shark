@@ -43,6 +43,10 @@ assert_contains "$FORMAT90_OUTPUT" "public enum I"
 assert_contains "$FORMAT90_OUTPUT" "public enum L"
 assert_contains "$FORMAT90_OUTPUT" "Greeting_HELLO"
 
+echo "==> generate relative path: Format90Example"
+(cd "$ROOT" && "${SHARK[@]}" Examples/Format90Example/Format90Example.xcodeproj "$TMP_DIR/Format90RelativeShark.swift" --target Format90Example)
+assert_contains "$TMP_DIR/Format90RelativeShark.swift" "public enum Shark"
+
 echo "==> lint clean: Format90Example"
 "${SHARK[@]}" lint "$FORMAT90_PROJECT" --target Format90Example >"$TMP_DIR/format90-lint.txt"
 assert_contains "$TMP_DIR/format90-lint.txt" "No localization issues found."
@@ -55,6 +59,18 @@ assert_contains "$TMP_DIR/workflow-lint.txt" "missing-key"
 assert_contains "$TMP_DIR/workflow-lint.txt" "Greeting_WELCOME_FORMAT"
 assert_contains "$TMP_DIR/workflow-lint.txt" "Catalog.button.format"
 assert_contains "$TMP_DIR/workflow-lint.txt" "plural key(s) skipped"
+
+echo "==> lint json is clean stdout: LocalizationWorkflowExample"
+if "${SHARK[@]}" lint "$WORKFLOW_PROJECT" --target LocalizationWorkflowExample --format json >"$TMP_DIR/workflow-lint.json" 2>"$TMP_DIR/workflow-lint-json.err"; then
+  echo "Expected json lint command to fail" >&2
+  echo "--- stdout ---" >&2
+  cat "$TMP_DIR/workflow-lint.json" >&2
+  echo "--- stderr ---" >&2
+  cat "$TMP_DIR/workflow-lint-json.err" >&2
+  exit 1
+fi
+python3 -m json.tool "$TMP_DIR/workflow-lint.json" >/dev/null
+assert_contains "$TMP_DIR/workflow-lint.json" "\"findings\""
 
 echo "==> translate dry-run: LocalizationWorkflowExample"
 "${SHARK[@]}" translate "$WORKFLOW_PROJECT" --target LocalizationWorkflowExample --to de,fr --dry-run >"$TMP_DIR/workflow-translate.txt"

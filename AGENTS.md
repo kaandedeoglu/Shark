@@ -116,6 +116,10 @@ We deliberately stay on `tuist/XcodeGraph` 1.34.5 because:
 
 Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven changes — until then, the standalone 1.34.5 release plus a fresh XcodeProj is the cheapest correct setup.
 
+#### SwiftPM warning output during package mapping
+
+`XcodeGraphMapper` shells out to `swift package dump-package` while mapping Swift package references. Some SwiftPM releases print non-fatal diagnostics to stderr even when stdout contains valid JSON; older XcodeGraph plumbing can feed those bytes into JSON decoding and surface only "The data couldn't be read because it isn't in the correct format." Keep `SwiftPackageDumpWrapper` in `Project/XcodeProjectHelper.swift`: it is intentionally scoped around `mapper.map(at:)`, suppresses stderr only for successful `dump-package` calls, and forwards stderr on failures so real SwiftPM errors remain visible.
+
 ### Regression fixture
 
 `Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54.

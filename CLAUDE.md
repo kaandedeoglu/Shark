@@ -71,12 +71,22 @@ We deliberately stay on `tuist/XcodeGraph` 1.34.5 because:
 
 Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven changes — until then, the standalone 1.34.5 release plus a fresh XcodeProj is the cheapest correct setup.
 
+#### SwiftPM warning output during package mapping
+
+XcodeGraph 1.34.5's `PackageInfoLoader` collects stdout and stderr together before decoding `swift package dump-package` output as JSON. Some package manifests, notably newer Swift manifests using deprecated PackageDescription APIs, can emit warnings to stderr while still returning valid JSON on stdout. Shark wraps `swift` during project mapping so successful `dump-package` calls expose only stdout to XcodeGraph; failed calls still forward stderr so real SwiftPM errors remain visible.
+
 ### Regression fixture
 
 `Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54. Smoke-test the toolchain against it after dependency bumps:
 
 ```bash
 swift run Shark Examples/Format90Example/Format90Example.xcodeproj Examples/Format90Example/Format90Example/
+```
+
+Also smoke-test against a real project with local Swift package dependencies that can emit manifest warnings:
+
+```bash
+swift run Shark /path/to/App.xcodeproj /tmp/SharkSmoke.swift --target App --deps /tmp/shark-smoke.d
 ```
 
 ### Resource Processing Flow

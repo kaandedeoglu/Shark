@@ -141,6 +141,16 @@ You can then verify the installation by doing
 > shark --help
 ```
 
+## Compatibility Notes
+
+Shark 1.8.6 handles Xcode projects whose local Swift package dependencies emit manifest warnings during `swift package dump-package`. Older Shark builds may fail these projects with a generic "data couldn't be read because it isn't in the correct format" parse error.
+
+If you use Xcode's discovered dependency file setting in a Run Script phase, keep the `dependencyFile` project value quoted when it contains path separators, for example:
+
+```pbxproj
+dependencyFile = "/tmp/deps-MyApp.d";
+```
+
 ## Setup (Easy)
 
 - Add a new Run Script phase to your target's build phases. This build phase should ideally run before the `Compile Sources` phase. The script body should look like the following:
@@ -250,6 +260,8 @@ Declares the `I, C, F, L` enums in the top level scope instead of nesting it in 
 ### --deps
 
 Add the path to a Makefile-style dependency file. This gives Xcode a hint when to skip calling build phase because nothing has changed.
+
+When Xcode persists this path into `project.pbxproj`, paths such as `/tmp/deps-MyApp.d` should remain quoted for parser compatibility.
 
 ### --exclude
 

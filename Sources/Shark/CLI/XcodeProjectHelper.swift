@@ -16,6 +16,10 @@ struct ProjectMappingError: LocalizedError {
         var lines: [String] = []
         lines.append("Failed to parse \(projectPath):")
         lines.append("  \(underlying.localizedDescription)")
+        let detailedDescription = String(reflecting: underlying)
+        if detailedDescription != underlying.localizedDescription {
+            lines.append("  \(detailedDescription)")
+        }
         if let hint {
             lines.append("")
             lines.append(hint)
@@ -49,6 +53,8 @@ struct XcodeProjectHelper {
     func resourcePaths() async throws -> ResourcePaths {
 
         let xcodeproj: XcodeGraph.Graph
+        let swiftWrapper = try SwiftPackageDumpWrapper.install()
+        defer { swiftWrapper.restore() }
         do {
             xcodeproj = try await mapper.map(at: self.projectPath)
         } catch {
@@ -148,5 +154,89 @@ struct XcodeProjectHelper {
             """
         }
         return ProjectMappingError(underlying: error, projectPath: projectPath, hint: hint)
+    }
+}
+
+private struct SwiftPackageDumpWrapper {
+    private let originalPath: String?
+    private let wrapperDirectory: URL
+
+    static func install() throws -> Self {
+        let environment = ProcessInfo.processInfo.environment
+        let originalPath = environment["PATH"]
+        let swiftPath = try resolveSwiftExecutable()
+        let wrapperDirectory = FileManager.default.temporaryDirectory
+            .appendingPathComponent("shark-swift-\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: wrapperDirectory, withIntermediateDirectories: true)
+
+        let wrapperPath = wrapperDirectory.appendingPathComponent("swift")
+        let script = """
+        #!/bin/sh
+        case " $* " in
+          *" dump-package "*|*" dump-package")
+            stderr_file=$(mktemp "${TMPDIR:-/tmp}/shark-swift-stderr.XXXXXX") || exit 1
+            '\(shellEscaped(swiftPath))' "$@" 2>"$stderr_file"
+            status=$?
+            if [ "$status" -ne 0 ]; then
+              cat "$stderr_file" >&2
+            fi
+            rm -f "$stderr_file"
+            exit "$status"
+            ;;
+          *)
+            exec '\(shellEscaped(swiftPath))' "$@"
+            ;;
+        esac
+        """
+        try script.write(to: wrapperPath, atomically: true, encoding: .utf8)
+        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: wrapperPath.path)
+
+        let newPath = [wrapperDirectory.path, originalPath].compactMap(\.self).joined(separator: ":")
+        setenv("PATH", newPath, 1)
+        return Self(originalPath: originalPath, wrapperDirectory: wrapperDirectory)
+    }
+
+    func restore() {
+        if let originalPath {
+            setenv("PATH", originalPath, 1)
+        } else {
+            unsetenv("PATH")
+        }
+        try? FileManager.default.removeItem(at: wrapperDirectory)
+    }
+
+    private static func resolveSwiftExecutable() throws -> String {
+        let process = Process()
+        process.executableURL = URL(fileURLWithPath: "/usr/bin/which")
+        process.arguments = ["swift"]
+        let pipe = Pipe()
+        process.standardOutput = pipe
+        process.standardError = Pipe()
+        try process.run()
+        process.waitUntilExit()
+
+        guard process.terminationStatus == 0,
+              let data = try pipe.fileHandleForReading.readToEnd(),
+              let output = String(data: data, encoding: .utf8)?
+                  .trimmingCharacters(in: .whitespacesAndNewlines),
+              !output.isEmpty else {
+            throw SwiftPackageDumpWrapperError.swiftExecutableNotFound
+        }
+        return output
+    }
+
+    private static func shellEscaped(_ value: String) -> String {
+        value.replacingOccurrences(of: "'", with: "'\\''")
+    }
+}
+
+private enum SwiftPackageDumpWrapperError: LocalizedError {
+    case swiftExecutableNotFound
+
+    var errorDescription: String? {
+        switch self {
+        case .swiftExecutableNotFound:
+            "Unable to locate the Swift executable"
+        }
     }
 }

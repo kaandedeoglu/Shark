@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.8.7
+
+- Fixed Homebrew source installs on macOS 27 / Xcode 27 by updating the formula to use SwiftPM's native build system, avoiding a Swift macro expansion failure in transitive dependencies.
+
 ## 1.8.6
 
 - Fixed project parsing when SwiftPM prints warnings while Shark maps local package dependencies. Shark now keeps successful `swift package dump-package` JSON clean even when package manifest warnings are written to stderr.

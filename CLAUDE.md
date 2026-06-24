@@ -127,6 +127,8 @@ XcodeGraph 1.34.5's `PackageInfoLoader` shells out to `swift package dump-packag
 
 `Examples/LocalizationWorkflowExample/` is a hand-crafted localization workflow fixture with expected lint findings across `.strings` and `.xcstrings`, skipped plural catalog entries, and stable `translate --dry-run` gaps.
 
+`Scripts/smoke-fixtures.sh` also creates a temporary XcodeGen project during the run. With XcodeGen 2.45.x this covers `objectVersion = 77`, giving the parser both committed Xcode 16.3 fixtures and a generator-produced project format.
+
 Smoke-test the toolchain against committed fixtures after dependency bumps:
 
 ```bash

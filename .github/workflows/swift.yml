@@ -16,6 +16,8 @@ jobs:
     - uses: maxim-lobanov/setup-xcode@v1
       with:
         xcode-version: latest-stable
+    - name: Install XcodeGen
+      run: brew install xcodegen
     - name: Build
       run: swift build -v
     - name: Test

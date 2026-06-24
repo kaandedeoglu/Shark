@@ -51,6 +51,62 @@ echo "==> lint clean: Format90Example"
 "${SHARK[@]}" lint "$FORMAT90_PROJECT" --target Format90Example >"$TMP_DIR/format90-lint.txt"
 assert_contains "$TMP_DIR/format90-lint.txt" "No localization issues found."
 
+if command -v xcodegen >/dev/null 2>&1; then
+  XCODEGEN_ROOT="$TMP_DIR/XcodeGenSmoke"
+  mkdir -p "$XCODEGEN_ROOT/XcodeGenSmoke/Assets.xcassets/Logo.imageset"
+  mkdir -p "$XCODEGEN_ROOT/XcodeGenSmoke/en.lproj"
+
+  cat >"$XCODEGEN_ROOT/project.yml" <<'YAML'
+name: XcodeGenSmoke
+options:
+  minimumXcodeGenVersion: 2.45.0
+targets:
+  XcodeGenSmoke:
+    type: application
+    platform: iOS
+    deploymentTarget: "16.0"
+    sources:
+      - XcodeGenSmoke
+    resources:
+      - XcodeGenSmoke/Assets.xcassets
+      - XcodeGenSmoke/en.lproj/Localizable.strings
+    settings:
+      PRODUCT_BUNDLE_IDENTIFIER: dev.shark.XcodeGenSmoke
+YAML
+
+  cat >"$XCODEGEN_ROOT/XcodeGenSmoke/AppDelegate.swift" <<'SWIFT'
+import UIKit
+
+@main
+final class AppDelegate: UIResponder, UIApplicationDelegate {}
+SWIFT
+
+  cat >"$XCODEGEN_ROOT/XcodeGenSmoke/Assets.xcassets/Contents.json" <<'JSON'
+{"info":{"version":1,"author":"xcode"}}
+JSON
+
+  cat >"$XCODEGEN_ROOT/XcodeGenSmoke/Assets.xcassets/Logo.imageset/Contents.json" <<'JSON'
+{"images":[],"info":{"version":1,"author":"xcode"}}
+JSON
+
+  cat >"$XCODEGEN_ROOT/XcodeGenSmoke/en.lproj/Localizable.strings" <<'STRINGS'
+"HELLO_FROM_XCODEGEN" = "Hello from XcodeGen";
+STRINGS
+
+  echo "==> generate: XcodeGenSmoke"
+  (cd "$XCODEGEN_ROOT" && xcodegen generate --quiet)
+  XCODEGEN_OBJECT_VERSION="$(awk '/objectVersion =/ { gsub(";", "", $3); print $3; exit }' "$XCODEGEN_ROOT/XcodeGenSmoke.xcodeproj/project.pbxproj")"
+  if [[ "$XCODEGEN_OBJECT_VERSION" == "90" || -z "$XCODEGEN_OBJECT_VERSION" ]]; then
+    echo "Expected XcodeGenSmoke to cover a non-90 objectVersion; got '${XCODEGEN_OBJECT_VERSION:-missing}'" >&2
+    exit 1
+  fi
+  "${SHARK[@]}" "$XCODEGEN_ROOT/XcodeGenSmoke.xcodeproj" "$TMP_DIR/XcodeGenSmokeShark.swift" --target XcodeGenSmoke
+  assert_contains "$TMP_DIR/XcodeGenSmokeShark.swift" "HELLO_FROM_XCODEGEN"
+  assert_contains "$TMP_DIR/XcodeGenSmokeShark.swift" "Logo"
+else
+  echo "==> skipping XcodeGenSmoke: xcodegen not installed"
+fi
+
 WORKFLOW_PROJECT="$ROOT/Examples/LocalizationWorkflowExample/LocalizationWorkflowExample.xcodeproj"
 
 echo "==> lint expected findings: LocalizationWorkflowExample"

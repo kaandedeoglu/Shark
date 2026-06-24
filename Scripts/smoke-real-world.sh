@@ -19,10 +19,16 @@ if [[ ! -d "$REAL_WORLD_ROOT" ]]; then
 fi
 
 PROJECT_LIST="$TMP_DIR/projects.txt"
+AUTO_DISCOVERED=0
 if [[ -n "${SHARK_REAL_WORLD_PROJECTS_FILE:-}" ]]; then
   cp "$SHARK_REAL_WORLD_PROJECTS_FILE" "$PROJECT_LIST"
 else
-  find "$REAL_WORLD_ROOT" -name "*.xcodeproj" -type d | sort | head -n "$LIMIT" >"$PROJECT_LIST"
+  AUTO_DISCOVERED=1
+  find "$REAL_WORLD_ROOT" \
+    \( -name .build -o -name DerivedData -o -name .swiftpm -o -name .git \) -prune \
+    -o -name "*.xcodeproj" -type d -print \
+    | sort \
+    | head -n "$LIMIT" >"$PROJECT_LIST"
 fi
 
 if [[ ! -s "$PROJECT_LIST" ]]; then
@@ -32,6 +38,7 @@ fi
 
 failures=0
 checked=0
+skipped=0
 
 while IFS= read -r raw_line; do
   [[ -z "$raw_line" || "$raw_line" == \#* ]] && continue
@@ -55,6 +62,12 @@ while IFS= read -r raw_line; do
 
   if "${SHARK[@]}" "${args[@]}" >"$log" 2>&1; then
     echo "    ok"
+  elif [[ "$AUTO_DISCOVERED" -eq 1 ]] && grep -Fq "Multiple application targets found" "$log"; then
+    skipped=$((skipped + 1))
+    echo "    skipped: multiple eligible targets; provide SHARK_REAL_WORLD_PROJECTS_FILE with '$project|TargetName' to check this project"
+  elif [[ "$AUTO_DISCOVERED" -eq 1 ]] && grep -Fq "No resources found for target" "$log"; then
+    skipped=$((skipped + 1))
+    echo "    skipped: no resources found for auto-selected target"
   else
     failures=$((failures + 1))
     echo "    failed" >&2
@@ -72,4 +85,8 @@ if [[ "$failures" -ne 0 ]]; then
   exit 1
 fi
 
-echo "Real-world smoke passed for $checked project(s)."
+summary="Real-world smoke passed for $checked project(s)"
+if [[ "$skipped" -ne 0 ]]; then
+  summary+=", skipped $skipped auto-discovered project(s)"
+fi
+echo "$summary."

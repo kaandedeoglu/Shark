@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0
+
+- Added `shark lint`, a localization CI gate for missing keys, empty source values, orphaned keys, placeholder mismatches, and skipped plural entries.
+- Added `shark translate`, which fills localization gaps via Claude Code, Codex CLI, or the Claude API, validates placeholder preservation, and writes results back for human review.
+- Added first-class `.xcstrings` support alongside classic `.strings` files across generation, linting, and translation.
+- Split the package into a reusable `SharkKit` library and a thin `Shark` executable while preserving the existing default `shark PROJECT OUTPUT` generation workflow.
+- Improved Xcode project parser resilience with committed smoke fixtures for modern object versions and SwiftPM warning output.
+
 ## 1.8.7
 
 - Fixed Homebrew source installs on macOS 27 / Xcode 27 by updating the formula to use SwiftPM's native build system, avoiding a Swift macro expansion failure in transitive dependencies.

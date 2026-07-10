@@ -176,12 +176,12 @@ dependencyFile = "/tmp/deps-MyApp.d";
 
   ```bash
   unset SDKROOT
-  if [ -x "$(command -v shark)" ]; then
-  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/
+  if [ -x "/opt/homebrew/bin/shark" ]; then
+  /opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/"
   fi
   ```
 
-  the `if/fi` block makes sure that Shark runs only if it's installed on the current machine.
+  The `if/fi` block makes sure that Shark runs only if it's installed on the current machine. If you installed Shark somewhere else, adjust the path accordingly.
 
 - Build your project. You should now see a file named `Shark.swift` in your project folder.
 - Add this file to your target. Voila! `Shark.swift` will be updated every time you build the project.
@@ -189,12 +189,12 @@ dependencyFile = "/tmp/deps-MyApp.d";
 
   ```bash
   # Write to a specific file called MyAssets.swift
-  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/MyAssets.swift
+  /opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/MyAssets.swift"
   ```
 
   ```bash
   # Write to a specific file in a different folder
-  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME/Utility/MyAssets.swift
+  /opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/Utility/MyAssets.swift"
   ```
   
   With this setup, Shark will generate the resource files on every code run.
@@ -207,7 +207,7 @@ If you want to run Shark only when it really needs to, then make the following a
 1. Edit the command line to have Shark create a dependency file. This file will contain the paths of all the assets in your project.
 
   ```bash
-  shark $PROJECT_FILE_PATH $PROJECT_DIR/$PROJECT_NAME --deps /tmp/deps-$PROJECT_NAME.d
+  /opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME" --deps "/tmp/deps-$PROJECT_NAME.d"
   ```
 
 2. Add the output file (e.g. `${SRCROOT}/Shark.swift`) as a dependency to the Run Script phase.
@@ -219,6 +219,23 @@ If you want to run Shark only when it really needs to, then make the following a
 At the end of all that, your run Script phase should look similar to this:
 
 ![Shark build phase in Xcode](https://github.com/user-attachments/assets/1a767515-ddf0-4e59-ae8f-6aa36e291b31)
+
+## Troubleshooting
+
+### Shark fails inside an Xcode Run Script phase
+
+When Shark runs from an Xcode Run Script phase, Xcode exports build settings such as `SDKROOT` into the script environment. That is correct for compiling your app, but it can confuse SwiftPM and the project-mapping dependencies Shark uses while reading package manifests and `.xcodeproj` files.
+
+Unset `SDKROOT` before invoking Shark:
+
+```bash
+unset SDKROOT
+if [ -x "/opt/homebrew/bin/shark" ]; then
+/opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/Shark.swift"
+fi
+```
+
+This is an Xcode build-environment detail, not an indication that your project file format is unsupported.
 
 ## Options & Flags
 

@@ -1,0 +1,209 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		B1000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = B2000001 /* AppDelegate.swift */; };
+		B1000002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B2000010 /* Assets.xcassets */; };
+		B1000003 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = B2000020 /* Localizable.strings */; };
+		B1000004 /* WorkspaceProduct.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B2000030 /* WorkspaceProduct.framework */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B2000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		B2000002 /* WorkspaceBuiltProductExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WorkspaceBuiltProductExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		B2000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		B2000021 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B2000030 /* WorkspaceProduct.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = WorkspaceProduct.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		B3000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000004 /* WorkspaceProduct.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		B4000001 /* root */ = {
+			isa = PBXGroup;
+			children = (
+				B4000002 /* WorkspaceBuiltProductExample */,
+				B4000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		B4000002 /* WorkspaceBuiltProductExample */ = {
+			isa = PBXGroup;
+			children = (
+				B2000001 /* AppDelegate.swift */,
+				B2000010 /* Assets.xcassets */,
+				B2000020 /* Localizable.strings */,
+			);
+			path = WorkspaceBuiltProductExample;
+			sourceTree = "<group>";
+		};
+		B4000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				B2000002 /* WorkspaceBuiltProductExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B6000001 /* WorkspaceBuiltProductExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B8000003 /* Build configuration list for PBXNativeTarget "WorkspaceBuiltProductExample" */;
+			buildPhases = (
+				B7000001 /* Sources */,
+				B3000001 /* Frameworks */,
+				B7000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = WorkspaceBuiltProductExample;
+			productName = WorkspaceBuiltProductExample;
+			productReference = B2000002 /* WorkspaceBuiltProductExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		B9000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+			};
+			buildConfigurationList = B8000001 /* Build configuration list for PBXProject "WorkspaceBuiltProductExample" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = B4000001 /* root */;
+			productRefGroup = B4000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B6000001 /* WorkspaceBuiltProductExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		B7000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000002 /* Assets.xcassets in Resources */,
+				B1000003 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B7000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				B1000001 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		B2000020 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				B2000021 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		B8000010 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		B8000011 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		B8000020 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaandedeoglu.shark.WorkspaceBuiltProductExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		B8000021 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaandedeoglu.shark.WorkspaceBuiltProductExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		B8000001 /* Build configuration list for PBXProject "WorkspaceBuiltProductExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B8000010 /* Debug */,
+				B8000011 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		B8000003 /* Build configuration list for PBXNativeTarget "WorkspaceBuiltProductExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B8000020 /* Debug */,
+				B8000021 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = B9000001 /* Project object */;
+}

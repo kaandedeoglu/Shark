@@ -160,6 +160,8 @@ You can then verify the installation by doing
 
 ## Compatibility Notes
 
+Shark 2.1.0 handles `.xcodeproj` files whose Frameworks or Embed build phases reference products built elsewhere in the workspace, for example sibling frameworks under `BUILT_PRODUCTS_DIR`. Shark scans resources from a temporary project copy that keeps resource phases intact and ignores those workspace-only binary links, so these projects do not need an Xcode project format bump just for Shark.
+
 Shark 1.8.6 handles Xcode projects whose local Swift package dependencies emit manifest warnings during `swift package dump-package`. Older Shark builds may fail these projects with a generic "data couldn't be read because it isn't in the correct format" parse error.
 
 If you use Xcode's discovered dependency file setting in a Run Script phase, keep the `dependencyFile` project value quoted when it contains path separators, for example:

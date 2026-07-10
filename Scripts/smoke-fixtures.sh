@@ -51,6 +51,14 @@ echo "==> lint clean: Format90Example"
 "${SHARK[@]}" lint "$FORMAT90_PROJECT" --target Format90Example >"$TMP_DIR/format90-lint.txt"
 assert_contains "$TMP_DIR/format90-lint.txt" "No localization issues found."
 
+WORKSPACE_PRODUCT_PROJECT="$ROOT/Examples/WorkspaceBuiltProductExample/WorkspaceBuiltProductExample.xcodeproj"
+WORKSPACE_PRODUCT_OUTPUT="$TMP_DIR/WorkspaceBuiltProductShark.swift"
+
+echo "==> generate: WorkspaceBuiltProductExample"
+"${SHARK[@]}" "$WORKSPACE_PRODUCT_PROJECT" "$WORKSPACE_PRODUCT_OUTPUT" --target WorkspaceBuiltProductExample
+assert_contains "$WORKSPACE_PRODUCT_OUTPUT" "WORKSPACE_PRODUCT_GREETING"
+assert_contains "$WORKSPACE_PRODUCT_OUTPUT" "Logo"
+
 if command -v xcodegen >/dev/null 2>&1; then
   XCODEGEN_ROOT="$TMP_DIR/XcodeGenSmoke"
   mkdir -p "$XCODEGEN_ROOT/XcodeGenSmoke/Assets.xcassets/Logo.imageset"

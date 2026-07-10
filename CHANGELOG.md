@@ -1,5 +1,11 @@
 # Changelog
 
+## 2.1.0
+
+- Fixed resource scanning for projects that link workspace-built products such as sibling frameworks from `BUILT_PRODUCTS_DIR`. Shark now ignores unresolved Frameworks and Embed phase entries while mapping resources, so valid workspace projects no longer need Xcode project format changes or hand-sanitized build phases.
+- Added a dedicated workspace-built-product fixture and smoke coverage for this parser fallback.
+- Added `shark --version` output for release verification.
+
 ## 2.0
 
 - Added `shark lint`, a localization CI gate for missing keys, empty source values, orphaned keys, placeholder mismatches, and skipped plural entries.

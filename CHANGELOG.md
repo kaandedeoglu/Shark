@@ -1,5 +1,14 @@
 # Changelog
 
+## 2.2.0
+
+- Replaced the XcodeGraph dependency with direct XcodeProj parsing. Shark reads the target's resource build phases and Xcode 16 synchronized folder groups itself, and no longer resolves Swift package manifests, link phases or a dependency graph it never used. Runs that took seconds now take milliseconds: a project with eight local Swift packages went from 2.85s to 0.11s, and cold builds of Shark itself from 207s to 49s with 22 dependencies down to 5.
+- Fixed projects that reference a local Swift package both as a package and as a folder in the navigator, which is what Xcode and XcodeGen write. Those aborted the process outright.
+- Fixed projects whose local Swift package sits at the project's own directory. Their application targets were invisible, so Shark reported them as not found.
+- Fixed `generate` for string catalogs with pluralized entries. Decoding failed on the whole catalog; a pluralized key now generates an accessor that takes its format specifiers from the plural variations.
+- `unset SDKROOT` is no longer needed in Xcode Run Script phases: nothing in Shark shells out to SwiftPM any more.
+- Added fixtures for local packages, Xcode 16 folder-backed targets and their membership exceptions.
+
 ## 2.1.0
 
 - Fixed resource scanning for projects that link workspace-built products such as sibling frameworks from `BUILT_PRODUCTS_DIR`. Shark now ignores unresolved Frameworks and Embed phase entries while mapping resources, so valid workspace projects no longer need Xcode project format changes or hand-sanitized build phases.

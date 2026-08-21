@@ -168,12 +168,6 @@ which older versions resolved through SwiftPM at about a second each.
 Xcode 16 folder-backed targets, whose membership follows the file system rather than the project
 file, are supported including per-target membership exceptions.
 
-If you use Xcode's discovered dependency file setting in a Run Script phase, keep the `dependencyFile` project value quoted when it contains path separators, for example:
-
-```pbxproj
-dependencyFile = "/tmp/deps-MyApp.d";
-```
-
 ## Setup (Easy)
 
 - Add a new Run Script phase to your target's build phases. This build phase should ideally run before the `Compile Sources` phase. The script body should look like the following:
@@ -200,12 +194,16 @@ dependencyFile = "/tmp/deps-MyApp.d";
   /opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/Utility/MyAssets.swift"
   ```
   
-  With this setup, Shark will generate the resource files on every code run.
-  This can add several seconds to the build time which you may not like.
+  With this setup, Shark runs on every build. That costs a few dozen milliseconds: Shark reads the
+  project file and rewrites its output only when something actually changed, so an unchanged run
+  neither touches `Shark.swift` nor triggers a recompile downstream.
 
-## Setup (Advanced)
+## Setup (Optional: skip the build phase entirely)
 
-If you want to run Shark only when it really needs to, then make the following adjustments:
+Shark used to take seconds on projects with Swift package dependencies, and this section was how you
+got out of paying that on every build. Since 2.2.0 a run costs milliseconds, so this is an
+optimization rather than a necessity — set it up if you want Xcode to skip the phase outright, and
+skip it otherwise.
 
 1. Edit the command line to have Shark create a dependency file. This file will contain the paths of all the assets in your project.
 
@@ -290,7 +288,9 @@ Declares the `I, C, F, L` enums in the top level scope instead of nesting it in 
 
 ### --deps
 
-Add the path to a Makefile-style dependency file. This gives Xcode a hint when to skip calling build phase because nothing has changed.
+Writes a Makefile-style dependency file listing the resources Shark read, which lets Xcode skip the
+build phase when none of them changed. Rarely worth the setup since 2.2.0 — a run takes milliseconds
+— but harmless if you want it.
 
 When Xcode persists this path into `project.pbxproj`, paths such as `/tmp/deps-MyApp.d` should remain quoted for parser compatibility.
 

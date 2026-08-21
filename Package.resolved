@@ -1,5 +1,5 @@
 {
-  "originHash" : "06149852a27d1f405540943751c524254af3a961f3f743fc889668f02d012eb1",
+  "originHash" : "dca153e2b4da2573b862b02356c1b40d9781615d36e3d8dcd902ca06472f06ac",
   "pins" : [
     {
       "identity" : "aexml",
@@ -8,69 +8,6 @@
       "state" : {
         "revision" : "db806756c989760b35108146381535aec231092b",
         "version" : "4.7.0"
-      }
-    },
-    {
-      "identity" : "anycodable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Flight-School/AnyCodable",
-      "state" : {
-        "revision" : "862808b2070cd908cb04f9aafe7de83d35f81b05",
-        "version" : "0.6.7"
-      }
-    },
-    {
-      "identity" : "command",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tuist/Command.git",
-      "state" : {
-        "revision" : "fd9dff1a6e7424a1b7886916fd318d18e7c1ba7e",
-        "version" : "0.14.3"
-      }
-    },
-    {
-      "identity" : "filesystem",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tuist/FileSystem.git",
-      "state" : {
-        "revision" : "f6ef54996851fbc24c8f4b74a7295da8725d5a28",
-        "version" : "0.17.2"
-      }
-    },
-    {
-      "identity" : "machokit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p-x9/MachOKit",
-      "state" : {
-        "revision" : "ff3c258b4b676cbd873b03ee3f11e3bc2b11d5af",
-        "version" : "0.49.0"
-      }
-    },
-    {
-      "identity" : "mockable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Kolos65/Mockable.git",
-      "state" : {
-        "revision" : "bd20509c34ca3205003677747ad8dcb70d18b7ca",
-        "version" : "0.6.2"
-      }
-    },
-    {
-      "identity" : "objectarchivekit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p-x9/ObjectArchiveKit.git",
-      "state" : {
-        "revision" : "96d782a576273b73b277b577943a2a25b00b919e",
-        "version" : "0.5.0"
-      }
-    },
-    {
-      "identity" : "path",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tuist/Path.git",
-      "state" : {
-        "revision" : "7c74ac435e03a927c3a73134c48b61e60221abcb",
-        "version" : "0.3.8"
       }
     },
     {
@@ -101,102 +38,12 @@
       }
     },
     {
-      "identity" : "swift-asn1",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-asn1.git",
-      "state" : {
-        "revision" : "eb50cbd14606a9161cbc5d452f18797c90ef0bab",
-        "version" : "1.7.0"
-      }
-    },
-    {
-      "identity" : "swift-binary-parse-support",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p-x9/swift-binary-parse-support.git",
-      "state" : {
-        "revision" : "5fb96b503672ea4752eded6b4e301fd87214b03b",
-        "version" : "0.2.1"
-      }
-    },
-    {
-      "identity" : "swift-crypto",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-crypto.git",
-      "state" : {
-        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
-        "version" : "3.15.1"
-      }
-    },
-    {
-      "identity" : "swift-fileio",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p-x9/swift-fileio.git",
-      "state" : {
-        "revision" : "d589ff3966f9f064574780f527449a946736b989",
-        "version" : "0.13.0"
-      }
-    },
-    {
-      "identity" : "swift-fileio-extra",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/p-x9/swift-fileio-extra.git",
-      "state" : {
-        "revision" : "8d83506dd4dff737807d90dbf2264096ed98c7a7",
-        "version" : "0.2.2"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log",
-      "state" : {
-        "revision" : "5073617dac96330a486245e4c0179cb0a6fd2256",
-        "version" : "1.12.0"
-      }
-    },
-    {
-      "identity" : "swift-syntax",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/swiftlang/swift-syntax.git",
-      "state" : {
-        "revision" : "4799286537280063c85a32f09884cfbca301b1a1",
-        "version" : "602.0.0"
-      }
-    },
-    {
-      "identity" : "xcodegraph",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tuist/XcodeGraph.git",
-      "state" : {
-        "revision" : "ccd0ab5c6602d8bb908970d274fb766cc9db08ab",
-        "version" : "1.34.5"
-      }
-    },
-    {
       "identity" : "xcodeproj",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tuist/XcodeProj",
       "state" : {
         "revision" : "fb79d68bc758cdb00079d72b6c8b899d99f5f15e",
         "version" : "9.12.0"
-      }
-    },
-    {
-      "identity" : "xctest-dynamic-overlay",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/xctest-dynamic-overlay",
-      "state" : {
-        "revision" : "dfd70507def84cb5fb821278448a262c6ff2bbad",
-        "version" : "1.9.0"
-      }
-    },
-    {
-      "identity" : "zipfoundation",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/tuist/ZIPFoundation",
-      "state" : {
-        "revision" : "a0e902e08e7a9ff3f0c1d109dc331b20cd498bb5",
-        "version" : "0.9.21"
       }
     }
   ],

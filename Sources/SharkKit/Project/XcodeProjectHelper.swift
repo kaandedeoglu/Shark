@@ -1,28 +1,15 @@
 import Foundation
-import XcodeGraph
-import XcodeGraphMapper
-import Path
+import PathKit
 
-enum PBXFilePathError: String, Error {
-    case cannotResolvePath
-}
-
-struct ProjectMappingError: LocalizedError {
+struct ProjectReadError: LocalizedError {
     let underlying: Error
     let projectPath: String
-    let hint: String?
 
     var errorDescription: String? {
-        var lines: [String] = []
-        lines.append("Failed to parse \(projectPath):")
-        lines.append("  \(underlying.localizedDescription)")
+        var lines = ["Failed to parse \(projectPath):", "  \(underlying.localizedDescription)"]
         let detailedDescription = String(reflecting: underlying)
         if detailedDescription != underlying.localizedDescription {
             lines.append("  \(detailedDescription)")
-        }
-        if let hint {
-            lines.append("")
-            lines.append(hint)
         }
         return lines.joined(separator: "\n")
     }
@@ -56,14 +43,12 @@ struct XcodeProjectHelper {
         fileprivate(set) var storyboardPaths: [String] = []
     }
 
-    private let projectPath: AbsolutePath
+    private let projectPath: Path
     private let targetName: String?
     private let locale: String
     private let excludes: [String]
     private let depsPath: String?
     private let outputPath: String?
-
-    private let mapper: XcodeGraphMapper = .init()
 
     init(options: Options) throws {
         try self.init(projectPath: options.projectPath,
@@ -75,7 +60,7 @@ struct XcodeProjectHelper {
     }
 
     init(projectPath: String, targetName: String?, locale: String = "en", excludes: [String] = [], depsPath: String? = nil, outputPath: String? = nil) throws {
-        self.projectPath = try AbsolutePath(validating: projectPath)
+        self.projectPath = Path(projectPath).absolute()
         self.targetName = targetName
         self.locale = locale
         self.excludes = excludes
@@ -88,12 +73,12 @@ struct XcodeProjectHelper {
     func localizationResourcePaths() async throws -> (strings: [String], xcstrings: [String]) {
         var strings: [String] = []
         var xcstrings: [String] = []
-        for path in try await targetResourceFilePaths() {
+        for path in try targetResourceFilePaths() {
             switch path.extension {
                 case "strings":
-                    strings.append(path.pathString)
+                    strings.append(path.string)
                 case "xcstrings":
-                    xcstrings.append(path.pathString)
+                    xcstrings.append(path.string)
                 default:
                     break
             }
@@ -104,18 +89,18 @@ struct XcodeProjectHelper {
     func resourcePaths() async throws -> ResourcePaths {
         var result = ResourcePaths()
 
-        for path in try await targetResourceFilePaths() {
+        for path in try targetResourceFilePaths() {
             switch path.extension {
                 case "xcassets":
-                    result.assetsPaths.append(path.pathString)
+                    result.assetsPaths.append(path.string)
                 case "strings" where path.components.contains("\(locale).lproj"):
-                    result.localizationPaths.append(path.pathString)
+                    result.localizationPaths.append(path.string)
                 case "xcstrings":
-                    result.localizationPaths.append(path.pathString)
+                    result.localizationPaths.append(path.string)
                 case "ttf", "otf", "ttc":
-                    result.fontPaths.append(path.pathString)
+                    result.fontPaths.append(path.string)
                 case "storyboard":
-                    result.storyboardPaths.append(path.pathString)
+                    result.storyboardPaths.append(path.string)
                 default:
                     break
             }
@@ -129,7 +114,7 @@ struct XcodeProjectHelper {
             let sharkFile = "\(outputPath):".data(using: .utf8)!
             try fileHandle.write(contentsOf: sharkFile)
 
-            let flattenedResources: [String] = (result.localizationPaths + result.assetsPaths + result.fontPaths + result.storyboardPaths).compactMap { $0 }
+            let flattenedResources: [String] = result.localizationPaths + result.assetsPaths + result.fontPaths + result.storyboardPaths
             for resource in flattenedResources {
                 let safeName = resource.replacingOccurrences(of: " ", with: "\\ ")
                 let dependency = " \(safeName)".data(using: .utf8)!
@@ -140,251 +125,33 @@ struct XcodeProjectHelper {
         return result
     }
 
-    private func targetResourceFilePaths() async throws -> [AbsolutePath] {
-        let swiftWrapper = try SwiftPackageDumpWrapper.install()
-        defer { swiftWrapper.restore() }
-
-        let xcodeproj = try await mapProjectGraph()
-
-        let selectedTarget = try self.selectedTarget(in: xcodeproj)
-        let targetResources = selectedTarget.resources.resources
-        guard targetResources.isEmpty == false else {
-            throw TargetSelectionError.noResources
+    private func targetResourceFilePaths() throws -> [Path] {
+        if let targetName {
+            Self.log("Looking for target \(targetName) in project at \(projectPath.string)...")
+        } else {
+            Self.log("No target specified, using the only target in the project at \(projectPath.string)...")
         }
 
-        return targetResources.compactMap { resource in
-            guard case let .file(path, _, _) = resource else { return nil }
-            guard self.shouldExclude(path: path.pathString) == false else { return nil }
-            return path
-        }
-    }
-
-    private func selectedTarget(in graph: XcodeGraph.Graph) throws -> Target {
-        if let targetName = self.targetName {
-            Self.log("Looking for target \(targetName) in project at \(self.projectPath.pathString)...")
-            for project in graph.projects.values {
-                if let target = project.targets[targetName] {
-                    Self.log("Found target \(targetName) in project \(project.name)")
-                    return target
-                }
-            }
-            throw TargetSelectionError.targetNotFound(name: targetName)
+        let scanner = XcodeProjectResourceScanner(projectPath: projectPath, targetName: targetName)
+        let resources: [Path]
+        do {
+            resources = try scanner.resourceFilePaths()
+        } catch let error as TargetSelectionError {
+            throw error
+        } catch {
+            throw ProjectReadError(underlying: error, projectPath: projectPath.string)
         }
 
-        Self.log("No target specified, using the first target found in the first project at \(self.projectPath.pathString)...")
-        guard let mainProject = graph.projects.values.first(where: { !$0.targets.isEmpty }) else {
-            throw TargetSelectionError.noTargets
-        }
-        guard mainProject.targets.count == 1 else {
-            throw TargetSelectionError.multipleTargets(eligible: mainProject.targets.map { $0.key })
-        }
-        return mainProject.targets.values.first!
+        let filtered = resources.filter { !shouldExclude(path: $0.string) }
+        guard !filtered.isEmpty else { throw TargetSelectionError.noResources }
+        return filtered
     }
 
     private func shouldExclude(path: String) -> Bool {
         excludes.contains { path.contains($0) }
     }
 
-    private func mapProjectGraph() async throws -> XcodeGraph.Graph {
-        do {
-            return try await mapper.map(at: self.projectPath)
-        } catch {
-            guard Self.shouldRetryWithResourceOnlyProject(after: error) else {
-                throw Self.diagnosticError(wrapping: error, projectPath: self.projectPath.pathString)
-            }
-
-            do {
-                return try await mapResourceOnlyProjectGraph()
-            } catch {
-                throw Self.diagnosticError(wrapping: error, projectPath: self.projectPath.pathString)
-            }
-        }
-    }
-
-    private func mapResourceOnlyProjectGraph() async throws -> XcodeGraph.Graph {
-        let sanitizedProjectURL = try Self.makeResourceOnlyProjectCopy(of: self.projectPath)
-        defer { try? FileManager.default.removeItem(at: sanitizedProjectURL) }
-
-        try Self.sanitizeProjectForResourceMapping(at: sanitizedProjectURL)
-        let sanitizedProjectPath = try AbsolutePath(validating: sanitizedProjectURL.path)
-        return try await mapper.map(at: sanitizedProjectPath)
-    }
-
-    private static func makeResourceOnlyProjectCopy(of projectPath: AbsolutePath) throws -> URL {
-        let sourceURL = URL(fileURLWithPath: projectPath.pathString, isDirectory: true)
-        let parentURL = sourceURL.deletingLastPathComponent()
-        let copyName = ".shark-\(sourceURL.deletingPathExtension().lastPathComponent)-\(UUID().uuidString).xcodeproj"
-        let copyURL = parentURL.appendingPathComponent(copyName, isDirectory: true)
-
-        try FileManager.default.copyItem(at: sourceURL, to: copyURL)
-        return copyURL
-    }
-
-    private static func sanitizeProjectForResourceMapping(at projectURL: URL) throws {
-        let projectFileURL = projectURL.appendingPathComponent("project.pbxproj")
-        var project = try String(contentsOf: projectFileURL, encoding: .utf8)
-
-        project = try replaceMatches(in: project,
-                                     pattern: #"^\t\t[A-F0-9]+ .* = \{isa = PBXBuildFile; productRef = .*;\};\n"#,
-                                     options: [.anchorsMatchLines],
-                                     with: "")
-
-        for sectionName in ["PBXFrameworksBuildPhase", "PBXCopyFilesBuildPhase"] {
-            project = try replaceMatches(in: project,
-                                         pattern: #"/\* Begin \#(sectionName) section \*/.*?/\* End \#(sectionName) section \*/"#,
-                                         options: [.dotMatchesLineSeparators],
-                                         withBlock: { section in
-                                             try replaceMatches(in: section,
-                                                                pattern: #"files = \(\n.*?\t\t\t\);"#,
-                                                                options: [.dotMatchesLineSeparators],
-                                                                with: "files = (\n\t\t\t);")
-                                         })
-        }
-
-        try project.write(to: projectFileURL, atomically: true, encoding: .utf8)
-    }
-
-    private static func replaceMatches(in value: String,
-                                       pattern: String,
-                                       options: NSRegularExpression.Options,
-                                       with replacement: String) throws -> String {
-        let regex = try NSRegularExpression(pattern: pattern, options: options)
-        let range = NSRange(value.startIndex..<value.endIndex, in: value)
-        return regex.stringByReplacingMatches(in: value, options: [], range: range, withTemplate: replacement)
-    }
-
-    private static func replaceMatches(in value: String,
-                                       pattern: String,
-                                       options: NSRegularExpression.Options,
-                                       withBlock replacement: (String) throws -> String) throws -> String {
-        let regex = try NSRegularExpression(pattern: pattern, options: options)
-        let matches = regex.matches(in: value, options: [], range: NSRange(value.startIndex..<value.endIndex, in: value)).reversed()
-        var result = value
-
-        for match in matches {
-            guard let range = Range(match.range, in: result) else { continue }
-            let original = String(result[range])
-            result.replaceSubrange(range, with: try replacement(original))
-        }
-
-        return result
-    }
-
-    /// XcodeGraph resolves Frameworks / Embed build phases while Shark only
-    /// needs resource phases. Workspace-built products live in BUILT_PRODUCTS_DIR
-    /// and may be valid in Xcode but unresolved when a single .xcodeproj is mapped.
-    private static func shouldRetryWithResourceOnlyProject(after error: Error) -> Bool {
-        let description = error.localizedDescription
-        let detailedDescription = String(reflecting: error)
-        return description.contains("PBXBuildFile") ||
-            detailedDescription.contains("PBXFrameworksBuildPhaseMappingError") ||
-            detailedDescription.contains("PBXCopyFilesBuildPhaseMappingError")
-    }
-
-    /// Wraps low-level XcodeGraph mapping errors with actionable guidance.
-    /// See https://github.com/kaandedeoglu/Shark/issues/52 — most reports are stale
-    /// frameworks-build-phase entries the user can fix in Xcode.
-    private static func diagnosticError(wrapping error: Error, projectPath: String) -> Error {
-        let description = error.localizedDescription
-        var hint: String?
-        if description.contains("PBXBuildFile") {
-            hint = """
-            Hint: Shark relies on XcodeGraph to parse the project, and one of the entries in
-            the target's "Link Binary With Libraries" / Frameworks build phase points to a
-            file Xcode can no longer resolve. Shark automatically ignores workspace-only
-            framework and embed references while scanning resources, so this usually means a
-            resource reference itself is broken. Open the target in Xcode, look for a missing
-            (red) resource reference, remove or fix it, and re-run Shark.
-            """
-        }
-        return ProjectMappingError(underlying: error, projectPath: projectPath, hint: hint)
-    }
-
     private static func log(_ message: String) {
         FileHandle.standardError.write(Data((message + "\n").utf8))
-    }
-}
-
-private struct SwiftPackageDumpWrapper {
-    private let originalPath: String?
-    private let wrapperDirectory: URL
-
-    static func install() throws -> Self {
-        let environment = ProcessInfo.processInfo.environment
-        let originalPath = environment["PATH"]
-        let swiftPath = try resolveSwiftExecutable()
-        let wrapperDirectory = FileManager.default.temporaryDirectory
-            .appendingPathComponent("shark-swift-\(UUID().uuidString)", isDirectory: true)
-        try FileManager.default.createDirectory(at: wrapperDirectory, withIntermediateDirectories: true)
-
-        let wrapperPath = wrapperDirectory.appendingPathComponent("swift")
-        let script = """
-        #!/bin/sh
-        case " $* " in
-          *" dump-package "*|*" dump-package")
-            stderr_file=$(mktemp "${TMPDIR:-/tmp}/shark-swift-stderr.XXXXXX") || exit 1
-            '\(shellEscaped(swiftPath))' "$@" 2>"$stderr_file"
-            status=$?
-            if [ "$status" -ne 0 ]; then
-              cat "$stderr_file" >&2
-            fi
-            rm -f "$stderr_file"
-            exit "$status"
-            ;;
-          *)
-            exec '\(shellEscaped(swiftPath))' "$@"
-            ;;
-        esac
-        """
-        try script.write(to: wrapperPath, atomically: true, encoding: .utf8)
-        try FileManager.default.setAttributes([.posixPermissions: 0o755], ofItemAtPath: wrapperPath.path)
-
-        let newPath = [wrapperDirectory.path, originalPath].compactMap(\.self).joined(separator: ":")
-        setenv("PATH", newPath, 1)
-        return Self(originalPath: originalPath, wrapperDirectory: wrapperDirectory)
-    }
-
-    func restore() {
-        if let originalPath {
-            setenv("PATH", originalPath, 1)
-        } else {
-            unsetenv("PATH")
-        }
-        try? FileManager.default.removeItem(at: wrapperDirectory)
-    }
-
-    private static func resolveSwiftExecutable() throws -> String {
-        let process = Process()
-        process.executableURL = URL(fileURLWithPath: "/usr/bin/which")
-        process.arguments = ["swift"]
-        let pipe = Pipe()
-        process.standardOutput = pipe
-        process.standardError = Pipe()
-        try process.run()
-        process.waitUntilExit()
-
-        guard process.terminationStatus == 0,
-              let data = try pipe.fileHandleForReading.readToEnd(),
-              let output = String(data: data, encoding: .utf8)?
-                .trimmingCharacters(in: .whitespacesAndNewlines),
-              !output.isEmpty else {
-            throw SwiftPackageDumpWrapperError.swiftExecutableNotFound
-        }
-        return output
-    }
-
-    private static func shellEscaped(_ value: String) -> String {
-        value.replacingOccurrences(of: "'", with: "'\\''")
-    }
-}
-
-private enum SwiftPackageDumpWrapperError: LocalizedError {
-    case swiftExecutableNotFound
-
-    var errorDescription: String? {
-        switch self {
-            case .swiftExecutableNotFound:
-                "Unable to locate the Swift executable"
-        }
     }
 }

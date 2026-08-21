@@ -160,9 +160,13 @@ You can then verify the installation by doing
 
 ## Compatibility Notes
 
-Shark 2.1.0 handles `.xcodeproj` files whose Frameworks or Embed build phases reference products built elsewhere in the workspace, for example sibling frameworks under `BUILT_PRODUCTS_DIR`. Shark scans resources from a temporary project copy that keeps resource phases intact and ignores those workspace-only binary links, so these projects do not need an Xcode project format bump just for Shark.
+Shark reads the project file directly and looks only at the target's resources. Links to products
+built elsewhere in the workspace (`BUILT_PRODUCTS_DIR`), SDK references and Swift package
+dependencies are not resolved at all, so none of them can fail a run — including local packages,
+which older versions resolved through SwiftPM at about a second each.
 
-Shark 1.8.6 handles Xcode projects whose local Swift package dependencies emit manifest warnings during `swift package dump-package`. Older Shark builds may fail these projects with a generic "data couldn't be read because it isn't in the correct format" parse error.
+Xcode 16 folder-backed targets, whose membership follows the file system rather than the project
+file, are supported including per-target membership exceptions.
 
 If you use Xcode's discovered dependency file setting in a Run Script phase, keep the `dependencyFile` project value quoted when it contains path separators, for example:
 
@@ -175,7 +179,6 @@ dependencyFile = "/tmp/deps-MyApp.d";
 - Add a new Run Script phase to your target's build phases. This build phase should ideally run before the `Compile Sources` phase. The script body should look like the following:
 
   ```bash
-  unset SDKROOT
   if [ -x "/opt/homebrew/bin/shark" ]; then
   /opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/"
   fi
@@ -224,18 +227,10 @@ At the end of all that, your run Script phase should look similar to this:
 
 ### Shark fails inside an Xcode Run Script phase
 
-When Shark runs from an Xcode Run Script phase, Xcode exports build settings such as `SDKROOT` into the script environment. That is correct for compiling your app, but it can confuse SwiftPM and the project-mapping dependencies Shark uses while reading package manifests and `.xcodeproj` files.
-
-Unset `SDKROOT` before invoking Shark:
-
-```bash
-unset SDKROOT
-if [ -x "/opt/homebrew/bin/shark" ]; then
-/opt/homebrew/bin/shark generate "$PROJECT_FILE_PATH" "$PROJECT_DIR/$PROJECT_NAME/Shark.swift"
-fi
-```
-
-This is an Xcode build-environment detail, not an indication that your project file format is unsupported.
+Older versions needed `unset SDKROOT` in the script body: Xcode exports its build settings into the
+script environment, and the SwiftPM invocation Shark used while resolving package manifests tripped
+over them. Shark no longer runs SwiftPM, so the build environment does not matter any more — if you
+carry that line, you can drop it.
 
 ## Options & Flags
 

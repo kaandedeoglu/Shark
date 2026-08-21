@@ -12,14 +12,14 @@ let package = Package(
         .executable(name: "Shark", targets: ["Shark"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/tuist/XcodeGraph.git", .upToNextMajor(from: "1.34.5")),
+        .package(url: "https://github.com/tuist/XcodeProj.git", .upToNextMajor(from: "9.12.0")),
         .package(url: "https://github.com/apple/swift-argument-parser", .upToNextMajor(from: "1.5.0")),
     ],
     targets: [
         .target(
             name: "SharkKit",
             dependencies: [
-                .product(name: "XcodeGraphMapper", package: "XcodeGraph"),
+                .product(name: "XcodeProj", package: "XcodeProj"),
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
             ]
         ),

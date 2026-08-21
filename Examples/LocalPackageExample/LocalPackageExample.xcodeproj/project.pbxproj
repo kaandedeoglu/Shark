@@ -1,0 +1,238 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 54;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C1000001 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2000001 /* AppDelegate.swift */; };
+		C1000002 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C2000010 /* Assets.xcassets */; };
+		C1000003 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = C2000020 /* Localizable.strings */; };
+		C1000004 /* ExamplePackage in Frameworks */ = {isa = PBXBuildFile; productRef = CA000001 /* ExamplePackage */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C2000001 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		C2000002 /* LocalPackageExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = LocalPackageExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C2000010 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C2000021 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		C2000040 /* ExamplePackage */ = {isa = PBXFileReference; lastKnownFileType = folder; name = ExamplePackage; path = Packages/ExamplePackage; sourceTree = SOURCE_ROOT; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C3000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1000004 /* ExamplePackage in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C4000001 /* root */ = {
+			isa = PBXGroup;
+			children = (
+				C4000002 /* LocalPackageExample */,
+				C4000004 /* Packages */,
+				C4000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C4000002 /* LocalPackageExample */ = {
+			isa = PBXGroup;
+			children = (
+				C2000001 /* AppDelegate.swift */,
+				C2000010 /* Assets.xcassets */,
+				C2000020 /* Localizable.strings */,
+			);
+			path = LocalPackageExample;
+			sourceTree = "<group>";
+		};
+		C4000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C2000002 /* LocalPackageExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		C4000004 /* Packages */ = {
+			isa = PBXGroup;
+			children = (
+				C2000040 /* ExamplePackage */,
+			);
+			name = Packages;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C6000001 /* LocalPackageExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C8000003 /* Build configuration list for PBXNativeTarget "LocalPackageExample" */;
+			buildPhases = (
+				C7000001 /* Sources */,
+				C3000001 /* Frameworks */,
+				C7000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = LocalPackageExample;
+			packageProductDependencies = (
+				CA000001 /* ExamplePackage */,
+			);
+			productName = LocalPackageExample;
+			productReference = C2000002 /* LocalPackageExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C9000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+			};
+			buildConfigurationList = C8000001 /* Build configuration list for PBXProject "LocalPackageExample" */;
+			compatibilityVersion = "Xcode 9.3";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C4000001 /* root */;
+			packageReferences = (
+				CB000001 /* XCLocalSwiftPackageReference "Packages/ExamplePackage" */,
+			);
+			productRefGroup = C4000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C6000001 /* LocalPackageExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C7000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1000002 /* Assets.xcassets in Resources */,
+				C1000003 /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C7000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C1000001 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C2000020 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C2000021 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C8000010 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		C8000011 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		C8000020 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaandedeoglu.shark.LocalPackageExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		C8000021 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaandedeoglu.shark.LocalPackageExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C8000001 /* Build configuration list for PBXProject "LocalPackageExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8000010 /* Debug */,
+				C8000011 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C8000003 /* Build configuration list for PBXNativeTarget "LocalPackageExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C8000020 /* Debug */,
+				C8000021 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		CB000001 /* XCLocalSwiftPackageReference "Packages/ExamplePackage" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = Packages/ExamplePackage;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		CA000001 /* ExamplePackage */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = ExamplePackage;
+		};
+/* End XCSwiftPackageProductDependency section */
+
+	};
+	rootObject = C9000001 /* Project object */;
+}

@@ -1,0 +1,196 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXFileReference section */
+		D2000002 /* SynchronizedFolderExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SynchronizedFolderExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		DC000001 /* Exceptions for "SynchronizedFolderExample" folder in "SynchronizedFolderExample" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Excluded.xcassets,
+			);
+			target = D6000001 /* SynchronizedFolderExample */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		D2000040 /* SynchronizedFolderExample */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				DC000001 /* Exceptions for "SynchronizedFolderExample" folder in "SynchronizedFolderExample" target */,
+			);
+			path = SynchronizedFolderExample;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D3000001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		D4000001 /* root */ = {
+			isa = PBXGroup;
+			children = (
+				D2000040 /* SynchronizedFolderExample */,
+				D4000003 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		D4000003 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				D2000002 /* SynchronizedFolderExample.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		D6000001 /* SynchronizedFolderExample */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = D8000003 /* Build configuration list for PBXNativeTarget "SynchronizedFolderExample" */;
+			buildPhases = (
+				D7000001 /* Sources */,
+				D3000001 /* Frameworks */,
+				D7000002 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				D2000040 /* SynchronizedFolderExample */,
+			);
+			name = SynchronizedFolderExample;
+			productName = SynchronizedFolderExample;
+			productReference = D2000002 /* SynchronizedFolderExample.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		D9000001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1630;
+				LastUpgradeCheck = 1630;
+			};
+			buildConfigurationList = D8000001 /* Build configuration list for PBXProject "SynchronizedFolderExample" */;
+			compatibilityVersion = "Xcode 15.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = D4000001 /* root */;
+			productRefGroup = D4000003 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				D6000001 /* SynchronizedFolderExample */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D7000002 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D7000001 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		D8000010 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+			};
+			name = Debug;
+		};
+		D8000011 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				SDKROOT = iphoneos;
+			};
+			name = Release;
+		};
+		D8000020 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaandedeoglu.shark.SynchronizedFolderExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		D8000021 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kaandedeoglu.shark.SynchronizedFolderExample;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		D8000001 /* Build configuration list for PBXProject "SynchronizedFolderExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8000010 /* Debug */,
+				D8000011 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		D8000003 /* Build configuration list for PBXNativeTarget "SynchronizedFolderExample" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				D8000020 /* Debug */,
+				D8000021 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+	};
+	rootObject = D9000001 /* Project object */;
+}

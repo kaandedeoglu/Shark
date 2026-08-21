@@ -3,7 +3,52 @@ import Foundation
 @testable import SharkKit
 
 struct LocalizationEnumBuilderTests {
-    
+
+    /// A pluralized catalog entry has no string unit of its own, and its translation states are
+    /// plain strings. Decoding used to fail on both, which took the whole `generate` run with it —
+    /// even though the entry is perfectly usable.
+    @Test func readsAPluralizedCatalogEntry() throws {
+        let catalog = """
+        {
+          "sourceLanguage" : "en",
+          "strings" : {
+            "items.count" : {
+              "localizations" : {
+                "en" : {
+                  "variations" : {
+                    "plural" : {
+                      "one" : {
+                        "state" : "translated",
+                        "stringUnit" : { "state" : "translated", "value" : "%d item" }
+                      },
+                      "other" : {
+                        "stringUnit" : { "state" : "translated", "value" : "%d items" }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+        """
+
+        let decoded = try JSONDecoder().decode(StringCatalog.self, from: Data(catalog.utf8))
+        let localization = try #require(decoded.strings["items.count"]?.localizations?["en"])
+
+        #expect(localization.stringUnit == nil)
+        // "other" first: it is the variation the generated accessor takes its format specifiers from
+        #expect(localization.variations?.plural?.all.first?.stringUnit?.value == "%d items")
+        #expect(localization.variations?.plural?.one?.state == .translated)
+    }
+
+    @Test func decodesBothSpellingsOfATranslationState() throws {
+        let unit = """
+        { "value" : "Hallo", "state" : "needs_review" }
+        """
+        #expect(try JSONDecoder().decode(StringUnit.self, from: Data(unit.utf8)).state == .needs_review)
+    }
+
     @Test func multilineStringParsingWithNSDictionary() throws {
         let tempDir = FileManager.default.temporaryDirectory
         let stringsFile = tempDir.appendingPathComponent("test.strings")

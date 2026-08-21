@@ -23,22 +23,27 @@ struct PluralVariation: Decodable {
     let two: Variation?
     let few: Variation?
     let many: Variation?
-    let other: Variation
+    let other: Variation?
 
-    var all: [Variation] { [zero, one, two, few, many, other].compactMap { $0 } }
+    /// Ordered from the most specific category to the most general, so callers that need a single
+    /// representative value — for format specifiers, say — can take the first one.
+    var all: [Variation] { [other, many, few, two, one, zero].compactMap { $0 } }
 }
 
 struct Variation: Decodable {
-    
-    enum TranslationState: Decodable {
-        case translated
-        case needs_review
-    }
+    let stringUnit: StringUnit?
+    /// Xcode keeps the translation state inside the string unit; some tools also write it here.
+    let state: TranslationState?
+}
 
-    let stringUnit: StringUnit
-    let state: TranslationState
+/// Raw-value backed on purpose: without one, the synthesized decoding expects `{"translated": {}}`
+/// and chokes on the `"translated"` a catalog actually contains.
+enum TranslationState: String, Decodable {
+    case translated
+    case needs_review
 }
 
 struct StringUnit: Decodable {
     let value: String
+    let state: TranslationState?
 }

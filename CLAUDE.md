@@ -87,11 +87,16 @@ The package is split into a library and a thin executable (see TRANSLATE_PLAN.md
 - `FormatSpecifierParser`: shared printf-specifier parsing used by codegen, lint, and translate validation.
 - `LocalizationLinter` / `LintReportFormatter`: rules and text/json/github output.
 - `Translator` + `CompletionProviding` backends: `ClaudeClient` (Messages API; structured output, prompt caching, retries, parallel batches — first batch runs alone to write the cache), `ClaudeCodeBackend` (pipes through a local `claude -p` binary with `--json-schema`, billed to the user's subscription), and `CodexBackend` (pipes through `codex exec` with structured-output schema support). Every translation is validated (placeholder preservation) and written back as `needs_review`.
-- Plurals are out of scope for now: readers skip and report them (`skippedPluralKeys`).
+- Plurals are out of scope for lint and translate: those readers skip and report them
+  (`skippedPluralKeys`). `generate` does handle them — a pluralized entry has no string unit of its
+  own, so the accessor takes its format specifiers from the `other` variation. Watch the decoding
+  model: translation states are plain strings in a catalog, and an enum without a raw value decodes
+  as `{"translated": {}}` instead, which used to fail the whole run.
 
 **Options & Project Parsing (`Sources/SharkKit/`)**
 - `Options.swift`: Shared ArgumentParser options used by `generate` and the builders.
-- `Project/XcodeProjectHelper.swift`: Interfaces with XcodeGraph library to parse `.xcodeproj` files and extract resource paths. Handles target selection and resource discovery.
+- `Project/XcodeProjectResourceScanner.swift`: Reads the target's resource files out of the project with XcodeProj — resource build phases (including variant groups for localizations) and Xcode 16 synchronized folder groups, minus their membership exceptions. References that do not live in the file system (built products, SDK paths) are skipped, which is what keeps stale entries from mattering.
+- `Project/XcodeProjectHelper.swift`: Facade over the scanner — locale filtering, `--exclude`, and the `--deps` dependency file.
 
 **Code Generation (`Sources/SharkKit/Codegen/`)**
 - `SharkEnumBuilder.swift`: Main orchestrator that coordinates generation of all asset types (images, colors, fonts, localizations, storyboards, data assets).
@@ -104,26 +109,45 @@ The package is split into a library and a thin executable (see TRANSLATE_PLAN.md
 - Each framework has different import statements and API generation patterns
 
 ### Key Dependencies
-- **XcodeGraph**: Parses Xcode project files and workspace structures
+- **XcodeProj**: Parses `.xcodeproj` files. The only thing between Shark and the project format.
 - **ArgumentParser**: Handles command-line interface and option parsing
 
-#### Note on XcodeGraph maintenance status
+#### Why not XcodeGraph
 
-The standalone `tuist/XcodeGraph` repo was archived on 2026-02-26; final release is **1.34.5**. Its sources have moved into `tuist/tuist:cli/Sources/XcodeGraph`, but that copy uses Swift Package Registry IDs (`.package(id:)`) and is not exposed as a public product, so it can't be consumed as a Swift Package dependency without additional work.
+Shark used XcodeGraph between 1.8 and 2.1 (issue #51), because Xcode 16 folder-backed projects broke
+the direct XcodeProj usage (XcodeProj#880). It cost more than it gave:
 
-We deliberately stay on `tuist/XcodeGraph` 1.34.5 because:
-- The actually consequential parser lives in `tuist/XcodeProj` (still actively maintained — 9.12.0+).
-- 1.34.5's `Package.swift` pins XcodeProj as `.upToNextMajor(from: "9.9.0")`, so XcodeProj fixes (e.g. the Xcode 16.3 `objectVersion = 90` shellScript-as-array fix in 9.7.1) flow through transitively.
+- **Runtime.** XcodeGraph resolves Swift package manifests by shelling out to `swift package
+  dump-package` — a full second per local package. Projects with five local packages paid five
+  seconds per build. That is the complaint in #51 that the `--deps` dependency-file support was
+  built to route around.
+- **Workarounds.** The stderr/PATH wrapper around `dump-package`, the resource-only project copy for
+  unresolvable link phases (#52, #55), and a de-duplication guard for local packages — every one of
+  them existed because of a feature Shark does not use.
+- **Correctness.** A project whose local package sits at the project's own directory (`path: .`, what
+  XcodeGen writes for a repo-root package) lost its targets entirely: XcodeGraph keys projects by
+  path, and the package's project overwrites the Xcode project's. The app targets simply vanished.
+- **Maintenance.** `tuist/XcodeGraph` was archived on 2026-02-26 at 1.34.5; the successor inside
+  `tuist/tuist` is not consumable as a Swift package. Reported bugs cannot reach us.
 
-Revisit vendoring/submoduling only if XcodeGraph itself needs format-driven changes — until then, the standalone 1.34.5 release plus a fresh XcodeProj is the cheapest correct setup.
+Shark needs two answers from a project: which target, and which resource files that target builds.
+`XcodeProjectResourceScanner` reads both straight from the object graph — resource build phases plus
+Xcode 16 synchronized folder groups — in about 130 lines. Cold build went from 207 s to 49 s,
+dependencies from 22 to 5, and a run on a project with local packages from ~1.1 s to ~0.03 s.
 
-#### SwiftPM warning output during package mapping
-
-XcodeGraph 1.34.5's `PackageInfoLoader` shells out to `swift package dump-package` while mapping Swift package references and can collect stdout and stderr together before decoding JSON. Some package manifests, notably newer Swift manifests using deprecated PackageDescription APIs, emit non-fatal diagnostics to stderr while still returning valid JSON on stdout. Keep `SwiftPackageDumpWrapper` in `Project/XcodeProjectHelper.swift`: it is intentionally scoped around `mapper.map(at:)`, suppresses stderr only for successful `dump-package` calls, and forwards stderr on failures so real SwiftPM errors remain visible.
+Upstream report for the crash, kept for the record: https://github.com/tuist/tuist/issues/12546
 
 ### Regression fixture
 
 `Examples/Format90Example/` is a hand-crafted minimal `.xcodeproj` with `objectVersion = 90` and a `PBXShellScriptBuildPhase` whose `shellScript` is the new array form. It's the regression case for issue #54.
+
+`Examples/LocalPackageExample/` links a local Swift package and also carries it as a folder
+reference, which is what Xcode and XcodeGen both write. It used to abort Shark before a single
+resource was read; the scanner ignores packages entirely, which is the point of the fixture.
+
+`Examples/SynchronizedFolderExample/` is an Xcode 16 folder-backed target: no files in the project
+file at all, membership follows the file system, and an exception set keeps `Excluded.xcassets` out.
+This is the case from issues #50/#51 and the reason the scanner walks synchronized groups itself.
 
 `Examples/LocalizationWorkflowExample/` is a hand-crafted localization workflow fixture with expected lint findings across `.strings` and `.xcstrings`, skipped plural catalog entries, and stable `translate --dry-run` gaps.
 
@@ -144,7 +168,7 @@ swift run Shark /path/to/App.xcodeproj /tmp/SharkSmoke.swift --target App --deps
 Real-world projects under `$HOME/Documents/late` are useful before release tags, but they are not CI fixtures. If one fails, reduce it to the smallest synthetic `.xcodeproj` and commit that under `Examples/`.
 
 ### Resource Processing Flow
-1. XcodeProjectHelper parses the `.xcodeproj` file using XcodeGraph
+1. XcodeProjectResourceScanner parses the `.xcodeproj` file using XcodeProj
 2. Extracts resource file paths based on target selection
 3. Different builders process each asset type:
    - `.xcassets` → Images, Colors, Data Assets

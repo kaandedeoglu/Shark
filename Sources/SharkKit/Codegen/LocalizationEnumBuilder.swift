@@ -154,12 +154,15 @@ enum LocalizationEnumBuilder {
             var terms: [String: String] = [:]
             for (string, entry) in stringCatalog.strings {
                 guard let localizations = entry.localizations,
-                      let sourceLocalization = localizations[stringCatalog.sourceLanguage],
-                      let value = sourceLocalization.stringUnit?.value else {
+                      let sourceLocalization = localizations[stringCatalog.sourceLanguage] else {
                     terms[string] = string
                     continue
                 }
-                terms[string] = value
+                // A pluralized entry has no string unit of its own; any of its variations carries the
+                // same format specifiers, which is all the generated accessor needs.
+                let value = sourceLocalization.stringUnit?.value
+                    ?? sourceLocalization.variations?.plural?.all.compactMap(\.stringUnit?.value).first
+                terms[string] = value ?? string
             }
             return terms
         }

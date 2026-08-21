@@ -117,6 +117,10 @@ fi
 
 WORKFLOW_PROJECT="$ROOT/Examples/LocalizationWorkflowExample/LocalizationWorkflowExample.xcodeproj"
 
+echo "==> generate handles the pluralized catalog entry: LocalizationWorkflowExample"
+"${SHARK[@]}" generate "$WORKFLOW_PROJECT" "$TMP_DIR/workflow-shark.swift" --target LocalizationWorkflowExample >"$TMP_DIR/workflow-generate.txt" 2>&1
+assert_contains "$TMP_DIR/workflow-shark.swift" "public static func count("
+
 echo "==> lint expected findings: LocalizationWorkflowExample"
 assert_fails "$TMP_DIR/workflow-lint.txt" "${SHARK[@]}" lint "$WORKFLOW_PROJECT" --target LocalizationWorkflowExample
 assert_contains "$TMP_DIR/workflow-lint.txt" "missing-key"
